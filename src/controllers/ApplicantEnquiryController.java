@@ -1,6 +1,9 @@
 package controllers;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import models.Applicant;
 import models.Enquiry;
@@ -17,9 +20,28 @@ public class ApplicantEnquiryController implements IApplicantEnquiryController {
 	 */
 	public void enquiryActionMenu(Applicant applicant) {
 		ApplicantEnquiryView applicantEnquiryView = new ApplicantEnquiryView();
-		Enquiry.getEnquiryByApplicantDB(applicant);
-		applicantEnquiryView.showEnquiries();
-		
+		try {
+			// Get all enquiries the user has made
+			ArrayList<Enquiry> enquiries = Enquiry.getEnquiriesByNricDB(applicant.getNric());
+			
+			// Classify enquiries into projects
+			ArrayList<Project> projects = new ArrayList<>();
+			// Mapping of Project -> Enquiries ArrayList 
+			Map<Project, ArrayList<Enquiry>> projectEnquiriesMap = new HashMap<Project, ArrayList<Enquiry>>(); 
+			for (Enquiry enquiry : enquiries){
+				projectEnquiriesMap
+			}
+			// Show and get enquiry to modify
+			Enquiry enquiry = applicantEnquiryView.showEnquiries(enquiries);
+			
+		}
+		catch (IOException e){
+
+		}
+		catch (NumberFormatException e){
+			
+		}		
+
 	}
 
 	/**

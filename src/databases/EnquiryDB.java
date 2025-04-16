@@ -54,9 +54,9 @@ public class EnquiryDB {
         // False will only occur when error is thrown to controller
     }
 
-    // Get all enquries
+    // Get all enquiries
     public static ArrayList<Enquiry> getAllEnquiries() throws IOException, NumberFormatException {
-        ArrayList<Enquiry> enquries = new ArrayList<>();
+        ArrayList<Enquiry> enquiries = new ArrayList<>();
         
         try (FileInputStream fileStreamIn = new FileInputStream(ENQUIRY_FILEPATH);
         Workbook workbook = new XSSFWorkbook(fileStreamIn)) {
@@ -64,15 +64,15 @@ public class EnquiryDB {
             Sheet sheet = workbook.getSheetAt(0);
             for (Row row : sheet) {
                 if (row.getRowNum() == 0) continue; // Skip header
-                enquries.add(createEnquiryFromRow(row));
+                enquiries.add(createEnquiryFromRow(row));
             }
         }
-        return enquries;
+        return enquiries;
     }
 
-    // Get all enquries by user nric
+    // Get all enquiries by user nric
     public static ArrayList<Enquiry> getEnquiriesByNricDB(String nric) throws IOException, NumberFormatException {
-        ArrayList<Enquiry> enquries = new ArrayList<>();
+        ArrayList<Enquiry> enquiries = new ArrayList<>();
         
         try (FileInputStream fileStreamIn = new FileInputStream(ENQUIRY_FILEPATH);
         Workbook workbook = new XSSFWorkbook(fileStreamIn)) {
@@ -81,11 +81,11 @@ public class EnquiryDB {
             for (Row row : sheet) {
                 if (row.getRowNum() == 0) continue; // Skip header
                 if (row.getCell(EnquiryFileIndex.NRIC.getIndex()).getStringCellValue() == nric){
-                    enquries.add(createEnquiryFromRow(row));
+                    enquiries.add(createEnquiryFromRow(row));
                 }
             }
         }
-        return enquries;
+        return enquiries;
     }
 
     // Update Enquiry using ID
