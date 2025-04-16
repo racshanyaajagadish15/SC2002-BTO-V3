@@ -1,0 +1,68 @@
+package databases;
+
+import models.HDBManager;
+import enums.UserFileIndex;
+import java.io.FileInputStream;
+import java.io.IOException;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+
+public class HDBManagerDB {
+    private static final String MANAGER_FILEPATH = "resources/data/ManagerList.xlsx";
+
+    public static HDBManager getManagerByNRIC(String nric) throws IOException, NumberFormatException {
+        try (FileInputStream fileStreamIn = new FileInputStream(MANAGER_FILEPATH);
+        Workbook workbook = new XSSFWorkbook(fileStreamIn)) {
+            Sheet sheet = workbook.getSheetAt(0);
+            for (Row row : sheet) {
+                // Skip header
+                if (row.getRowNum() == 0) continue;
+
+                // Read the user details from the row
+                String fileNric = row.getCell(UserFileIndex.NRIC.getIndex()).getStringCellValue();
+
+                // Check if NRIC match
+                if (fileNric.equals(nric)) {
+                    String name = row.getCell(UserFileIndex.NRIC.getIndex()).getStringCellValue();
+                    String maritalStatus = row.getCell(UserFileIndex.MARITAL_STATUS.getIndex()).getStringCellValue();
+                    String filePassword = row.getCell(UserFileIndex.PASSWORD.getIndex()).getStringCellValue();
+                    // !! Propogate any NumberFormatException to calling method
+                    int age = (int) row.getCell(UserFileIndex.AGE.getIndex()).getNumericCellValue();
+
+                    return new HDBManager(name, nric, age, maritalStatus, filePassword);
+                }
+            } 
+        }
+    // No results
+    return null;
+    }
+    public static HDBManager getManagerbyName(String name) throws IOException, NumberFormatException {
+        try (FileInputStream fileStreamIn = new FileInputStream(MANAGER_FILEPATH);
+        Workbook workbook = new XSSFWorkbook(fileStreamIn)) {
+            Sheet sheet = workbook.getSheetAt(0);
+            for (Row row : sheet) {
+                // Skip header
+                if (row.getRowNum() == 0) continue;
+
+                // Read the user details from the row
+                String fileName = row.getCell(UserFileIndex.NAME.getIndex()).getStringCellValue();
+
+                // Check if NRIC match
+                if (fileName.equals(name)) {
+                    String nric = row.getCell(UserFileIndex.NRIC.getIndex()).getStringCellValue();
+                    String maritalStatus = row.getCell(UserFileIndex.MARITAL_STATUS.getIndex()).getStringCellValue();
+                    String filePassword = row.getCell(UserFileIndex.PASSWORD.getIndex()).getStringCellValue();
+                    // !! Propogate any NumberFormatException to calling method
+                    int age = (int) row.getCell(UserFileIndex.AGE.getIndex()).getNumericCellValue();
+
+                    return new HDBManager(name, nric, age, maritalStatus, filePassword);
+                }
+            } 
+        }
+    // No results
+    return null;
+    }
+}
