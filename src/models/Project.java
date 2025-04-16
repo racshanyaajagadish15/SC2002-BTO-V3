@@ -1,9 +1,9 @@
 package models;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.io.IOException;
 
 import databases.ApplicationDB;
 import databases.ProjectDB;
@@ -33,8 +33,8 @@ public class Project {
      * @param visibility Visibility status of the project
      */
     public Project(int projectID, String projectName, HDBManager manager, String neighborhood, 
-                  List<FlatType> flatTypes, Date openingDate, Date closingDate, 
-                  int officerSlots, boolean visibility) {
+                   List<FlatType> flatTypes, Date openingDate, Date closingDate, 
+                   int officerSlots, boolean visibility) {
         this.projectID = projectID;
         this.projectName = projectName;
         this.projectManager = manager;
@@ -46,29 +46,79 @@ public class Project {
         this.projectVisibility = visibility;
     }
 
-    public static void createApplicationDB(Applicant applicant, Project project, String applicationStatus) {
-        Date now = new Date();
-        if (now.before(project.getApplicationOpeningDate())) {
-            throw new IllegalStateException("Applications are not open yet");
-        }
-        if (now.after(project.getApplicationClosingDate())) {
-            throw new IllegalStateException("Application period has ended");
-        }
+    // Static methods for database operations
 
-        if (!applicant.isEligibleForHDB()) {
-            throw new IllegalArgumentException("Applicant is not eligible for HDB");
-        }
-        Application.createApplication(applicant, project, applicationStatus);
+    /**
+     * Create a new project in the database.
+     * @param project The project to be created.
+     * @return True if the project was successfully created, false otherwise.
+     * @throws IOException If an I/O error occurs.
+     */
+    public static boolean createProjectDB(Project project) throws IOException {
+        return ProjectDB.createProject(project);
     }
 
+    /**
+     * Retrieve all projects from the database.
+     * @return A list of all projects.
+     * @throws IOException If an I/O error occurs.
+     */
     public static List<Project> getAllProjectsDB() throws IOException {
         return ProjectDB.getAllProjects();
     }
 
-    public static List<Project> getHDBManagerProjectsDB(int hdbManagerID) throws IOException {
+    /**
+     * Retrieve projects managed by a specific HDB manager.
+     * @param hdbManagerID The ID of the HDB manager.
+     * @return A list of projects managed by the specified manager.
+     * @throws IOException If an I/O error occurs.
+     */
+    public static List<Project> getProjectsByManagerDB(String hdbManagerID) throws IOException {
         return ProjectDB.getProjectsByManager(hdbManagerID);
     }
 
+    /**
+     * Update an existing project in the database.
+     * @param updatedProject The updated project object.
+     * @throws IOException If an I/O error occurs.
+     */
+    public static void updateProjectDB(Project updatedProject) throws IOException {
+        if (updatedProject.getApplicationOpeningDate().after(updatedProject.getApplicationClosingDate())) {
+            throw new IllegalArgumentException("Opening date must be before closing date");
+        }
+
+        if (updatedProject.getOfficerSlots() < 0) {
+            throw new IllegalArgumentException("Officer slots cannot be negative");
+        }
+
+        ProjectDB.updateProject(updatedProject);
+    }
+
+    /**
+     * Delete a project from the database by its name.
+     * @param projectName The name of the project to delete.
+     * @return True if the project was successfully deleted, false otherwise.
+     * @throws IOException If an I/O error occurs.
+     */
+    public static boolean deleteProjectDB(String projectName) throws IOException {
+        Project project = ProjectDB.getProjectByName(projectName);
+        if (project == null) {
+            throw new IllegalArgumentException("Project not found");
+        }
+
+        // Prevent deletion if applications exist
+        if (project.hasApplications()) {
+            throw new IllegalStateException("Cannot delete project with existing applications");
+        }
+
+        return ProjectDB.deleteProject(projectName);
+    }
+
+    /**
+     * Filter projects based on visibility and optional filters.
+     * @param filters A list of filters to apply.
+     * @return A list of filtered projects.
+     */
     public static List<Project> getFilteredProjectsDB(List<String> filters) {
         List<Project> allProjects;
         try {
@@ -98,48 +148,35 @@ public class Project {
 
         return filteredProjects;
     }
-	private boolean matchesFilter(String filter) {
+
+    // Instance methods
+
+    /**
+     * Check if the project has any applications.
+     * @return True if the project has applications, false otherwise.
+     */
+    public boolean hasApplications() {
+        try {
+            return ApplicationDB.hasApplicationsForProject(this.projectID);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to check applications for project", e);
+        }
+    }
+
+    /**
+     * Check if the project matches a specific filter.
+     * @param filter The filter to check against.
+     * @return True if the project matches the filter, false otherwise.
+     */
+    private boolean matchesFilter(String filter) {
         String lowerFilter = filter.toLowerCase();
         return this.neighborhood.toLowerCase().contains(lowerFilter) ||
                this.projectName.toLowerCase().contains(lowerFilter) ||
                this.flatTypes.stream().anyMatch(ft -> ft.toString().toLowerCase().contains(lowerFilter));
     }
 
-    public static void updateProjectDB(Project updatedProject) throws IOException {
-        if (updatedProject.getApplicationOpeningDate().after(updatedProject.getApplicationClosingDate())) {
-            throw new IllegalArgumentException("Opening date must be before closing date");
-        }
+    // Getters and Setters
 
-        if (updatedProject.getOfficerSlots() < 0) {
-            throw new IllegalArgumentException("Officer slots cannot be negative");
-        }
-
-        ProjectDB.updateProject(updatedProject);
-    }
-
-    public static boolean deleteProjectDB(String projectName) throws IOException {
-        Project project = ProjectDB.getProjectByName(projectName);
-        if (project == null) {
-            throw new IllegalArgumentException("Project not found");
-        }
-
-        // Prevent deletion if applications exist
-        if (project.hasApplications()) {
-            throw new IllegalStateException("Cannot delete project with existing applications");
-        }
-
-        return ProjectDB.deleteProject(projectName);
-    }
-
-    public boolean hasApplications() {
-		try {
-			return ApplicationDB.hasApplicationsForProject(this.projectID);
-		} catch (IOException e) {
-			throw new RuntimeException("Failed to check applications for project", e);
-    }
-}
-
-    // Getters
     public int getProjectID() {
         return projectID;
     }
@@ -176,7 +213,6 @@ public class Project {
         return officerSlots;
     }
 
-    // Setters
     public void setProjectName(String projectName) {
         this.projectName = projectName;
     }
