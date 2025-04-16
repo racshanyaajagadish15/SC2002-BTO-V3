@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import models.Applicant;
 import models.Enquiry;
 import models.Project;
+import views.ApplicantEnquiryView;
 
 public class ApplicantEnquiryController implements IApplicantEnquiryController {
 
@@ -15,7 +16,10 @@ public class ApplicantEnquiryController implements IApplicantEnquiryController {
 	 * @param enquiry
 	 */
 	public void enquiryActionMenu(Applicant applicant) {
-
+		ApplicantEnquiryView applicantEnquiryView = new ApplicantEnquiryView();
+		Enquiry.getEnquiryByApplicantDB(applicant);
+		applicantEnquiryView.showEnquiries();
+		
 	}
 
 	/**

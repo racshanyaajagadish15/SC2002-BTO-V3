@@ -1,56 +1,71 @@
 package models;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+
+import databases.EnquiryDB;
+
 public class Enquiry {
 
 	private int enquiryID;
-	private Applicant applicant;
-	private Project project;
+	private String nric;
+	private int projectID;
 	private String enquiry;
 	private String reply;
+	private Date enquiryDate;
+	private Date replyDate;
 
 	/**
 	 * 
-	 * @param applicant
-	 * @param project
 	 * @param enquiryID
+	 * @param nric
+	 * @param projectID
 	 * @param enquiry
 	 * @param reply
+	 * @param enquiryDate
+	 * @param replyDate
 	 */
-	public Enquiry(Applicant applicant, Project project, int enquiryID, String enquiry, String reply) {
-		// TODO - implement Enquiry.Enquiry
-		
+	public Enquiry(int enquiryID, String nric, int projectID, String enquiry, String reply, Date enquiryDate, Date replyDate) {
+		this.enquiryID = enquiryID;
+		this.nric = nric;
+		this.projectID = projectID;
+		this.enquiry = enquiry;
+		this.reply = reply;
+		this.enquiryDate = enquiryDate;
+		this.replyDate = replyDate;
 	}
 
-	public static void createEnquiryDB() {
-		// TODO - implement Enquiry.createEnquiryDB
-		
+	public static boolean createEnquiryDB(Enquiry enquiry) throws NumberFormatException, IOException {
+		return EnquiryDB.createEnquiry(enquiry);
 	}
 
-	public static void updateEnquiryDB() {
-		// TODO - implement Enquiry.updateEnquiryDB
-		
+	public static boolean updateEnquiryDB(Enquiry enquiry) throws NumberFormatException, IOException {
+		return EnquiryDB.updateEnquryByID(enquiry);
 	}
 
-	public static void deleteEnquiryDB() {
-		// TODO - implement Enquiry.deleteEnquiryDB
-		
+	public static boolean deleteEnquiryDB(int ID) throws NumberFormatException, IOException {
+		return EnquiryDB.deleteEnquiryByID(ID);
 	}
 
-	public static void getEnquiryDB() {
-		// TODO - implement Enquiry.getEnquiryDB
-		
+	public static ArrayList<Enquiry> getEnquiriesByNricDB(String nric) throws NumberFormatException, IOException {
+		return EnquiryDB.getEnquiriesByNricDB(nric);
+	}
+
+	public static ArrayList<Enquiry> getAllEnquiriesDB() throws NumberFormatException, IOException {
+		return EnquiryDB.getAllEnquiries();		
 	}
 
 	public int getEnquiryID() {
 		return this.enquiryID;
 	}
 
-	public Applicant getApplicant() {
-		return this.applicant;
+	public String getNric() {
+		return this.nric;
 	}
 
-	public Project getProject() {
-		return this.project;
+	public int getProjectID() {
+		return this.projectID;
 	}
 
 	public String getEnquiry() {
@@ -61,28 +76,12 @@ public class Enquiry {
 		return this.reply;
 	}
 
-	/**
-	 * 
-	 * @param enquiryID
-	 */
-	public void setEnquiryID(int enquiryID) {
-		this.enquiryID = enquiryID;
+	public Date getEnquiryDate() {
+		return this.enquiryDate;
 	}
 
-	/**
-	 * 
-	 * @param applicant
-	 */
-	public void setApplicant(Applicant applicant) {
-		this.applicant = applicant;
-	}
-
-	/**
-	 * 
-	 * @param project
-	 */
-	public void setProject(Project project) {
-		this.project = project;
+	public Date getReplyDate() {
+		return this.replyDate;
 	}
 
 	/**
@@ -101,4 +100,19 @@ public class Enquiry {
 		this.reply = reply;
 	}
 
+	/**
+	 * 
+	 * @param enquiryDate
+	 */
+	public void setEnquiryDate(Date enquiryDate) {
+		this.enquiryDate = enquiryDate;
+	}
+
+	/**
+	 * 
+	 * @param replyDate
+	 */
+	public void setReplyDate(Date replyDate) {
+		this.replyDate = replyDate;
+	}
 }

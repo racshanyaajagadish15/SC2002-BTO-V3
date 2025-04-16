@@ -1,6 +1,6 @@
 package views;
 
-public class ApplicantEquiryView {
+public class ApplicantEnquiryView {
 
 	public void showEnquiries() {
 		// TODO - implement ApplicantEquiryView.showEnquiries
