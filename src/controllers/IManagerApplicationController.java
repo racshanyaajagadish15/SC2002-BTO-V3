@@ -1,3 +1,6 @@
+package controllers;
+import models.Application;
+
 public interface IManagerApplicationController {
 
 	/**

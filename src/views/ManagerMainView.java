@@ -12,7 +12,7 @@ public class ManagerMainView {
     private HDBManager loggedInManager;
 
     public ManagerMainView() {
-        this.applicationView = new ManagerApplicationView();
+        this.applicationView = new ManagerApplicationView(loggedInManager);
         this.projectView = new ManagerProjectView();
         this.enquiryView = new ManagerEnquiryView();
         this.registrationView = new ManagerRegistrationView();
@@ -20,7 +20,7 @@ public class ManagerMainView {
 
     public ManagerMainView(HDBManager manager) {
         this.loggedInManager = manager;
-        this.applicationView = new ManagerApplicationView();
+        this.applicationView = new ManagerApplicationView(loggedInManager);
         this.projectView = new ManagerProjectView();
         this.enquiryView = new ManagerEnquiryView();
         this.registrationView = new ManagerRegistrationView();

@@ -15,8 +15,10 @@ public class Application {
 	 * @param applicationID
 	 */
 	public Application(Applicant applicant, Project project, String applicationStatus, int applicationID) {
-		// TODO - implement Application.Application
-		
+		this.applicant = applicant;
+		this.project = project;
+		this.applicationStatus = applicationStatus;
+		this.applicationID = applicationID;
 	}
 
 	public static void createEnquiryDB() {
