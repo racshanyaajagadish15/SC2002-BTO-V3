@@ -1,20 +1,21 @@
 package enums;
 
 public enum ProjectListFileIndex {
-    NAME(0),
-    NEIGHBORHOOD(1),
-    TYPE_1(2),
-    TYPE_1_UNITS(3),
-    TYPE_1_PRICE(4),
-    TYPE_2(5),
-    TYPE_2_UNITS(6),
-    TYPE_2_PRICE(7),
-    OPENING_DATE(8),
-    CLOSING_DATE(9),
-    MANAGER(10),
-    OFFICER_SLOT(11),
-    OFFICER(12),
-    VISIBILITY(13); // Add visibility field here
+    PROJECT_ID(0), // Add this line
+    NAME(1),
+    NEIGHBORHOOD(2),
+    TYPE_1(3),
+    TYPE_1_UNITS(4),
+    TYPE_1_PRICE(5),
+    TYPE_2(6),
+    TYPE_2_UNITS(7),
+    TYPE_2_PRICE(8),
+    OPENING_DATE(9),
+    CLOSING_DATE(10),
+    MANAGER(11),
+    OFFICER_SLOT(12),
+    OFFICERS(13),
+    VISIBILITY(14);
 
     private final int index;
 

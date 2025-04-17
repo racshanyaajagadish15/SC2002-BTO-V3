@@ -15,20 +15,24 @@ public class ProjectDB {
     private static final String PROJECT_FILEPATH = "resources/data/ProjectList.xlsx";
 
     // Helper function to create Project object from excel row
+    // Helper function to create Project object from excel row
     private static Project createProjectFromRow(Row row) {
         try {
+            // Extract PROJECT_ID
+            int projectID = (int) row.getCell(ProjectListFileIndex.PROJECT_ID.getIndex()).getNumericCellValue();
+
             String projectName = row.getCell(ProjectListFileIndex.NAME.getIndex()).getStringCellValue();
             String neighborhood = row.getCell(ProjectListFileIndex.NEIGHBORHOOD.getIndex()).getStringCellValue();
-    
+
             // Flat Type 1
             String type1Name = row.getCell(ProjectListFileIndex.TYPE_1.getIndex()).getStringCellValue().trim();
             int type1Units = (int) row.getCell(ProjectListFileIndex.TYPE_1_UNITS.getIndex()).getNumericCellValue();
             double type1Price = row.getCell(ProjectListFileIndex.TYPE_1_PRICE.getIndex()).getNumericCellValue();
             FlatType type1 = new FlatType(type1Name, type1Units, type1Price);
-    
+
             ArrayList<FlatType> flatTypes = new ArrayList<>();
             flatTypes.add(type1);
-    
+
             // Flat Type 2 if exists
             Cell type2Cell = row.getCell(ProjectListFileIndex.TYPE_2.getIndex());
             if (type2Cell != null && !type2Cell.getStringCellValue().isBlank()) {
@@ -37,29 +41,29 @@ public class ProjectDB {
                 double type2Price = row.getCell(ProjectListFileIndex.TYPE_2_PRICE.getIndex()).getNumericCellValue();
                 flatTypes.add(new FlatType(type2Name, type2Units, type2Price));
             }
-    
+
             Date openingDate = row.getCell(ProjectListFileIndex.OPENING_DATE.getIndex()).getDateCellValue();
             Date closingDate = row.getCell(ProjectListFileIndex.CLOSING_DATE.getIndex()).getDateCellValue();
-    
-            String managerName = row.getCell(ProjectListFileIndex.MANAGER.getIndex()).getStringCellValue();
-    
+
+            String managerNRIC = row.getCell(ProjectListFileIndex.MANAGER.getIndex()).getStringCellValue();
+
             // Adapt to the existing HDBManager constructor
             HDBManager manager = new HDBManager(
-                managerName,          // Name
-                "N/A",                // NRIC (placeholder)
+                managerNRIC,          // Name
+                managerNRIC,                // NRIC (placeholder)
                 0,                    // Age (default value)
                 "Unknown",            // Marital Status (placeholder)
                 "defaultPassword"     // Password (placeholder)
             );
-    
+
             int officerSlots = (int) row.getCell(ProjectListFileIndex.OFFICER_SLOT.getIndex()).getNumericCellValue();
-    
+
             // Handle visibility
             Cell visibilityCell = row.getCell(ProjectListFileIndex.VISIBILITY.getIndex());
             boolean visibility = visibilityCell != null && visibilityCell.getStringCellValue().equalsIgnoreCase("Visible");
-    
+
             return new Project(
-                row.getRowNum(), // Use row number as temporary ID
+                projectID, // Use PROJECT_ID from the Excel row
                 projectName,
                 manager,
                 neighborhood,
@@ -67,6 +71,7 @@ public class ProjectDB {
                 openingDate,
                 closingDate,
                 officerSlots,
+                
                 visibility
             );
         } catch (Exception e) {
@@ -77,6 +82,10 @@ public class ProjectDB {
 
     // Helper function to populate excel row from Project object
     private static void populateProjectRow(Row row, Project project) {
+        // Populate PROJECT_ID
+        row.createCell(ProjectListFileIndex.PROJECT_ID.getIndex()).setCellValue(project.getProjectID());
+
+        // Populate other fields
         row.createCell(ProjectListFileIndex.NAME.getIndex()).setCellValue(project.getProjectName());
         row.createCell(ProjectListFileIndex.NEIGHBORHOOD.getIndex()).setCellValue(project.getNeighborhood());
 
@@ -111,7 +120,7 @@ public class ProjectDB {
     // Create Project
     public static boolean createProject(Project project) throws IOException {
         try (FileInputStream fileStreamIn = new FileInputStream(PROJECT_FILEPATH);
-             Workbook workbook = new XSSFWorkbook(fileStreamIn)) {
+            Workbook workbook = new XSSFWorkbook(fileStreamIn)) {
             Sheet sheet = workbook.getSheetAt(0);
 
             // Check if project already exists
@@ -122,7 +131,12 @@ public class ProjectDB {
                 }
             }
 
-            Row newRow = sheet.createRow(sheet.getLastRowNum() + 1);
+            // Assign PROJECT_ID as the next available row number
+            int projectID = sheet.getLastRowNum() + 1;
+            project.setProjectID(projectID);
+
+            // Create a new row and populate it
+            Row newRow = sheet.createRow(projectID);
             populateProjectRow(newRow, project);
 
             try (FileOutputStream fileOut = new FileOutputStream(PROJECT_FILEPATH)) {
@@ -188,12 +202,16 @@ public class ProjectDB {
         try (FileInputStream fileStreamIn = new FileInputStream(PROJECT_FILEPATH);
              Workbook workbook = new XSSFWorkbook(fileStreamIn)) {
             Sheet sheet = workbook.getSheetAt(0);
-
+    
             for (Row row : sheet) {
-                if (row.getRowNum() == 0) continue;
-                if (row.getCell(ProjectListFileIndex.NAME.getIndex()).getStringCellValue().equalsIgnoreCase(project.getProjectName())) {
+                if (row.getRowNum() == 0) continue; // Skip header
+    
+                // Use PROJECT_ID to find the correct row
+                int rowProjectID = (int) row.getCell(ProjectListFileIndex.PROJECT_ID.getIndex()).getNumericCellValue();
+                if (rowProjectID == project.getProjectID()) {
+                    // Update the row
                     populateProjectRow(row, project);
-
+    
                     try (FileOutputStream fileOut = new FileOutputStream(PROJECT_FILEPATH)) {
                         workbook.write(fileOut);
                     }
@@ -201,7 +219,7 @@ public class ProjectDB {
                 }
             }
         }
-        return false;
+        return false; // Return false if no matching project is found
     }
 
     // Delete Project
@@ -227,5 +245,31 @@ public class ProjectDB {
             }
         }
         return false;
+    }
+
+    public static ArrayList<Project> getProjectsByManager(String hdbManagerID) throws IOException {
+        ArrayList<Project> allProjects = getAllProjects();
+        ArrayList<Project> filteredProjects = new ArrayList<>();
+        for (Project project : allProjects) {
+            if (project.getProjectManager().getNric() == hdbManagerID) {
+                filteredProjects.add(project);
+            }
+        }
+        return filteredProjects;
+    }
+
+    // Get Project by ID
+    public static Project getProjectByID(int projectID) throws IOException {
+        try (FileInputStream fileStreamIn = new FileInputStream(PROJECT_FILEPATH);
+            Workbook workbook = new XSSFWorkbook(fileStreamIn)) {
+            Sheet sheet = workbook.getSheetAt(0);
+            for (Row row : sheet) {
+                if (row.getRowNum() == 0) continue; // Skip header
+                if (row.getRowNum() == projectID) { // Match row number with project ID
+                    return createProjectFromRow(row);
+                }
+            }
+        }
+        return null; // Return null if no project matches the given ID
     }
 }

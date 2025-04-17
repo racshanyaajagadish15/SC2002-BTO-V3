@@ -213,6 +213,10 @@ public class Project {
         return officerSlots;
     }
 
+    public void setProjectID(int projectID) {
+        this.projectID = projectID;
+    }
+    
     public void setProjectName(String projectName) {
         this.projectName = projectName;
     }
