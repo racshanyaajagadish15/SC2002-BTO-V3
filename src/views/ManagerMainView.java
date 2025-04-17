@@ -3,6 +3,8 @@ package views;
 import utilities.ScannerUtility;
 import controllers.ManagerProjectController;
 import models.HDBManager;
+import controllers.ManagerEnquiryController;
+import views.ManagerEnquiryView;
 
 public class ManagerMainView {
     private ManagerApplicationView applicationView;
@@ -10,11 +12,14 @@ public class ManagerMainView {
     private ManagerEnquiryView enquiryView;
     private ManagerRegistrationView registrationView;
     private HDBManager loggedInManager;
+    private ManagerEnquiryController enquiryController;
+
+    
 
     public ManagerMainView() {
         this.applicationView = new ManagerApplicationView(loggedInManager);
         this.projectView = new ManagerProjectView();
-        this.enquiryView = new ManagerEnquiryView();
+        this.enquiryView = new ManagerEnquiryView(loggedInManager);
         this.registrationView = new ManagerRegistrationView();
     }
 
@@ -22,7 +27,7 @@ public class ManagerMainView {
         this.loggedInManager = manager;
         this.applicationView = new ManagerApplicationView(loggedInManager);
         this.projectView = new ManagerProjectView();
-        this.enquiryView = new ManagerEnquiryView();
+        this.enquiryView = new ManagerEnquiryView(loggedInManager);
         this.registrationView = new ManagerRegistrationView();
     }
 
