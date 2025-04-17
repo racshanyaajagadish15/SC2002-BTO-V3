@@ -58,7 +58,7 @@ public class ManagerMainView {
 
     private void printMenuHeader() {
         System.out.println("\n=========================================");
-        System.out.println("              MANAGER DASHBOARD           ");
+        System.out.println("            MANAGER DASHBOARD           ");
         System.out.println("=========================================");
         System.out.println("1. Manage Applications");
         System.out.println("2. Manage Projects");

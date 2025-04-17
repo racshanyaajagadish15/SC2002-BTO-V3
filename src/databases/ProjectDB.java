@@ -164,6 +164,25 @@ public class ProjectDB {
         return null;
     }
 
+    public static ArrayList<Project> getProjectsbyManager(String managerNRIC) throws IOException {
+        ArrayList<Project> projects = new ArrayList<>();
+        try (FileInputStream fileStreamIn = new FileInputStream(PROJECT_FILEPATH);
+             Workbook workbook = new XSSFWorkbook(fileStreamIn)) {
+            Sheet sheet = workbook.getSheetAt(0);
+            for (Row row : sheet) {
+                if (row.getRowNum() == 0) continue;
+                if (row.getCell(ProjectListFileIndex.MANAGER.getIndex()).getStringCellValue().equalsIgnoreCase(managerNRIC)) {
+                    Project project = createProjectFromRow(row);
+                    if (project != null) {
+                        projects.add(project);
+                    }
+                }
+            }
+        }
+        return projects;
+    }
+
+
     // Update Project
     public static boolean updateProject(Project project) throws IOException {
         try (FileInputStream fileStreamIn = new FileInputStream(PROJECT_FILEPATH);
@@ -208,16 +227,5 @@ public class ProjectDB {
             }
         }
         return false;
-    }
-
-    public static ArrayList<Project> getProjectsByManager(String hdbManagerID) throws IOException {
-        ArrayList<Project> allProjects = getAllProjects();
-        ArrayList<Project> filteredProjects = new ArrayList<>();
-        for (Project project : allProjects) {
-            if (project.getProjectManager().getNric() == hdbManagerID) {
-                filteredProjects.add(project);
-            }
-        }
-        return filteredProjects;
     }
 }

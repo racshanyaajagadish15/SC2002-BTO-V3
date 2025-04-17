@@ -8,7 +8,7 @@ public class ManagerProjectView {
 
     public void showProjectMenuHeader() {
         System.out.println("\n=========================================");
-        System.out.println("              MANAGE BTO PROJECTS           ");
+        System.out.println("           MANAGE BTO PROJECTS           ");
         System.out.println("=========================================");
         System.out.println("1. Create New Project");
         System.out.println("2. View All Projects");

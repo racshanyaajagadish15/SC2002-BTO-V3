@@ -291,7 +291,7 @@ public class ManagerProjectController implements IManagerProjectController {
             if (loggedInManager == null) {
                 return new ArrayList<>();
             }
-            return ProjectDB.getProjectsByManager(loggedInManager.getNric()); // Changed to use name
+            return ProjectDB.getProjectsbyManager(loggedInManager.getNric()); // Changed to use name
         } catch (IOException e) {
             view.showErrorMessage("Error loading projects: " + e.getMessage());
             return new ArrayList<>();
