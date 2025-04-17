@@ -14,18 +14,60 @@ import models.Enquiry;
 public class EnquiryDB {
     private static final String ENQUIRY_FILEPATH = "resources/data/ProjectEnquiry.xlsx";
 
-    // Helper function to create Enquiry object from excel row
-    private static Enquiry createEnquiryFromRow(Row row) throws NumberFormatException {
-        return new Enquiry(
-            (int) row.getCell(EnquiryFileIndex.ID.getIndex()).getNumericCellValue(),
-            row.getCell(EnquiryFileIndex.NRIC.getIndex()).getStringCellValue(),
-            (int) row.getCell(EnquiryFileIndex.PROJECT_ID.getIndex()).getNumericCellValue(),
-            row.getCell(EnquiryFileIndex.ENQUIRY.getIndex()).getStringCellValue(),
-            row.getCell(EnquiryFileIndex.REPLY.getIndex()).getStringCellValue(),
-            (Date) row.getCell(EnquiryFileIndex.ENQUIRY_DATE.getIndex()).getDateCellValue(),
-            (Date) row.getCell(EnquiryFileIndex.REPLY_DATE.getIndex()).getDateCellValue());
+    // Helper function to get numeric cell value safely
+    private static double getNumericCellValue(Cell cell) {
+        if (cell == null) {
+            throw new IllegalArgumentException("Cell is null");
+        }
+        if (cell.getCellType() == CellType.NUMERIC) {
+            return cell.getNumericCellValue();
+        } else if (cell.getCellType() == CellType.STRING) {
+            try {
+                return Double.parseDouble(cell.getStringCellValue().trim());
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Expected numeric value but found string: " + cell.getStringCellValue());
+            }
+        } else {
+            throw new IllegalArgumentException("Unexpected cell type: " + cell.getCellType());
+        }
     }
 
+    private static String getStringCellValue(Cell cell) {
+        if (cell == null || cell.getCellType() != CellType.STRING) {
+            return ""; // Return an empty string if the cell is null or not a string
+        }
+        return cell.getStringCellValue();
+    }
+    
+    private static Date getDateCellValue(Cell cell) {
+        if (cell == null || cell.getCellType() != CellType.NUMERIC || !DateUtil.isCellDateFormatted(cell)) {
+            return null; // Return null if the cell is not a valid date
+        }
+        return cell.getDateCellValue();
+    }
+
+    // Helper function to create Enquiry object from excel row
+    private static Enquiry createEnquiryFromRow(Row row) throws NumberFormatException {
+        if (row == null) {
+            throw new IllegalArgumentException("Row is null");
+        }
+    
+        // Skip rows with invalid or missing data
+        Cell idCell = row.getCell(EnquiryFileIndex.ID.getIndex());
+        if (idCell == null) {
+            throw new IllegalArgumentException("Missing Enquiry ID in row: " + row.getRowNum());
+        }
+    
+        int enquiryID = (int) getNumericCellValue(idCell);
+        String nric = getStringCellValue(row.getCell(EnquiryFileIndex.NRIC.getIndex()));
+        int projectID = (int) getNumericCellValue(row.getCell(EnquiryFileIndex.PROJECT_ID.getIndex()));
+        String enquiry = getStringCellValue(row.getCell(EnquiryFileIndex.ENQUIRY.getIndex()));
+        String reply = getStringCellValue(row.getCell(EnquiryFileIndex.REPLY.getIndex()));
+        Date enquiryDate = getDateCellValue(row.getCell(EnquiryFileIndex.ENQUIRY_DATE.getIndex()));
+        Date replyDate = getDateCellValue(row.getCell(EnquiryFileIndex.REPLY_DATE.getIndex()));
+    
+        return new Enquiry(enquiryID, nric, projectID, enquiry, reply, enquiryDate, replyDate);
+    }
     // Helper function to create excel row from Enquiry object 
     private static void populateEnquiryRow(Row row, Enquiry enquiry) throws NumberFormatException {
         row.createCell(EnquiryFileIndex.ID.getIndex()).setCellValue(enquiry.getEnquiryID());
@@ -57,14 +99,19 @@ public class EnquiryDB {
     // Get all enquiries
     public static ArrayList<Enquiry> getAllEnquiries() throws IOException, NumberFormatException {
         ArrayList<Enquiry> enquiries = new ArrayList<>();
-        
+    
         try (FileInputStream fileStreamIn = new FileInputStream(ENQUIRY_FILEPATH);
-        Workbook workbook = new XSSFWorkbook(fileStreamIn)) {
-            
+             Workbook workbook = new XSSFWorkbook(fileStreamIn)) {
+    
             Sheet sheet = workbook.getSheetAt(0);
             for (Row row : sheet) {
-                if (row.getRowNum() == 0) continue; // Skip header
-                enquiries.add(createEnquiryFromRow(row));
+                if (row.getRowNum() == 0) continue; // Skip header row
+                if (row.getCell(EnquiryFileIndex.ID.getIndex()) == null) continue; // Skip empty rows
+                try {
+                    enquiries.add(createEnquiryFromRow(row));
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Skipping invalid row: " + row.getRowNum() + " - " + e.getMessage());
+                }
             }
         }
         return enquiries;

@@ -1,3 +1,8 @@
+package controllers;
+import java.util.ArrayList;
+import models.Enquiry;
+import models.Project;
+
 public interface IManagerEnquiryController {
 
 	/**
