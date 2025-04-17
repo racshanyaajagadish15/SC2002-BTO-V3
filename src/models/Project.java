@@ -74,7 +74,7 @@ public class Project {
      * @throws IOException If an I/O error occurs.
      */
     public static List<Project> getProjectsByManagerDB(String hdbManagerID) throws IOException {
-        return ProjectDB.getProjectsByManager(hdbManagerID);
+        return ProjectDB.getProjectsbyManager(hdbManagerID);
     }
 
     /**
