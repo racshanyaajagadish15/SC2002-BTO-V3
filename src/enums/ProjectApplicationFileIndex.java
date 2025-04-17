@@ -1,15 +1,15 @@
 package enums;
 
-public enum ApplicationFileIndex {
+public enum ProjectApplicationFileIndex {
     ID(0),
-    NRIC(1),
-    PROJECT_ID(2),
+    PROJECT_ID(1),
+    NRIC(2),
     STATUS(3),
     DATE(4);
 
     private final int index;
 
-    ApplicationFileIndex(int index) {
+    ProjectApplicationFileIndex(int index) {
         this.index = index;
     }
 

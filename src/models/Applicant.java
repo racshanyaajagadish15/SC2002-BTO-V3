@@ -6,7 +6,9 @@ public class Applicant extends User {
 
 	private Application projectApplication;
 	private List<Enquiry> enquiries;
-
+	private int applicationID;
+	
+		
 	/**
 	 * 
 	 * @param name
@@ -27,6 +29,15 @@ public class Applicant extends User {
 	public boolean isEligibleForHDB() {
         return true; // Placeholder logic
     }
+
+	public int getApplicationID() {
+		return applicationID;
+	}
+
+	public void setApplicationID(int applicationID) {
+		this.applicationID = applicationID;
+	}
+
 
 
 }
