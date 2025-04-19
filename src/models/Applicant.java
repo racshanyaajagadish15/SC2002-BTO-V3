@@ -6,7 +6,6 @@ public class Applicant extends User {
 
 	private Application projectApplication;
 	private List<Enquiry> enquiries;
-	private int applicationID;
 	
 		
 	/**
@@ -18,24 +17,21 @@ public class Applicant extends User {
 	 * @param password
 	 */
 	public Applicant(String name, String nric, int age, String maritalStatus, String password) {
-		super(name, nric, age, maritalStatus, password);		
+		super(name, nric, age, maritalStatus, password);
+		this.projectApplication = null;
+		this.enquiries = null;
 	}
 
-	public String getProjectApplicationStatus() {
-		// TODO - implement Applicant.getProjectApplicationStatus
-		return null;
+	public Application getApplication() {
+		return projectApplication;
 	}
 
-	public boolean isEligibleForHDB() {
-        return true; // Placeholder logic
-    }
-
-	public int getApplicationID() {
-		return applicationID;
+	public void setApplication(Application projectApplication) {
+		this.projectApplication = projectApplication;
 	}
 
-	public void setApplicationID(int applicationID) {
-		this.applicationID = applicationID;
+	public List<Enquiry> getEnquiries(){
+		return this.enquiries;
 	}
 
 

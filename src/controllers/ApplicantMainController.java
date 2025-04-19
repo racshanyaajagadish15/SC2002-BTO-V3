@@ -13,17 +13,14 @@ public class ApplicantMainController {
 		ApplicantEnquiryController applicantEnquiryController = new ApplicantEnquiryController();
 		// Load enquiries and projects that the applicant have TODO
 
-		applicantMainView.showApplicantMenu();
-
 		while (true){
-			option = applicantMainView.getApplicantAction();
-
+			option = applicantMainView.showApplicantMenu();
 			switch (option) {
 				case 1:
-					applicantApplicationController.projectAction(applicant);
+					applicantApplicationController.applicationAction(applicant);
 					break;
 				case 2:
-					applicantApplicationController.applicationAction(applicant);
+					applicantApplicationController.projectAction(applicant);
 					break;
 				case 3:
 					applicantEnquiryController.enquiryActionMenu(applicant);
@@ -32,7 +29,9 @@ public class ApplicantMainController {
 					// return back to login
 					return;
 				default:
+					applicantMainView.showError("Invalid selection. Please try again.");
 					break;
+			
 			}
 		}
 	}

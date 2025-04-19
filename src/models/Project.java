@@ -2,11 +2,13 @@ package models;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import databases.ApplicationDB;
 import databases.ProjectDB;
+import enums.FilterIndex;
 
 public class Project {
 
@@ -68,13 +70,23 @@ public class Project {
     }
 
     /**
+     * Retrieve a singular project from the database.
+     * @return a singular project.
+     * @throws IOException If an I/O error occurs.
+     */
+    public static Project getProjectsByIdDB(int id) throws IOException {
+        return ProjectDB.getProjectsById(id);
+    }
+
+
+    /**
      * Retrieve projects managed by a specific HDB manager.
      * @param hdbManagerID The ID of the HDB manager.
      * @return A list of projects managed by the specified manager.
      * @throws IOException If an I/O error occurs.
      */
     public static List<Project> getProjectsByManagerDB(String hdbManagerID) throws IOException {
-        return ProjectDB.getProjectsbyManager(hdbManagerID);
+        return ProjectDB.getProjectsByManager(hdbManagerID);
     }
 
     /**
@@ -114,6 +126,55 @@ public class Project {
         return ProjectDB.deleteProject(projectName);
     }
 
+    public static void filterProject(ArrayList<Project> projects,  List<String> filters){
+        ArrayList<Project> filteredProjects = new ArrayList<Project>();
+        for (Project project : projects){
+            // Check if filter is "" then check its filter content, skip if doesnt fit
+            if (!filters.get(FilterIndex.PROJECT_NAME.getIndex()).isEmpty() && !project.getProjectName().toLowerCase().contains(filters.get(FilterIndex.PROJECT_NAME.getIndex()).toLowerCase())){
+                continue;
+            }
+            else if (!filters.get(FilterIndex.NEIGHBOURHOOD.getIndex()).isEmpty() && !project.getNeighborhood().toLowerCase().contains(filters.get(FilterIndex.NEIGHBOURHOOD.getIndex()).toLowerCase())){
+                continue;
+            }
+            else {
+                // Check if price range is met
+                String priceStartStr = filters.get(FilterIndex.PRICE_START.getIndex());
+                String priceEndStr = filters.get(FilterIndex.PRICE_END.getIndex());
+                
+                if (!priceStartStr.isEmpty() || !priceEndStr.isEmpty()) {
+                    double priceStart = priceStartStr.isEmpty() ? Double.MIN_VALUE : Double.parseDouble(priceStartStr);
+                    double priceEnd = priceEndStr.isEmpty() ? Double.MAX_VALUE : Double.parseDouble(priceEndStr);
+					List<FlatType> filteredFlatTypes = new ArrayList<FlatType>();                    
+                    for (FlatType flatType : project.getFlatTypes()) {
+                        double price = flatType.getPricePerFlat();
+                        if (price >= priceStart && price <= priceEnd) {
+                            filteredFlatTypes.add(flatType);
+                        }
+                    }
+                    if (filteredFlatTypes.size() == 0) continue;
+                    project.setFlatTypes(filteredFlatTypes);
+                }
+                // Check flat type
+                if (!filters.get(FilterIndex.FLAT_TYPE.getIndex()).isEmpty()){
+                    List<FlatType> filteredFlatTypes = new ArrayList<FlatType>();                    
+                    for (FlatType flatType : project.getFlatTypes()) {
+                        if (flatType.getFlatType().equals(filters.get(FilterIndex.FLAT_TYPE.getIndex()))) {
+                            filteredFlatTypes.add(flatType);
+                        }
+                    }
+                    if (filteredFlatTypes.size() == 0) continue;
+                    project.setFlatTypes(filteredFlatTypes);
+                }
+
+                // Matches all criterias
+                filteredProjects.add(project);
+            }
+        }
+        projects.clear();
+        projects.addAll(filteredProjects);
+    }
+
+
     /**
      * Filter projects based on visibility and optional filters.
      * @param filters A list of filters to apply.
@@ -148,6 +209,58 @@ public class Project {
 
         return filteredProjects;
     }
+    
+    /**
+     * Sort projects based by project name alphabetically.
+     * @param projects A list of projects to apply.
+     */
+    public static void sortProjectByName(List<Project> projects){
+        Collections.sort(projects, (p1, p2) -> p1.getProjectName().compareToIgnoreCase(p2.getProjectName()));
+    }
+
+    /**
+     * Sort projects based by neighbourhood alphabetically.
+     * @param projects A list of projects to apply.
+     */
+    public static void sortProjectByNeighbourhood(List<Project> projects) {
+        Collections.sort(projects, (p1, p2) -> p1.getNeighborhood().compareToIgnoreCase(p2.getNeighborhood()));
+    }
+
+    /**
+     * Sort projects based by price.
+     * @param projects A list of projects to apply.
+     */
+    public static void sortProjectByPrice(List<Project> projects, Boolean isAscending) {
+        List<Project> expandedProjects = new ArrayList<>();
+        // Split projects by flat types
+        for (Project project : projects) {
+            for (FlatType flatType : project.getFlatTypes()) {
+                Project splitProject = new Project(
+                    project.getProjectID(),
+                    project.getProjectName(),
+                    project.getProjectManager(),
+                    project.getNeighborhood(),
+                    Collections.singletonList(flatType),
+                    project.getApplicationOpeningDate(),
+                    project.getApplicationClosingDate(),
+                    project.getOfficerSlots(),
+                    project.getProjectVisibility()
+                );
+                expandedProjects.add(splitProject);
+            }
+        }
+        // Sort the expanded projects by price
+        Collections.sort(expandedProjects, (p1, p2) -> {
+            double price1 = p1.getFlatTypes().get(0).getPricePerFlat();
+            double price2 = p2.getFlatTypes().get(0).getPricePerFlat();
+            return isAscending ? Double.compare(price1, price2) : Double.compare(price2, price1);
+        });
+
+        // Clear the original list and add the sorted projects
+        projects.clear();
+        projects.addAll(expandedProjects);
+    }
+
 
     // Instance methods
 

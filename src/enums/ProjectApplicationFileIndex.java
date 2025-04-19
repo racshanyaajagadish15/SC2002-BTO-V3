@@ -5,7 +5,8 @@ public enum ProjectApplicationFileIndex {
     PROJECT_ID(1),
     NRIC(2),
     STATUS(3),
-    DATE(4);
+    FLAT_TYPE(4),
+    DATE(5);
 
     private final int index;
 

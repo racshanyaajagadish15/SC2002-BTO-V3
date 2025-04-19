@@ -8,7 +8,7 @@ public class FlatType {
      * Constructor for FlatType
      * @param flatType The type of flat (e.g., "2-bedroom", "3-bedroom")
      * @param numFlats The number of flats available of this type
-     * @param pricePerFlat The price per flat
+    * @param pricePerFlat The price of this flat type
      */
     public FlatType(String flatType, int numFlats, double pricePerFlat) {
         validateFlatType(flatType);

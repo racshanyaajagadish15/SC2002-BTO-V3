@@ -127,7 +127,7 @@ public class EnquiryDB {
             Sheet sheet = workbook.getSheetAt(0);
             for (Row row : sheet) {
                 if (row.getRowNum() == 0) continue; // Skip header
-                if (row.getCell(EnquiryFileIndex.NRIC.getIndex()).getStringCellValue() == nric){
+                if (row.getCell(EnquiryFileIndex.NRIC.getIndex()).getStringCellValue().equals(nric)){
                     enquiries.add(createEnquiryFromRow(row));
                 }
             }
@@ -136,7 +136,7 @@ public class EnquiryDB {
     }
 
     // Update Enquiry using ID
-    public static boolean updateEnquryByID(Enquiry enquiry) throws IOException, NumberFormatException {
+    public static boolean updateEnquiry(Enquiry enquiry) throws IOException, NumberFormatException {
         try (FileInputStream fileStreamIn = new FileInputStream(ENQUIRY_FILEPATH);
         Workbook workbook = new XSSFWorkbook(fileStreamIn)) {
             Sheet sheet = workbook.getSheetAt(0);

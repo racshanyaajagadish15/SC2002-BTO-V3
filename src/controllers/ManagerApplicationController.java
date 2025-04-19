@@ -17,9 +17,8 @@ public class ManagerApplicationController implements IManagerApplicationControll
         try {
             // Update the application's status
             application.setApplicationStatus(status);
-
             // Persist the updated application to the database
-            ApplicationDB.createApplication(application.getApplicant(), application.getProject(), status);
+            Application.updateApplicationDB(application);
         } catch (IOException e) {
             throw new RuntimeException("Failed to update application status: " + e.getMessage(), e);
         }
@@ -38,7 +37,7 @@ public class ManagerApplicationController implements IManagerApplicationControll
             application.setApplicationStatus(status);
 
             // Persist the updated application to the database
-            ApplicationDB.createApplication(application.getApplicant(), application.getProject(), status);
+            Application.updateApplicationDB(application);
         } catch (IOException e) {
             throw new RuntimeException("Failed to update application withdrawal status: " + e.getMessage(), e);
         }

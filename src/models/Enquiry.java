@@ -41,7 +41,7 @@ public class Enquiry {
 	}
 
 	public static boolean updateEnquiryDB(Enquiry enquiry) throws NumberFormatException, IOException {
-		return EnquiryDB.updateEnquryByID(enquiry);
+		return EnquiryDB.updateEnquiry(enquiry);
 	}
 
 	public static boolean deleteEnquiryDB(int ID) throws NumberFormatException, IOException {

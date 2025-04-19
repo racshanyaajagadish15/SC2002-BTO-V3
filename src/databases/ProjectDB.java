@@ -72,7 +72,6 @@ public class ProjectDB {
                 openingDate,
                 closingDate,
                 officerSlots,
-                
                 visibility
             );
         } catch (Exception e) {
@@ -162,6 +161,20 @@ public class ProjectDB {
             }
         }
         return projects;
+    }
+
+    public static Project getProjectsById(int id) throws IOException {
+        try (FileInputStream fileStreamIn = new FileInputStream(PROJECT_FILEPATH);
+             Workbook workbook = new XSSFWorkbook(fileStreamIn)) {
+            Sheet sheet = workbook.getSheetAt(0);
+            for (Row row : sheet) {
+                if (row.getRowNum() == 0) continue; // Skip header
+                if ((int) row.getCell(ProjectListFileIndex.PROJECT_ID.getIndex()).getNumericCellValue() != id) {
+                    return createProjectFromRow(row);
+                }
+            }
+        }
+        return null;
     }
 
     // Get Project by Name

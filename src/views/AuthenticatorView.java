@@ -5,23 +5,21 @@ import utilities.ScannerUtility;
 public class AuthenticatorView {
 
     public void showLoginBanner() {
+        System.out.println("\n=========================================");
+        System.out.println("                Welcome to               ");
+        System.out.println("          BTO Management System          ");
         System.out.println("=========================================");
-        System.out.println("               Welcome to           ");
-        System.out.println("   	   BTO Management System          ");
-        System.out.println("=========================================");
-        System.out.println("============== Login ==============");
+        System.out.println("                  Login                  ");
+		System.out.println("=========================================");
+
     }	
 
     public void showFailedLogin(String msg) {
-        System.out.println("===================================");
         System.out.println("Login Failed: " + msg);
-        System.out.println("===================================");
     }
 
     public void showSuccessfulLogin() {
-        System.out.println("===================================");
         System.out.println("Login Successful. Welcome!");
-        System.out.println("===================================");
     }
     
     public String getNric() {

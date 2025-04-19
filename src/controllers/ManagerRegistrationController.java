@@ -1,3 +1,5 @@
+package controllers;
+
 public class ManagerRegistrationController implements IManagerRegistrationController {
 
 	/**
