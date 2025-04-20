@@ -2,6 +2,7 @@ package controllers;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,7 +22,7 @@ public class ApplicantEnquiryController implements IApplicantEnquiryController {
 		ApplicantEnquiryView applicationEnquiryView = new ApplicantEnquiryView();
 		try {
 			// Get all enquiries the user has made
-			ArrayList<Enquiry> enquiries = getEnquiriesByNric(applicant.getNric());
+			ArrayList<Enquiry> enquiries = Enquiry.getEnquiriesByNricDB(applicant.getNric());
 	
 			// Mapping of Project -> Enquiries ArrayList
 			Map<Project, ArrayList<Enquiry>> projectEnquiriesMap = new HashMap<>();
@@ -41,7 +42,6 @@ public class ApplicantEnquiryController implements IApplicantEnquiryController {
 				
 				projectEnquiriesMap.get(project).add(enquiry);
 			}
-			System.out.println(projectEnquiriesMap);
 			// Show menu for enquiries
 			applicationEnquiryView.showEnquiriesMenu(projectEnquiriesMap);
 		} catch (IOException | NumberFormatException e) {
@@ -69,29 +69,21 @@ public class ApplicantEnquiryController implements IApplicantEnquiryController {
 
 	/**
 	 * 
-	 * @param nric
-	 * @throws IOException 
-	 * @throws NumberFormatException 
-	 */
-	public ArrayList<Enquiry> getEnquiriesByNric(String nric) throws NumberFormatException, IOException {
-		return Enquiry.getEnquiriesByNricDB(nric);
-	}
-
-	/**
-	 * 
 	 * @param enquiry
 	 */
-	public boolean editEnquiry(Enquiry enquiry) {
+	public void editEnquiry(Enquiry enquiry, String newText) {
 		try {
-			Enquiry.updateEnquiryDB(enquiry);
-			return true;
-		}
-		catch (NumberFormatException e){
-			return false;
-		}
-		catch (IOException e){
-			return false;
-		}
+			enquiry.setEnquiry(newText);
+			enquiry.setEnquiryDate(new Date());
+			boolean success = Enquiry.updateEnquiryDB(enquiry);
+			if (!success) {
+                System.out.println("Failed to update the enquiry in the database.");
+            }else{
+				System.out.println("Enquiry updated successfully.");
+			}
+        } catch (IOException e) {
+			System.out.println("An error occurred while replying to enquiries, contact admin if error persist");
+		}		
 	}
 
 	/**

@@ -39,13 +39,13 @@ public class AuthenticatorController {
 				authenticatorView.showFailedLogin("Incorrect password. Please try again!");
 			} 
 			else {
-				if (user instanceof Applicant) {
+				if (user.getClass() == Applicant.class) {
 					new ApplicantMainController().applicantSelectMenu((Applicant) user);
 				} 
-				else if (user instanceof HDBOfficer) {
+				else if (user.getClass() == HDBOfficer.class) {
 					new OfficerMainController().officerSelectMenu((HDBOfficer) user);
 				} 
-				else if (user instanceof HDBManager) {
+				else if (user.getClass() == HDBManager.class) {
 					new ManagerMainController().managerSelectMenu((HDBManager) user);
 				}
 			}

@@ -1,8 +1,5 @@
 package controllers;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
 import models.Applicant;
 import models.Enquiry;
 
@@ -19,14 +16,6 @@ public interface IApplicantEnquiryController {
 	 * @param enquiry
 	 */
 	boolean submitEnquiry(Enquiry enquiry) ;
-
-	/**
-	 * 
-	 * @param nric
-	 * @throws IOException 
-	 * @throws NumberFormatException 
-	 */
-	ArrayList<Enquiry> getEnquiriesByNric(String nric) throws NumberFormatException, IOException;
 
 	/**
 	 * 

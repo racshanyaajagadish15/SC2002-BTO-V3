@@ -1,6 +1,7 @@
 package views;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Map;
@@ -64,7 +65,7 @@ public class ApplicantEnquiryView {
             while (true) {
                 try{
                     displayEnquiries(enquiries);
-                    System.out.println("Note: Enquiries wiith replies can not be modified!");
+                    System.out.println("\nNote: Enquiries wiith replies can not be modified!");
                     System.out.print("Enter an enquiry number to modify (0 to go back): ");
                     enquiryIndex = ScannerUtility.SCANNER.nextInt() - 1;
                     ScannerUtility.SCANNER.nextLine();
@@ -104,9 +105,7 @@ public class ApplicantEnquiryView {
                         if (option == 1) {
                             System.out.print("Enter your new enquiry: ");
                             String newText = ScannerUtility.SCANNER.nextLine();
-                            selectedEnquiry.setEnquiry(newText);
-                            controller.editEnquiry(selectedEnquiry);
-                            System.out.println("Enquiry updated successfully.");
+                            controller.editEnquiry(selectedEnquiry, newText);
                             break;
                         } else if (option == 2) {
                             controller.deleteEnquiry(selectedEnquiry.getEnquiryID());
@@ -149,10 +148,10 @@ public class ApplicantEnquiryView {
     }
 
     private void displayEnquiries(ArrayList<Enquiry> enquiries) {
-        System.out.println("\n-----------------------------------------------------------------------------------------------------------------------");
-        System.out.printf("| %-3s | %-20s | %-30s | %-30s | %-20s |\n", 
-            "No", "Date", "Enquiry", "Reply", "Reply Date");
-        System.out.println("-----------------------------------------------------------------------------------------------------------------------");
+        System.out.println("\n---------------------------------------------------------------------------------------------------------------------------------------------------------------");
+        System.out.printf("| %-3s | %-40s | %-30s | %-30s | %-40s |\n", 
+            "No", "Enquiry Date", "Enquiry", "Reply", "Reply Date");
+        System.out.println("---------------------------------------------------------------------------------------------------------------------------------------------------------------");
 
         for (int i = 0; i < enquiries.size(); i++) {
             Enquiry e = enquiries.get(i);
@@ -169,10 +168,10 @@ public class ApplicantEnquiryView {
                 String reply = line < replyLines.size() ? replyLines.get(line) : "";
                 String replyDate = (line == 0 && !e.getReply().isEmpty()) ? String.valueOf(e.getReplyDate()) : (line == 0 ? "-" : "");
 
-                System.out.printf("| %-3s | %-20s | %-30s | %-30s | %-20s |\n",
+                System.out.printf("| %-3s | %-40s | %-30s | %-30s | %-40s |\n",
                         no, date, enquiry, reply, replyDate);
             }
-            System.out.println("-----------------------------------------------------------------------------------------------------------------------");
+            System.out.println("---------------------------------------------------------------------------------------------------------------------------------------------------------------");
         }
     }
     

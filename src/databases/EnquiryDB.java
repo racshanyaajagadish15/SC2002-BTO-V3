@@ -85,11 +85,19 @@ public class EnquiryDB {
         if (enquiry.getReply() != null && !enquiry.getReply().isEmpty()) {
             row.createCell(EnquiryFileIndex.REPLY.getIndex()).setCellValue(enquiry.getReply());
         }
+        Workbook workbook = row.getSheet().getWorkbook();
+        CellStyle dateCellStyle = workbook.createCellStyle();
+        dateCellStyle.setDataFormat(workbook.getCreationHelper().createDataFormat().getFormat("yyyy-MM-dd HH:mm:ss"));
+
         if (enquiry.getEnquiryDate() != null) {
-            row.createCell(EnquiryFileIndex.ENQUIRY_DATE.getIndex()).setCellValue(enquiry.getEnquiryDate());
+            Cell enquiryDateCell = row.createCell(EnquiryFileIndex.ENQUIRY_DATE.getIndex());
+            enquiryDateCell.setCellValue(enquiry.getEnquiryDate());
+            enquiryDateCell.setCellStyle(dateCellStyle);
         }
         if (enquiry.getReplyDate() != null) {
-            row.createCell(EnquiryFileIndex.REPLY_DATE.getIndex()).setCellValue(enquiry.getReplyDate());
+            Cell replyDateCell = row.createCell(EnquiryFileIndex.REPLY_DATE.getIndex());
+            replyDateCell.setCellValue(enquiry.getReplyDate());
+            replyDateCell.setCellStyle(dateCellStyle);
         }
     }
 

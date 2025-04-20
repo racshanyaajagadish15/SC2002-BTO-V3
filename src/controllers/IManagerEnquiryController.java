@@ -13,11 +13,4 @@ public interface IManagerEnquiryController {
 	void replyToEnquiry(Enquiry enquiry, String message);
 
 	ArrayList<Enquiry> getAllProjectEnquiries();
-
-	/**
-	 * 
-	 * @param project
-	 */
-	ArrayList<Enquiry> getProjectEnquiries(Project project);
-
 }

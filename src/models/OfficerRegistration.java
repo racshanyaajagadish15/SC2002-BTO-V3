@@ -1,11 +1,14 @@
 package models;
+import java.io.IOException;
 import java.util.ArrayList;
+
+import databases.OfficerRegistrationDB;
 
 public class OfficerRegistration {
 
 	private int officerRegistrationID;
 	private HDBOfficer officer;
-	private Project project;
+	private int projectID;
 	private String registrationStatus;
 
 	/**
@@ -15,9 +18,11 @@ public class OfficerRegistration {
 	 * @param officerRegistrationID
 	 * @param registrationStatus
 	 */
-	public OfficerRegistration(HDBOfficer officer, Project project, int officerRegistrationID, String registrationStatus) {
-		// TODO - implement OfficerRegistration.OfficerRegistration
-		
+	public OfficerRegistration(int officerRegistrationID, HDBOfficer officer, int projectID, String registrationStatus) {
+		this.officerRegistrationID = officerRegistrationID;
+		this.officer = officer;
+		this.projectID = projectID;
+		this.registrationStatus = registrationStatus;
 	}
 
 	/**
@@ -27,17 +32,20 @@ public class OfficerRegistration {
 	 * @param registrationStatus
 	 */
 	public static OfficerRegistration createOfficerRegistrationDB(HDBOfficer officer, Project project, String registrationStatus) {
-		// TODO - implement OfficerRegistration.createOfficerRegistrationDB
-		
+		try {
+			return OfficerRegistrationDB.createOfficerRegistration(officer, project, registrationStatus);
+		}catch (IOException e){
+			return null;
+		}
 	}
 
 	/**
 	 * 
 	 * @param officer
+	 * @throws IOException 
 	 */
-	public static ArrayList<OfficerRegistration> getOfficerRegistrationDB(HDBOfficer officer) {
-		// TODO - implement OfficerRegistration.getOfficerRegistrationDB
-		
+	public static ArrayList<OfficerRegistration> getOfficerRegistrationsByOfficerDB(HDBOfficer officer) throws IOException {
+		return OfficerRegistrationDB.getOfficerRegistrationsByOfficer(officer);
 	}
 
 	/**
@@ -59,8 +67,8 @@ public class OfficerRegistration {
 		return this.officer;
 	}
 
-	public Project getProject() {
-		return this.project;
+	public int getProjectID() {
+		return this.projectID;
 	}
 
 	public String getRegistrationStatus() {
@@ -87,8 +95,8 @@ public class OfficerRegistration {
 	 * 
 	 * @param project
 	 */
-	public void setProject(Project project) {
-		this.project = project;
+	public void setProjectID(int projectID) {
+		this.projectID = projectID;
 	}
 
 	/**

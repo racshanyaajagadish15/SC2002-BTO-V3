@@ -64,6 +64,27 @@ public class Enquiry {
 		return EnquiryDB.getAllEnquiries();		
 	}
 
+	/**
+	 * Retrieve enquiries for a specific project.
+	 * 
+	 * @param project The project for which to retrieve enquiries.
+	 * @return A list of enquiries for the specified project.
+	 */
+    public static ArrayList<Enquiry> getProjectEnquiries(Project project) {
+        ArrayList<Enquiry> projectEnquiries = new ArrayList<>();
+        try {
+            ArrayList<Enquiry> allEnquiries = Enquiry.getAllEnquiriesDB();
+            for (Enquiry enquiry : allEnquiries) {
+                if (enquiry.getProjectID() == project.getProjectID()) {
+                    projectEnquiries.add(enquiry);
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("An error occurred while retrieving project enquiries: " + e.getMessage());
+        }
+        return projectEnquiries;
+    }
+
 	public int getEnquiryID() {
 		return this.enquiryID;
 	}

@@ -10,6 +10,8 @@ public class OfficerMainController {
 		OfficerMainView officerMainView = new OfficerMainView();
 		OfficerApplicationController officerApplicationController = new OfficerApplicationController();
 		ApplicantEnquiryController applicantEnquiryController = new ApplicantEnquiryController();
+		OfficerEnquiryController officerEnquiryController = new OfficerEnquiryController();
+		OfficerJoinProjectController officerJoinProjectController = new OfficerJoinProjectController();
 		// Load enquiries and projects that the applicant have TODO
 
 		while (true){
@@ -25,14 +27,18 @@ public class OfficerMainController {
 					applicantEnquiryController.enquiryActionMenu(officer);
 					break;
 				case 4:
-					applicantEnquiryController.enquiryActionMenu(officer);
+					officerJoinProjectController.showRegistrations(officer);
 					break;
 				case 5:
-					applicantEnquiryController.enquiryActionMenu(officer);
+					officerJoinProjectController.joinProjectAction(officer);
 					break;
 				case 6:
-					//Change password
+					officerEnquiryController.enquiryActionMenu(officer);
+					break;
 				case 7:
+					//Change password
+					break;
+				case 8:
 					// return back to login
 					return;
 				default:
