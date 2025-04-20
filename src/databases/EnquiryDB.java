@@ -70,13 +70,27 @@ public class EnquiryDB {
     }
     // Helper function to create excel row from Enquiry object 
     private static void populateEnquiryRow(Row row, Enquiry enquiry) throws NumberFormatException {
-        row.createCell(EnquiryFileIndex.ID.getIndex()).setCellValue(enquiry.getEnquiryID());
-        row.createCell(EnquiryFileIndex.NRIC.getIndex()).setCellValue(enquiry.getNric());
-        row.createCell(EnquiryFileIndex.PROJECT_ID.getIndex()).setCellValue(enquiry.getProjectID());
-        row.createCell(EnquiryFileIndex.ENQUIRY.getIndex()).setCellValue(enquiry.getEnquiry());
-        row.createCell(EnquiryFileIndex.REPLY.getIndex()).setCellValue(enquiry.getReply());
-        row.createCell(EnquiryFileIndex.ENQUIRY_DATE.getIndex()).setCellValue(enquiry.getEnquiryDate());
-        row.createCell(EnquiryFileIndex.REPLY_DATE.getIndex()).setCellValue(enquiry.getReplyDate());
+        if (enquiry.getEnquiryID() != 0) {
+            row.createCell(EnquiryFileIndex.ID.getIndex()).setCellValue(enquiry.getEnquiryID());
+        }
+        if (enquiry.getNric() != null && !enquiry.getNric().isEmpty()) {
+            row.createCell(EnquiryFileIndex.NRIC.getIndex()).setCellValue(enquiry.getNric());
+        }
+        if (enquiry.getProjectID() != 0) {
+            row.createCell(EnquiryFileIndex.PROJECT_ID.getIndex()).setCellValue(enquiry.getProjectID());
+        }
+        if (enquiry.getEnquiry() != null && !enquiry.getEnquiry().isEmpty()) {
+            row.createCell(EnquiryFileIndex.ENQUIRY.getIndex()).setCellValue(enquiry.getEnquiry());
+        }
+        if (enquiry.getReply() != null && !enquiry.getReply().isEmpty()) {
+            row.createCell(EnquiryFileIndex.REPLY.getIndex()).setCellValue(enquiry.getReply());
+        }
+        if (enquiry.getEnquiryDate() != null) {
+            row.createCell(EnquiryFileIndex.ENQUIRY_DATE.getIndex()).setCellValue(enquiry.getEnquiryDate());
+        }
+        if (enquiry.getReplyDate() != null) {
+            row.createCell(EnquiryFileIndex.REPLY_DATE.getIndex()).setCellValue(enquiry.getReplyDate());
+        }
     }
 
     // Create Enquiry
@@ -84,6 +98,12 @@ public class EnquiryDB {
         try (FileInputStream fileStreamIn = new FileInputStream(ENQUIRY_FILEPATH);
         Workbook workbook = new XSSFWorkbook(fileStreamIn)) {
             Sheet sheet = workbook.getSheetAt(0);
+            Row lastRow = sheet.getRow(sheet.getLastRowNum());
+            if (lastRow == null || lastRow.getCell(EnquiryFileIndex.ID.getIndex()) == null) {
+                enquiry.setEnquiryID(1); // Start with ID 1 if no valid last row exists
+            } else {
+                enquiry.setEnquiryID((int) lastRow.getCell(EnquiryFileIndex.ID.getIndex()).getNumericCellValue() + 1);
+            }
             int newRowNum = sheet.getLastRowNum() + 1;
             Row row = sheet.createRow(newRowNum);
             populateEnquiryRow(row, enquiry);

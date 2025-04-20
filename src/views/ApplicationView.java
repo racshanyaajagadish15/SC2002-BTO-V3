@@ -6,6 +6,7 @@ import java.util.InputMismatchException;
 import java.util.List;
 
 import controllers.ApplicantApplicationController;
+import controllers.ApplicantEnquiryController;
 import enums.ApplicationStatus;
 import enums.FilterIndex;
 import enums.FlatTypeName;
@@ -41,7 +42,7 @@ public class ApplicationView {
 				System.out.println("-----------------------------------------");
 			}
 
-			System.out.print("\nSelect a project number to apply (0 to go back): ");
+			System.out.print("\nSelect a project number to enquire or apply (0 to go back): ");
 			try {
 				int projectIndex = ScannerUtility.SCANNER.nextInt() - 1;
 				ScannerUtility.SCANNER.nextLine(); 
@@ -52,7 +53,36 @@ public class ApplicationView {
 					System.out.println("Invalid selection. Please try again.");
 					continue;
 				}
-				
+				int action;
+				while (true){
+					try {
+						System.out.println("\nActions: ");
+						System.out.println("1. Submit Enquiry");
+						System.out.println("2. Submit Application");
+						System.out.println("0. Back ");
+						System.out.print("\nSelect action: ");
+
+						action = ScannerUtility.SCANNER.nextInt();
+						ScannerUtility.SCANNER.nextLine(); 
+						if (action >= 0 && action <= 2){
+							break;
+						}
+						System.out.println("Invalid selection. Please try again.");
+					}
+					catch (InputMismatchException e){
+						ScannerUtility.SCANNER.nextLine(); 
+						System.out.println("Invalid selection. Please try again.");
+						continue;
+					}
+				}
+				if (action == 0) {
+					continue;
+				}
+				if (action == 1) {
+					ApplicantEnquiryView applicantEnquiryView = new ApplicantEnquiryView();
+					applicantEnquiryView.showCreateEnquiry(applicableProjects.get(projectIndex), applicant);
+					continue;
+				}
 				FlatType selectedFlatType = null;
 				int flatTypeIndex;
 				while (true){

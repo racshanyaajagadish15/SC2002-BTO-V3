@@ -26,10 +26,12 @@ public class ApplicantMainController {
 					applicantEnquiryController.enquiryActionMenu(applicant);
 					break;
 				case 4:
+					//Change password
+				case 5:
 					// return back to login
 					return;
 				default:
-					applicantMainView.showError("Invalid selection. Please try again.");
+					System.out.println("Invalid selection. Please try again.");
 					break;
 			
 			}

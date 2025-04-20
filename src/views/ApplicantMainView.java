@@ -17,22 +17,18 @@ public class ApplicantMainView {
 			System.out.println("2. View projects");
 			System.out.println("3. Manage Enquiries");
 			System.out.println("4. Change Password");
-			System.out.println("4. Logout");
+			System.out.println("5. Logout");
 			try {
 				System.out.print("Please enter your choice: ");
 				option = ScannerUtility.SCANNER.nextInt();
 				ScannerUtility.SCANNER.nextLine();
 				return option;
 			} catch (InputMismatchException e){
-				showError("Invalid selection. Please try again.");
+				System.out.println("Invalid selection. Please try again.");
 				ScannerUtility.SCANNER.nextLine();
 				continue;
 			}
 		}
-	}
-
-	public void showError(String error) {
-		System.out.println(error);
 	}
 
 }

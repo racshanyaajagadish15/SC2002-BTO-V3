@@ -1,5 +1,10 @@
 package controllers;
 
+import java.util.ArrayList;
+
+import models.Enquiry;
+import models.Project;
+
 public interface IOfficerEnquiryController {
 
 	/**
@@ -7,13 +12,13 @@ public interface IOfficerEnquiryController {
 	 * @param enquiryID
 	 * @param msg
 	 */
-	void replyEnquiry(int enquiryID, String msg);
+	void replyEnquiry(Enquiry enquiry, String message);
 
 	/**
 	 * 
 	 * @param project
 	 * @param enquiry
 	 */
-	void getProjectEnquiries(Project project, int enquiry);
+	 ArrayList<Enquiry> getProjectEnquiries(Project project);
 
 }

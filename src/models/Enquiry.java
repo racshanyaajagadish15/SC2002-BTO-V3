@@ -35,6 +35,14 @@ public class Enquiry {
 		this.enquiryDate = enquiryDate;
 		this.replyDate = replyDate;
 	}
+	public Enquiry(String enquiry, String nric, int projectID) {
+		this.enquiry = enquiry;
+		this.nric = nric;
+		this.projectID = projectID;
+		this.reply = null;
+		this.enquiryDate = new Date();
+		this.replyDate = null;
+	}
 
 	public static boolean createEnquiryDB(Enquiry enquiry) throws NumberFormatException, IOException {
 		return EnquiryDB.createEnquiry(enquiry);
@@ -82,6 +90,14 @@ public class Enquiry {
 
 	public Date getReplyDate() {
 		return this.replyDate;
+	}
+
+	/**
+	 * 
+	 * @param enquiryID
+	 */
+	public void setEnquiryID(int enquiryID) {
+		this.enquiryID = enquiryID;
 	}
 
 	/**

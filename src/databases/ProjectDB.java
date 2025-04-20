@@ -6,7 +6,6 @@ import enums.ProjectListFileIndex;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 import org.apache.poi.ss.usermodel.*;
@@ -15,7 +14,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class ProjectDB {
     private static final String PROJECT_FILEPATH = "resources/data/ProjectList.xlsx";
 
-    // Helper function to create Project object from excel row
     // Helper function to create Project object from excel row
     private static Project createProjectFromRow(Row row) {
         try {
@@ -49,13 +47,7 @@ public class ProjectDB {
             String managerNRIC = row.getCell(ProjectListFileIndex.MANAGER.getIndex()).getStringCellValue();
 
             // Adapt to the existing HDBManager constructor
-            HDBManager manager = new HDBManager(
-                managerNRIC,          // Name
-                managerNRIC,                // NRIC (placeholder)
-                0,                    // Age (default value)
-                "Unknown",            // Marital Status (placeholder)
-                "defaultPassword"     // Password (placeholder)
-            );
+            HDBManager manager = (HDBManager) HDBManager.findUserByNricDB(managerNRIC);
 
             int officerSlots = (int) row.getCell(ProjectListFileIndex.OFFICER_SLOT.getIndex()).getNumericCellValue();
 
@@ -169,7 +161,7 @@ public class ProjectDB {
             Sheet sheet = workbook.getSheetAt(0);
             for (Row row : sheet) {
                 if (row.getRowNum() == 0) continue; // Skip header
-                if ((int) row.getCell(ProjectListFileIndex.PROJECT_ID.getIndex()).getNumericCellValue() != id) {
+                if ((int) row.getCell(ProjectListFileIndex.PROJECT_ID.getIndex()).getNumericCellValue() == id) {
                     return createProjectFromRow(row);
                 }
             }

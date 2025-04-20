@@ -8,7 +8,7 @@ import java.util.Map;
 import models.Applicant;
 import models.Enquiry;
 import models.Project;
-import views.ApplicationEnquiryView;
+import views.ApplicantEnquiryView;
 
 public class ApplicantEnquiryController implements IApplicantEnquiryController {
 
@@ -18,7 +18,7 @@ public class ApplicantEnquiryController implements IApplicantEnquiryController {
 	 * @param applicant
 	 */
 	public void enquiryActionMenu(Applicant applicant) {
-		ApplicationEnquiryView applicationEnquiryView = new ApplicationEnquiryView();
+		ApplicantEnquiryView applicationEnquiryView = new ApplicantEnquiryView();
 		try {
 			// Get all enquiries the user has made
 			ArrayList<Enquiry> enquiries = getEnquiriesByNric(applicant.getNric());
@@ -26,10 +26,10 @@ public class ApplicantEnquiryController implements IApplicantEnquiryController {
 			// Mapping of Project -> Enquiries ArrayList
 			Map<Project, ArrayList<Enquiry>> projectEnquiriesMap = new HashMap<>();
 			Map<Integer, Project> projectIdMap = new HashMap<>();
-	
+			Project project;
+			int projID;
 			for (Enquiry enquiry : enquiries) {
-				int projID = enquiry.getProjectID();
-				Project project;
+				projID = enquiry.getProjectID();
 	
 				if (projectIdMap.containsKey(projID)) {
 					project = projectIdMap.get(projID);
@@ -38,14 +38,14 @@ public class ApplicantEnquiryController implements IApplicantEnquiryController {
 					projectIdMap.put(projID, project);
 					projectEnquiriesMap.put(project, new ArrayList<>());
 				}
-	
+				
 				projectEnquiriesMap.get(project).add(enquiry);
 			}
-	
+			System.out.println(projectEnquiriesMap);
 			// Show menu for enquiries
 			applicationEnquiryView.showEnquiriesMenu(projectEnquiriesMap);
 		} catch (IOException | NumberFormatException e) {
-			System.out.println("uhoh");
+			System.out.println("Cannot show enquiries due to error, contact admin if error persist.");
 		}
 	}
 	

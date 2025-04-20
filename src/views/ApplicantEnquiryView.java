@@ -6,11 +6,12 @@ import java.util.List;
 import java.util.Map;
 
 import controllers.ApplicantEnquiryController;
+import models.Applicant;
 import models.Enquiry;
 import models.Project;
 import utilities.ScannerUtility;
 
-public class ApplicationEnquiryView {
+public class ApplicantEnquiryView {
 
     public void showEnquiriesMenu(Map<Project, ArrayList<Enquiry>> projectEnquiriesMap) {
         if (projectEnquiriesMap.size() == 0){
@@ -128,6 +129,25 @@ public class ApplicationEnquiryView {
         }
     }
 
+    public void showCreateEnquiry(Project project, Applicant applicant) {
+        ApplicantEnquiryController applicantEnquiryController = new ApplicantEnquiryController();
+        System.out.println("\n=========================================");
+        System.out.println("            CREATE NEW ENQUIRY           ");
+        System.out.println("=========================================");
+
+        System.out.print("Enter your enquiry: ");
+        String enquiryText = ScannerUtility.SCANNER.nextLine();
+
+        if (enquiryText.trim().isEmpty()) {
+            System.out.println("Enquiry cannot be empty. Please try again.");
+            return;
+        }
+
+        Enquiry newEnquiry = new Enquiry(enquiryText, applicant.getNric(), project.getProjectID());
+        applicantEnquiryController.submitEnquiry(newEnquiry);
+        System.out.println("Enquiry created successfully.");
+    }
+
     private void displayEnquiries(ArrayList<Enquiry> enquiries) {
         System.out.println("\n-----------------------------------------------------------------------------------------------------------------------");
         System.out.printf("| %-3s | %-20s | %-30s | %-30s | %-20s |\n", 
@@ -155,6 +175,7 @@ public class ApplicationEnquiryView {
             System.out.println("-----------------------------------------------------------------------------------------------------------------------");
         }
     }
+    
     
     // Table helper method
     private List<String> wrapText(String text, int width) {
