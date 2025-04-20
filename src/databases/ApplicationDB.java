@@ -142,7 +142,10 @@ public class ApplicationDB {
         try {
             applicant = ApplicantDB.getApplicantByNRIC(nric);
             if (applicant == null) {
-                throw new IOException("Applicant with NRIC " + nric + " not found.");
+                applicant = HDBOfficerDB.getOfficerByNRIC(nric);
+                if (applicant == null) {
+                    throw new IOException("Applicant with NRIC " + nric + " not found.");
+                }
             }
         } catch (IOException e) {
             throw new IOException("Failed to fetch applicant by NRIC: " + nric, e);

@@ -1,7 +1,6 @@
 package controllers;
 import java.io.IOException;
 
-import databases.ApplicationDB;
 import models.Application;
 
 public class ManagerApplicationController implements IManagerApplicationController {

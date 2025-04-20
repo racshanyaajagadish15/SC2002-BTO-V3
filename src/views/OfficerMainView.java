@@ -15,10 +15,11 @@ public class OfficerMainView {
 			System.out.println("1. View Application Details");
 			System.out.println("2. View projects");
 			System.out.println("3. Manage Your Enquiries");
-			System.out.println("4. Manage Project Enquiries");
+			System.out.println("4. View Project Registration Details");
 			System.out.println("5. Register For Project As Officer");
-			System.out.println("5. Change Password");
-			System.out.println("5. Logout");
+			System.out.println("6. Manage Project Enquiries");
+			System.out.println("7. Change Password");
+			System.out.println("8. Logout");
 			try {
 				System.out.print("Please enter your choice: ");
 				option = ScannerUtility.SCANNER.nextInt();

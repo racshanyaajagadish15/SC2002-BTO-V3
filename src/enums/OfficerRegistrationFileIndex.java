@@ -1,11 +1,11 @@
 package enums;
 
 public enum OfficerRegistrationFileIndex {
-    NAME(0),
+    ID(0),
     NRIC(1),
-    AGE(2),
-    MARITAL_STATUS(3),
-    PROJECTS(4);
+    PROJECT(2),
+    STATUS(3),
+    DATE(4);
 
     private final int index;
 

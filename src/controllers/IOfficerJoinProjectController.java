@@ -1,12 +1,17 @@
 package controllers;
 
+import java.util.ArrayList;
+
+import models.HDBOfficer;
+import models.Project;
+
 public interface IOfficerJoinProjectController {
 
 	/**
 	 * 
 	 * @param project
 	 */
-	void registerForProject(int project);
+	boolean registerForProject(HDBOfficer officer, Project project);
 
 	/**
 	 * 
@@ -18,8 +23,7 @@ public interface IOfficerJoinProjectController {
 	 * 
 	 * @param project
 	 */
-	bool checkProjectEligibility(Project project);
+	boolean checkProjectEligibility(Project project);
 
-	List<Project> getAppliableProjectList();
-
+	ArrayList<Project> getRegistrableProjects(HDBOfficer officer);
 }

@@ -6,7 +6,6 @@ import java.util.InputMismatchException;
 import java.util.List;
 
 import controllers.ApplicantApplicationController;
-import controllers.ApplicantEnquiryController;
 import enums.ApplicationStatus;
 import enums.FilterIndex;
 import enums.FlatTypeName;
@@ -380,7 +379,6 @@ public class ApplicationView {
 			System.out.println("1. View all applicable projects");
 			System.out.println("2. Search and filter for projects");
 			System.out.println("0. Exit");
-			System.out.println("=========================================");
 
 			int option;
 			try {
@@ -420,6 +418,10 @@ public class ApplicationView {
 			return;
 		}
 		Application application = applicant.getApplication();
+		if (application == null){
+			System.out.println("You do not have an application.");
+			return;
+		}
 		ApplicantApplicationController applicantApplicationController = new ApplicantApplicationController();
 		System.out.println("\n=========================================");
 		System.out.println("           APPLICATION DETAILS           ");

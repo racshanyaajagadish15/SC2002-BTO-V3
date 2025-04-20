@@ -9,12 +9,14 @@ import enums.FlatTypeName;
 import enums.MaritalStatus;
 import models.Applicant;
 import models.FlatType;
+import models.HDBOfficer;
+import models.OfficerRegistration;
 import models.Project;
 
 public class OfficerApplicationController extends AbstractApplicationController {
 
-public ArrayList<Project> getApplicableProjects(Applicant applicant){
-try {
+	public ArrayList<Project> getApplicableProjects(Applicant applicant){
+		try {
 			List<Project> allProjects = Project.getAllProjectsDB();
 			ArrayList<Project> applicableProjects = new ArrayList<Project>();
 
@@ -26,6 +28,20 @@ try {
 				// Check if application is still open
 				if (!project.getApplicationClosingDate().after(new Date())){
 					continue; 
+				}
+
+				// Check if there are registrations to be an officer
+				HDBOfficer officer = (HDBOfficer) applicant;
+				List<OfficerRegistration> officerRegistrations = OfficerRegistration.getOfficerRegistrationsByOfficerDB(officer);
+				boolean toSkip = false;
+				for (OfficerRegistration officerRegistration : officerRegistrations){
+					if (officerRegistration.getProjectID() == project.getProjectID()){
+						toSkip = true;
+						break;
+					}
+				}
+				if (toSkip){
+					continue;
 				}
 
 				List<FlatType> projectFlatTypes = project.getFlatTypes();
@@ -69,4 +85,6 @@ try {
 			return null;
 		}
 	}
+
+
 }

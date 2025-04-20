@@ -1,5 +1,4 @@
 package enums;
-import models.FlatType;
 
 public enum FlatTypeName {
     TWO_ROOM("2-ROOM"), 

@@ -19,7 +19,7 @@ public class ApplicantMainView {
 			System.out.println("4. Change Password");
 			System.out.println("5. Logout");
 			try {
-				System.out.print("Please enter your choice: ");
+				System.out.print("\nPlease enter your choice: ");
 				option = ScannerUtility.SCANNER.nextInt();
 				ScannerUtility.SCANNER.nextLine();
 				return option;

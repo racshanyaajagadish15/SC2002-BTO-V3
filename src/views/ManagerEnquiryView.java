@@ -114,7 +114,7 @@ public class ManagerEnquiryView {
                 0,                        // Officer Slots
                 true                      // Visibility
             );
-            ArrayList<Enquiry> enquiries = controller.getProjectEnquiries(project);
+            ArrayList<Enquiry> enquiries = Enquiry.getProjectEnquiries(project);
             if (enquiries.isEmpty()) {
                 System.out.println("No enquiries found for the specified project.");
                 return;
