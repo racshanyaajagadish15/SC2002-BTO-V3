@@ -29,7 +29,7 @@ public class ManagerEnquiryView {
 
     public void showEnquiryMenu() {
         while (true) {
-            System.out.println("=========================================");
+            System.out.println("\n=========================================");
             System.out.println("             MANAGE ENQUIRIES           ");
             System.out.println("=========================================");
             System.out.println("1. Reply to an Enquiry");

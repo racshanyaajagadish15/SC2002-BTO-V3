@@ -1,6 +1,7 @@
 package models;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import databases.ApplicantDB;
@@ -30,6 +31,7 @@ public class User {
 		this.age = age;
 		this.maritalStatus = maritalStatus;
 		this.password = password;
+		this.filter = new ArrayList<>(List.of("", "", "", "", ""));
 	}
 
 	public static User findUserByNricDB(String nric) throws IOException, NumberFormatException {
@@ -60,8 +62,8 @@ public class User {
 		return this.password;
 	}
 
-	public String getFilter() {
-		return this.password;
+	public List<String> getFilter() {
+		return this.filter;
 	}
 
 	/**

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import models.Applicant;
 import models.Application;
+import models.FlatType;
 import models.Project;
 
 public interface IApplicationController {
@@ -13,32 +14,28 @@ public interface IApplicationController {
 	 * 
 	 * @param applicant
 	 */
-	Application projectAction(Applicant applicant);
+	void projectAction(Applicant applicant);
 
 	/**	
 	 * 
 	 * @param applicant
 	 */
-	Application applicationAction(Applicant applicant);
+	void applicationAction(Applicant applicant);
 	
 	/**
 	 * 
 	 * @param project
 	 */
-	void submitApplication(Project project);
+	boolean submitApplication(Project project, Applicant applicant, FlatType flatType);
 
-	ArrayList<Project> getViewableProjects();
+	ArrayList<Project> getApplicableProjects(Applicant applicant);
 
-	/**
-	 * 
-	 * @param filters
-	 */
-	void setProjectFilter(String[] filters);
 
 	/**
 	 * 
 	 * @param application
+	 * @return 
 	 */
-	void bookFlat(Application application);
+	boolean withdrawApplication(Application application);
 
 }

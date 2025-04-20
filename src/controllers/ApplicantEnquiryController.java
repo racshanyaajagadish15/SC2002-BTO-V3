@@ -14,72 +14,101 @@ public class ApplicantEnquiryController implements IApplicantEnquiryController {
 
 
 	/**
-	 * 
-	 * @param project
-	 * @param enquiry
+	 *
+	 * @param applicant
 	 */
 	public void enquiryActionMenu(Applicant applicant) {
-		ApplicantEnquiryView applicantEnquiryView = new ApplicantEnquiryView();
+		ApplicantEnquiryView applicationEnquiryView = new ApplicantEnquiryView();
 		try {
 			// Get all enquiries the user has made
-			ArrayList<Enquiry> enquiries = Enquiry.getEnquiriesByNricDB(applicant.getNric());
-			
-			// Classify enquiries into projects
-			ArrayList<Project> projects = new ArrayList<>();
-			// Mapping of Project -> Enquiries ArrayList 
-			Map<Project, ArrayList<Enquiry>> projectEnquiriesMap = new HashMap<Project, ArrayList<Enquiry>>(); 
-			for (Enquiry enquiry : enquiries){
-				projectEnquiriesMap
+			ArrayList<Enquiry> enquiries = getEnquiriesByNric(applicant.getNric());
+	
+			// Mapping of Project -> Enquiries ArrayList
+			Map<Project, ArrayList<Enquiry>> projectEnquiriesMap = new HashMap<>();
+			Map<Integer, Project> projectIdMap = new HashMap<>();
+			Project project;
+			int projID;
+			for (Enquiry enquiry : enquiries) {
+				projID = enquiry.getProjectID();
+	
+				if (projectIdMap.containsKey(projID)) {
+					project = projectIdMap.get(projID);
+				} else {
+					project = Project.getProjectsByIdDB(projID);
+					projectIdMap.put(projID, project);
+					projectEnquiriesMap.put(project, new ArrayList<>());
+				}
+				
+				projectEnquiriesMap.get(project).add(enquiry);
 			}
-			// Show and get enquiry to modify
-			Enquiry enquiry = applicantEnquiryView.showEnquiries(enquiries);
-			
+			System.out.println(projectEnquiriesMap);
+			// Show menu for enquiries
+			applicationEnquiryView.showEnquiriesMenu(projectEnquiriesMap);
+		} catch (IOException | NumberFormatException e) {
+			System.out.println("Cannot show enquiries due to error, contact admin if error persist.");
 		}
-		catch (IOException e){
-
-		}
-		catch (NumberFormatException e){
-			
-		}		
-
 	}
+	
 
 	/**
 	 * 
-	 * @param project
 	 * @param enquiry
 	 */
-	public void submitEnquiry(Project project, String enquiry) {
-		// TODO - implement ApplicantEnquiryController.submitEnquiry
-
+	public boolean submitEnquiry(Enquiry enquiry) {
+		try {
+			Enquiry.createEnquiryDB(enquiry);
+			return true;
+		}
+		catch (NumberFormatException e){
+			return false;
+		}
+		catch (IOException e){
+			return false;
+		}
 	}
 
 	/**
 	 * 
 	 * @param nric
+	 * @throws IOException 
+	 * @throws NumberFormatException 
 	 */
-	public ArrayList<Enquiry> getEnquiries(String nric) {
-		// TODO - implement ApplicantEnquiryController.getEnquiries
-		return null;
+	public ArrayList<Enquiry> getEnquiriesByNric(String nric) throws NumberFormatException, IOException {
+		return Enquiry.getEnquiriesByNricDB(nric);
+	}
+
+	/**
+	 * 
+	 * @param enquiry
+	 */
+	public boolean editEnquiry(Enquiry enquiry) {
+		try {
+			Enquiry.updateEnquiryDB(enquiry);
+			return true;
+		}
+		catch (NumberFormatException e){
+			return false;
+		}
+		catch (IOException e){
+			return false;
+		}
 	}
 
 	/**
 	 * 
 	 * @param id
-	 * @param newEnquiry
 	 */
-	public void editEnquiry(int id, String newEnquiry) {
-		// TODO - implement ApplicantEnquiryController.editEnquiry
-
-	}
-
-	/**
-	 * 
-	 * @param id
-	 */
-	public void deleteEnquiry(int id) {
-		// TODO - implement ApplicantEnquiryController.deleteEnquiry
-
+	public boolean deleteEnquiry(int id) {
+		try {
+			Enquiry.deleteEnquiryDB(id);
+			return true;
+		}
+		catch (NumberFormatException e){
+			return false;
+		}
+		catch (IOException e){
+			return false;
+		}
 	}
 
 }

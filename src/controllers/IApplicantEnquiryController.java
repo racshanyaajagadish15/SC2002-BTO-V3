@@ -1,36 +1,44 @@
 package controllers;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
+import models.Applicant;
 import models.Enquiry;
-import models.Project;
 
 public interface IApplicantEnquiryController {
 
 	/**
+	 *
+	 * @param applicant
+	 */
+	public void enquiryActionMenu(Applicant applicant);
+
+	/**
 	 * 
-	 * @param project
 	 * @param enquiry
 	 */
-	void submitEnquiry(Project project, String enquiry);
+	boolean submitEnquiry(Enquiry enquiry) ;
 
 	/**
 	 * 
 	 * @param nric
+	 * @throws IOException 
+	 * @throws NumberFormatException 
 	 */
-	ArrayList<Enquiry> getEnquiries(String nric);
+	ArrayList<Enquiry> getEnquiriesByNric(String nric) throws NumberFormatException, IOException;
+
+	/**
+	 * 
+	 * @param enquiry
+	 */
+	boolean editEnquiry(Enquiry enquiry);
 
 	/**
 	 * 
 	 * @param id
-	 * @param newEnquiry
+	 * @return 
 	 */
-	void editEnquiry(int id, String newEnquiry);
-
-	/**
-	 * 
-	 * @param id
-	 */
-	void deleteEnquiry(int id);
+	boolean deleteEnquiry(int id);
 
 }

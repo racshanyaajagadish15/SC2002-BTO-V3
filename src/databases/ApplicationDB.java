@@ -11,51 +11,57 @@ public class ApplicationDB {
     private static final String APPLICATION_FILEPATH = "resources/data/ProjectApplication.xlsx";
 
     // Create a new application
-    public static void createApplication(Applicant applicant, Project project, String status) throws IOException {
+    public static void createApplication(Applicant applicant, Project project, String status, FlatType flatType) throws IOException {
+        File file = new File(APPLICATION_FILEPATH);
+        try (FileInputStream fis = new FileInputStream(file);
+             Workbook workbook = new XSSFWorkbook(fis)) {
+            Sheet sheet = workbook.getSheetAt(0);
+            Row row = sheet.createRow(sheet.getLastRowNum() + 1);
+            Row lastRow = sheet.getRow(sheet.getLastRowNum());
+            int applicationID = (lastRow != null && lastRow.getCell(ProjectApplicationFileIndex.ID.getIndex()) != null) 
+                ? (int) lastRow.getCell(ProjectApplicationFileIndex.ID.getIndex()).getNumericCellValue() 
+                : 1; // Default to 1 if no rows exist
+            populateApplicationRow(row, applicationID, applicant, project, status, flatType.getFlatType());
+
+            // Save the changes to the file
+            try (FileOutputStream fos = new FileOutputStream(file)) {
+                workbook.write(fos);
+            }
+        }
+    }
+
+    // Create a new application
+    public static void updateApplication(Application application) throws IOException {
         File file = new File(APPLICATION_FILEPATH);
         Workbook workbook;
         Sheet sheet;
-    
-        if (file.exists()) {
-            try (FileInputStream fis = new FileInputStream(file)) {
-                workbook = new XSSFWorkbook(fis);
-                sheet = workbook.getSheetAt(0);
-            }
-        } else {
-            workbook = new XSSFWorkbook();
-            sheet = workbook.createSheet("Applications");
-            createHeaderRow(sheet);
+        try (FileInputStream fis = new FileInputStream(file)) {
+            workbook = new XSSFWorkbook(fis);
+            sheet = workbook.getSheetAt(0);
         }
-    
-        boolean recordUpdated = false;
-    
-        // Check if a record with the same NRIC exists and update it
+            
         for (Row row : sheet) {
             if (row.getRowNum() == 0) continue; // Skip header row
-    
-            String existingNRIC = row.getCell(ProjectApplicationFileIndex.NRIC.getIndex()).getStringCellValue();
-            if (existingNRIC.equals(applicant.getNric())) {
-                // Update the existing record
-                row.getCell(ProjectApplicationFileIndex.PROJECT_ID.getIndex()).setCellValue(project.getProjectID());
-                row.getCell(ProjectApplicationFileIndex.STATUS.getIndex()).setCellValue(status);
-                row.getCell(ProjectApplicationFileIndex.DATE.getIndex()).setCellValue(new Date().toString());
-                recordUpdated = true;
+            
+            int applicationID = (int) row.getCell(ProjectApplicationFileIndex.ID.getIndex()).getNumericCellValue();
+            if (applicationID == application.getApplicationID()) {
+                populateApplicationRow(
+                    row, 
+                    applicationID, 
+                    application.getApplicant(),
+                    application.getProject(), 
+                    application.getApplicationStatus(), 
+                    application.getFlatType());
                 break;
             }
         }
-    
-        // If no existing record was found, add a new row
-        if (!recordUpdated) {
-            Row row = sheet.createRow(sheet.getLastRowNum() + 1);
-            populateApplicationRow(row, applicant, project, status);
-        }
-    
         // Save the changes to the file
         try (FileOutputStream fos = new FileOutputStream(file)) {
             workbook.write(fos);
         }
         workbook.close();
     }
+
     // Check if a project has applications
     public static boolean hasApplicationsForProject(int projectID) throws IOException {
         try (FileInputStream fis = new FileInputStream(APPLICATION_FILEPATH);
@@ -65,9 +71,12 @@ public class ApplicationDB {
             for (Row row : sheet) {
                 if (row.getRowNum() == 0) continue; // Skip header
                 
-                int currentProjectID = (int) row.getCell(ProjectApplicationFileIndex.PROJECT_ID.getIndex()).getNumericCellValue();
-                if (currentProjectID == projectID) {
-                    return true;
+                Cell projectIDCell = row.getCell(ProjectApplicationFileIndex.PROJECT_ID.getIndex());
+                if (projectIDCell != null && projectIDCell.getCellType() == CellType.NUMERIC) {
+                    int currentProjectID = (int) projectIDCell.getNumericCellValue();
+                    if (currentProjectID == projectID) {
+                        return true;
+                    }
                 }
             }
         }
@@ -104,12 +113,30 @@ public class ApplicationDB {
         return applications;
     }
 
+    public static Application getApplicationByNric(String nric) throws IOException {
+        try (FileInputStream fis = new FileInputStream(APPLICATION_FILEPATH);
+        Workbook workbook = new XSSFWorkbook(fis)) {
+            Sheet sheet = workbook.getSheetAt(0);
+            for (Row row : sheet) {
+                if (row.getRowNum() == 0) continue;
+
+                Cell nricCell = row.getCell(ProjectApplicationFileIndex.NRIC.getIndex());
+                if (nricCell == null) continue;
+                if (nricCell.getCellType() == CellType.STRING && nricCell.getStringCellValue().equals(nric)) {
+                    return createApplicationFromRow(row);
+                }
+            }
+        }
+        return null;
+    }
+
     private static Application createApplicationFromRow(Row row) throws IOException {
         int applicationID = (int) row.getCell(ProjectApplicationFileIndex.ID.getIndex()).getNumericCellValue();
         String nric = row.getCell(ProjectApplicationFileIndex.NRIC.getIndex()).getStringCellValue();
         int projectID = (int) row.getCell(ProjectApplicationFileIndex.PROJECT_ID.getIndex()).getNumericCellValue();
         String applicationStatus = row.getCell(ProjectApplicationFileIndex.STATUS.getIndex()).getStringCellValue();
-    
+        String flatType = row.getCell(ProjectApplicationFileIndex.FLAT_TYPE.getIndex()).getStringCellValue();
+
         // Fetch the Applicant object
         Applicant applicant;
         try {
@@ -133,23 +160,15 @@ public class ApplicationDB {
         }
     
         // Create and return the Application object
-        return new Application(applicant, project, applicationStatus, applicationID);
+        return new Application(applicant, project, applicationStatus, applicationID, flatType);
     }
 
-    private static void populateApplicationRow(Row row, Applicant applicant, Project project, String status) {
-        row.createCell(ProjectApplicationFileIndex.ID.getIndex()).setCellValue(row.getRowNum()); // Using row number as ID
+    private static void populateApplicationRow(Row row, int applicationID,Applicant applicant, Project project, String status, String flatType) {
+        row.createCell(ProjectApplicationFileIndex.ID.getIndex()).setCellValue(applicationID); // Using row number as ID
         row.createCell(ProjectApplicationFileIndex.NRIC.getIndex()).setCellValue(applicant.getNric());
         row.createCell(ProjectApplicationFileIndex.PROJECT_ID.getIndex()).setCellValue(project.getProjectID());
         row.createCell(ProjectApplicationFileIndex.STATUS.getIndex()).setCellValue(status);
+        row.createCell(ProjectApplicationFileIndex.FLAT_TYPE.getIndex()).setCellValue(flatType);
         row.createCell(ProjectApplicationFileIndex.DATE.getIndex()).setCellValue(new Date());
-    }
-
-    private static void createHeaderRow(Sheet sheet) {
-        Row headerRow = sheet.createRow(0);
-        headerRow.createCell(ProjectApplicationFileIndex.ID.getIndex()).setCellValue("Application ID");
-        headerRow.createCell(ProjectApplicationFileIndex.NRIC.getIndex()).setCellValue("Applicant NRIC");
-        headerRow.createCell(ProjectApplicationFileIndex.PROJECT_ID.getIndex()).setCellValue("Project ID");
-        headerRow.createCell(ProjectApplicationFileIndex.STATUS.getIndex()).setCellValue("Status");
-        headerRow.createCell(ProjectApplicationFileIndex.DATE.getIndex()).setCellValue("Application Date");
     }
 }

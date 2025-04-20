@@ -1,11 +1,16 @@
 package models;
 
+import java.io.IOException;
+
+import databases.ApplicationDB;
+
 public class Application {
 
 	private Applicant applicant;
 	private Project project;
 	private String applicationStatus;
 	private int applicationID;
+	private String flatType;
 
 	/**
 	 * 
@@ -14,16 +19,12 @@ public class Application {
 	 * @param applicationStatus
 	 * @param applicationID
 	 */
-	public Application(Applicant applicant, Project project, String applicationStatus, int applicationID) {
+	public Application(Applicant applicant, Project project, String applicationStatus, int applicationID, String flatType) {
 		this.applicant = applicant;
 		this.project = project;
 		this.applicationStatus = applicationStatus;
 		this.applicationID = applicationID;
-	}
-
-	public static void createEnquiryDB() {
-		// TODO - implement Application.createEnquiryDB
-		
+		this.flatType = flatType;
 	}
 
 	/**
@@ -33,23 +34,16 @@ public class Application {
 	 * @param applicationStatus
 	 * @param applicationID
 	 */
-	public static void updateApplicationDB(Applicant applicant, Project project, String applicationStatus, int applicationID) {
-		// TODO - implement Application.updateApplicationDB
-		
+	public static void updateApplicationDB(Application applicantion) throws IOException{
+		ApplicationDB.updateApplication(applicantion);
 	}
 
-	/**
-	 * 
-	 * @param applicationID
-	 */
-	public static void deleteApplicationDB(int applicationID) {
-		// TODO - implement Application.deleteApplicationDB
-		
+	public static void createApplicationDB(Applicant applicant, Project project, String applicationStatus, FlatType flatType) throws IOException {
+		ApplicationDB.createApplication(applicant, project, applicationStatus, flatType);
 	}
 
-	public static void createApplication(Applicant applicant, Project project, String applicationStatus) {
-		// TODO - implement Application.createApplicationDB
-		
+	public static Application getApplicationByNricDB(String nric) throws IOException {
+		return ApplicationDB.getApplicationByNric(nric);
 	}
 
 	public Applicant getApplicant() {
@@ -67,6 +61,11 @@ public class Application {
 	public int getApplicationID() {
 		return this.applicationID;
 	}
+	
+	public String getFlatType() {
+		return this.flatType;
+	}
+
 
 	/**
 	 * 
@@ -100,4 +99,11 @@ public class Application {
 		this.applicationID = applicationID;
 	}
 
+	/**
+	 * 
+	 * @param flatType
+	 */
+	public void setFlatType(String flatType) {
+		this.flatType = flatType;
+	}
 }

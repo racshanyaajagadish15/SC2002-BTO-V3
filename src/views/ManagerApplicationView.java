@@ -3,11 +3,13 @@ package views;
 import controllers.ManagerApplicationController;
 import databases.ApplicationDB;
 import databases.ProjectDB;
+import enums.ApplicationStatus;
 import models.Application;
 import models.Project;
 import models.HDBManager; // Ensure Manager is imported from the correct package
 
 import java.io.IOException;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -25,7 +27,7 @@ public class ManagerApplicationView {
     }
 
     public void showApplicationMenu() {
-        int choice;
+        int choice = -1;
         do {
             System.out.println("\n=========================================");
             System.out.println("           MANAGE APPLICATIONS           ");
@@ -34,21 +36,25 @@ public class ManagerApplicationView {
             System.out.println("2. Update Withdrawal Status");
             System.out.println("0. Exit");
             System.out.print("Enter your choice: ");
-            choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
-
-            switch (choice) {
-                case 1:
-                    updateApplicationStatus();
-                    break;
-                case 2:
-                    updateWithdrawalStatus();
-                    break;
-                case 0:
-                    System.out.println("Exiting Application Manager...");
-                    break;
-                default:
-                    System.out.println("[ERROR] Invalid choice. Please try again.");
+            try {
+                choice = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
+                switch (choice) {
+                    case 1:
+                        updateApplicationStatus();
+                        break;
+                    case 2:
+                        updateWithdrawalStatus();
+                        break;
+                    case 0:
+                        System.out.println("Exiting Application Manager...");
+                        break;
+                    default:
+                        System.out.println("[ERROR] Invalid choice. Please try again.");
+                }
+            } catch (InputMismatchException e){
+                scanner.nextLine(); // Consume newline
+                System.out.println("[ERROR] Invalid choice. Please try again.");
             }
         } while (choice != 0);
     }
@@ -57,21 +63,52 @@ public class ManagerApplicationView {
         try {
             displayAllApplications();
     
-            System.out.print("Enter Application ID: ");
-            int applicationID = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+            int applicationID = -1;
+            while (true) {
+                try {
+                    System.out.print("\nEnter Application ID: ");
+                    applicationID = scanner.nextInt();
+                    scanner.nextLine();
+                    break; 
+                } catch (InputMismatchException e) {
+                    scanner.nextLine();
+                    System.out.println("[ERROR] Invalid input. Please enter a valid numeric Application ID.");
+                }
+            }
     
-            System.out.print("Enter New Status: ");
-            String status = scanner.nextLine();
-    
+            System.out.println("Statuses:");
+            System.out.println("1. " + ApplicationStatus.SUCESSFUL.getStatus());
+            System.out.println("2. " + ApplicationStatus.UNSUCCESSFUL.getStatus());
+            int status = -1;
+            while (true) {
+                try {
+                    System.out.print("\nEnter Status option: ");
+                    applicationID = scanner.nextInt();
+                    scanner.nextLine();
+                    if (status == 1 || status == 2){
+                        break; 
+                    }
+                } catch (InputMismatchException e) {
+                    scanner.nextLine();
+                    System.out.println("[ERROR] Invalid input. Please enter a valid numeric Application ID.");
+                }
+            }
+            String statusStr = "";
+            if (status == 1){
+                statusStr = ApplicationStatus.SUCESSFUL.getStatus();
+            } 
+            else if (status == 2) {
+                statusStr = ApplicationStatus.UNSUCCESSFUL.getStatus();
+            }
             // Fetch application
             Application application = fetchApplicationByID(applicationID);
-    
+            
+            
             if (application != null) {
-                controller.updateBTOApplicationStatus(application, status);
+                controller.updateBTOApplicationStatus(application, statusStr);
                 System.out.println("[SUCCESS] Application status updated successfully.");
             } else {
-                System.out.println("[ERROR] Application not found or you are not authorized to update it.");
+                System.out.println("[ERROR] Application not found.");
             }
         } catch (Exception e) {
             System.out.println("[ERROR] Failed to update application status: " + e.getMessage());
@@ -83,9 +120,19 @@ public class ManagerApplicationView {
             displayAllApplications();
     
             System.out.print("Enter Application ID: ");
-            int applicationID = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
-    
+            int applicationID = -1;
+            while (true) {
+                try {
+                    System.out.print("\nEnter Application ID: ");
+                    applicationID = scanner.nextInt();
+                    scanner.nextLine();
+                    break; 
+                } catch (InputMismatchException e) {
+                    scanner.nextLine();
+                    System.out.println("[ERROR] Invalid input. Please enter a valid numeric Application ID.");
+                }
+            }
+
             System.out.print("Enter New Withdrawal Status: ");
             String status = scanner.nextLine();
     
@@ -96,7 +143,7 @@ public class ManagerApplicationView {
                 controller.updateBTOApplicationWithdrawalStatus(application, status);
                 System.out.println("[SUCCESS] Withdrawal status updated successfully.");
             } else {
-                System.out.println("[ERROR] Application not found or you are not authorized to update it.");
+                System.out.println("[ERROR] Application not found.");
             }
         } catch (Exception e) {
             System.out.println("[ERROR] Failed to update withdrawal status: " + e.getMessage());
@@ -154,7 +201,7 @@ public class ManagerApplicationView {
         }
     }
 
-    // Mock method to fetch an application by ID (replace with actual logic)
+    // Fetch an application by ID (replace with actual logic)
     private Application fetchApplicationByID(int applicationID) {
         try {
             // Fetch all projects managed by the logged-in manager
