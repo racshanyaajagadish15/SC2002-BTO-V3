@@ -69,7 +69,7 @@ public class OfficerEnquiryController implements IOfficerEnquiryController {
 
 			for (OfficerRegistration officerRegistration : officerRegistrations){
 				if (officerRegistration.getRegistrationStatus().equals(OfficerRegisterationStatus.SUCESSFUL.getStatus())){
-					projectsAssigned.add(Project.getProjectsByIdDB(officerRegistration.getProjectID()));
+					projectsAssigned.add(Project.getProjectByIdDB(officerRegistration.getProjectID()));
 				}
 			}
 			for (Project project : projectsAssigned){

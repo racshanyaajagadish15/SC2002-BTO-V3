@@ -20,12 +20,14 @@ public class OfficerJoinProjectController implements IOfficerJoinProjectControll
 	 * @param project
 	 */
 	public boolean registerForProject(HDBOfficer officer, Project project) {
-		if (OfficerRegistration.createOfficerRegistrationDB(officer, project, OfficerRegisterationStatus.PENDING.getStatus()) != null){
+		try {
+			OfficerRegistration.createOfficerRegistrationDB(officer, project, OfficerRegisterationStatus.PENDING.getStatus());
 			return true;
 		}
-		else{
+		catch (IOException e) {
 			return false;
-		}	
+		}
+
 	}
 
 	/**
@@ -96,7 +98,7 @@ public class OfficerJoinProjectController implements IOfficerJoinProjectControll
 						break;
 					}
 					// Check that application is SUCCESSFUL/PENDING and date does not clash 
-					Project registerationProject = Project.getProjectsByIdDB(registration.getProjectID());
+					Project registerationProject = Project.getProjectByIdDB(registration.getProjectID());
 
 					if (registration.getRegistrationStatus().equals(OfficerRegisterationStatus.PENDING.getStatus()) || registration.getRegistrationStatus().equals(OfficerRegisterationStatus.SUCESSFUL.getStatus())){
 						if (!registerationProject.getApplicationClosingDate().before(project.getApplicationOpeningDate()) || registerationProject.getApplicationOpeningDate().after(project.getApplicationClosingDate())) {

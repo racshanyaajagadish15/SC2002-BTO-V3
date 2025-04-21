@@ -74,7 +74,7 @@ public class Project {
      * @return a singular project.
      * @throws IOException If an I/O error occurs.
      */
-    public static Project getProjectsByIdDB(int id) throws IOException {
+    public static Project getProjectByIdDB(int id) throws IOException {
         return ProjectDB.getProjectsById(id);
     }
 

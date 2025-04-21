@@ -20,8 +20,9 @@ public interface IApplicantEnquiryController {
 	/**
 	 * 
 	 * @param enquiry
+	 * @param newText
 	 */
-	boolean editEnquiry(Enquiry enquiry);
+	void editEnquiry(Enquiry enquiry, String newText);
 
 	/**
 	 * 
