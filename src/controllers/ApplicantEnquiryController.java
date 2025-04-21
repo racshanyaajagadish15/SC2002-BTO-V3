@@ -12,8 +12,6 @@ import models.Project;
 import views.ApplicantEnquiryView;
 
 public class ApplicantEnquiryController implements IApplicantEnquiryController {
-
-
 	/**
 	 *
 	 * @param applicant
@@ -82,7 +80,7 @@ public class ApplicantEnquiryController implements IApplicantEnquiryController {
 				System.out.println("Enquiry updated successfully.");
 			}
         } catch (IOException e) {
-			System.out.println("An error occurred while replying to enquiries, contact admin if error persist");
+			System.out.println("An error occurred while editting to enquiries, contact admin if error persist");
 		}		
 	}
 

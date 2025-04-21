@@ -1,7 +1,6 @@
 package views;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Map;
@@ -65,7 +64,7 @@ public class ApplicantEnquiryView {
             while (true) {
                 try{
                     displayEnquiries(enquiries);
-                    System.out.println("\nNote: Enquiries wiith replies can not be modified!");
+                    System.out.println("\nNote: Enquiries with replies can not be modified!");
                     System.out.print("Enter an enquiry number to modify (0 to go back): ");
                     enquiryIndex = ScannerUtility.SCANNER.nextInt() - 1;
                     ScannerUtility.SCANNER.nextLine();
