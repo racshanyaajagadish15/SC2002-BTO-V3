@@ -2,10 +2,23 @@ package controllers;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Scanner;
+import java.util.Date;
 
 import models.Enquiry;
+import models.Project;
+import utilities.ScannerUtility;
+import views.ManagerEnquiryView;
 
 public class ManagerEnquiryController implements IManagerEnquiryController {
+
+    private final ManagerEnquiryView view;
+    private Scanner scanner;
+
+    public ManagerEnquiryController() {
+        this.view = new ManagerEnquiryView(this);
+        this.scanner = ScannerUtility.SCANNER;
+    }
 
     /**
      * Reply to an enquiry by updating its reply and reply date.
@@ -13,16 +26,19 @@ public class ManagerEnquiryController implements IManagerEnquiryController {
      * @param enquiry The enquiry to reply to.
      * @param message The reply message.
      */
+    @Override
     public void replyToEnquiry(Enquiry enquiry, String message) {
         try {
             enquiry.setReply(message);
-            enquiry.setReplyDate(new java.util.Date()); // Set the current date as the reply date
+            enquiry.setReplyDate(new Date()); // Set the current date as the reply date
             boolean success = Enquiry.updateEnquiryDB(enquiry);
-            if (!success) {
-                System.out.println("Failed to update the enquiry in the database.");
+            if (success) {
+                view.displaySuccess("Reply sent successfully.");
+            } else {
+                view.displayError("Failed to update the enquiry in the database.");
             }
         } catch (IOException e) {
-            System.out.println("An error occurred while replying to the enquiry: " + e.getMessage());
+            view.displayError("An error occurred while replying to the enquiry: " + e.getMessage());
         }
     }
 
@@ -40,4 +56,32 @@ public class ManagerEnquiryController implements IManagerEnquiryController {
         }
     }
 
+    private void viewProjectEnquiries() {
+        try {
+            System.out.print("Enter Project ID: ");
+            int projectID = scanner.nextInt();
+            scanner.nextLine();
+
+            Project project = Project.getProjectByIdDB(projectID);
+            if (project == null) {
+                System.out.println("Project not found.");
+                return;
+            }
+
+            ArrayList<Enquiry> enquiries = Enquiry.getProjectEnquiries(project);
+            if (enquiries.isEmpty()) {
+                System.out.println("No enquiries found for the specified project.");
+                return;
+            }
+            displayEnquiries(enquiries);
+        } catch (Exception e) {
+            System.out.println("An error occurred: " + e.getMessage());
+        }
+    }
+
+    private void displayEnquiries(ArrayList<Enquiry> enquiries) {
+        for (Enquiry enquiry : enquiries) {
+            System.out.println(enquiry);
+        }
+    }
 }

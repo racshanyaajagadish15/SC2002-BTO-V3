@@ -10,7 +10,7 @@ import models.OfficerRegistration;
 import models.Project;
 import utilities.ScannerUtility;
 
-public class OfficerJoinProjectView {
+public class OfficerJoinProjectView implements DisplayResult {
 
 	/**
 	 * 
@@ -30,7 +30,7 @@ public class OfficerJoinProjectView {
 			System.out.println("           REGISTRATION STATUS           ");
 			System.out.println("=========================================");
 			if (registrations.isEmpty()) {
-				System.out.println("No registrations found.");
+				displayInfo("No registrations found.");
 				return;
 			} else {
 				for (OfficerRegistration registration : registrations) {
@@ -62,13 +62,13 @@ public class OfficerJoinProjectView {
 				} 
 			}
 		} catch (IOException e){
-			System.out.println("Cannot show project registrations due to error, contact admin if error persist.");
+			displayError("Cannot show project registrations due to error, contact admin if error persist.");
 		}
 	}
 
 	public void showRegistrableProjectMenu(ArrayList<Project> projects, HDBOfficer officer) {
 		if (projects.size() == 0){
-			System.out.println("No projects that you can register for are available!");
+			displayError("No projects that you can register for are available!");
 			return;
 		}
 		while (true){

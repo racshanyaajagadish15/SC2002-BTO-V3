@@ -3,6 +3,7 @@ package databases;
 import models.HDBManager;
 import enums.UserFileIndex;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -64,5 +65,31 @@ public class HDBManagerDB {
         }
     // No results
     return null;
+    }
+
+    public static boolean saveUser(HDBManager manager) throws IOException {
+        try (FileInputStream fis = new FileInputStream(MANAGER_FILEPATH);
+             Workbook workbook = new XSSFWorkbook(fis)) {
+            Sheet sheet = workbook.getSheetAt(0);
+            boolean found = false;
+
+            for (Row row : sheet) {
+                if (row.getRowNum() == 0) continue;
+                String fileNric = row.getCell(UserFileIndex.NRIC.getIndex()).getStringCellValue();
+                if (fileNric.equals(manager.getNric())) {
+                    row.getCell(UserFileIndex.PASSWORD.getIndex()).setCellValue(manager.getPassword());
+                    found = true;
+                    break;
+                }
+            }
+
+            if (found) {
+                try (FileOutputStream fos = new FileOutputStream(MANAGER_FILEPATH)) {
+                    workbook.write(fos);
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }

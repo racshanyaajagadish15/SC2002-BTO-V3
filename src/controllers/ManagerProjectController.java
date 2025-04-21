@@ -57,10 +57,10 @@ public class ManagerProjectController implements IManagerProjectController {
 					deleteProjectMenu();
 					break;
 				case 0:
-					view.showSuccessMessage("Returning to main menu.");
+					view.displaySuccess("Returning to main menu.");
 					break;
 				default:
-					view.showErrorMessage("Invalid choice. Try again.");
+					view.displayError("Invalid choice. Try again.");
 			}
 		} while (choice != 0);
 	}
@@ -157,13 +157,13 @@ public class ManagerProjectController implements IManagerProjectController {
             );
 
             if (ProjectDB.createProject(project)) {
-                view.showSuccessMessage("Project created successfully!");
+                view.displaySuccess("Project created successfully!");
             } else {
-                view.showErrorMessage("Failed to create project.");
+                view.displayError("Failed to create project.");
             }
 
         } catch (IOException | ParseException e) {
-            view.showErrorMessage("Error: " + e.getMessage());
+            view.displayError("Error: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -185,13 +185,13 @@ public class ManagerProjectController implements IManagerProjectController {
         
             Project project = ProjectDB.getProjectByName(projectName);
             if (project == null) {
-                view.showErrorMessage("No project found with the given name.");
+                view.displayError("No project found with the given name.");
                 return;
             }
         
             // Verify the project belongs to the logged-in manager
             if (!project.getProjectManager().getNric().equals(loggedInManager.getNric())) {
-                view.showErrorMessage("You can only edit projects you manage.");
+                view.displayError("You can only edit projects you manage.");
                 return;
             }
         
@@ -216,18 +216,18 @@ public class ManagerProjectController implements IManagerProjectController {
                 try {
                     project.setOfficerSlots(Integer.parseInt(officerSlotsInput));
                 } catch (NumberFormatException e) {
-                    view.showErrorMessage("Invalid number format.");
+                    view.displayError("Invalid number format.");
                     return;
                 }
             }
         
             if (ProjectDB.updateProject(project)) {
-                view.showSuccessMessage("Project updated successfully.");
+                view.displaySuccess("Project updated successfully.");
             } else {
-                view.showErrorMessage("Failed to update project.");
+                view.displayError("Failed to update project.");
             }
         } catch (IOException e) {
-            view.showErrorMessage("Error: " + e.getMessage());
+            view.displayError("Error: " + e.getMessage());
         }
     }
 
@@ -244,9 +244,9 @@ public class ManagerProjectController implements IManagerProjectController {
 			ProjectDB.updateProject(project);
 
 			// Display success message
-			view.showSuccessMessage("Project visibility toggled to " + (project.getProjectVisibility() ? "Visible" : "Hidden") + ".");
+			view.displaySuccess("Project visibility toggled to " + (project.getProjectVisibility() ? "Visible" : "Hidden") + ".");
 		} catch (IOException e) {
-			view.showErrorMessage("Failed to toggle project visibility: " + e.getMessage());
+			view.displayError("Failed to toggle project visibility: " + e.getMessage());
 		}
 	}
 
@@ -257,7 +257,7 @@ public class ManagerProjectController implements IManagerProjectController {
 		ArrayList<Project> projects = getSpecificProject(projectName);
 	
 		if (projects.isEmpty()) {
-			view.showErrorMessage("No project found with the given name.");
+			view.displayError("No project found with the given name.");
 			return;
 		}
 	
@@ -267,9 +267,9 @@ public class ManagerProjectController implements IManagerProjectController {
 	
 		try {
 			ProjectDB.updateProject(project); // Save the updated project to the database
-			view.showSuccessMessage("Project visibility toggled to " + (project.getProjectVisibility() ? "Visible" : "Hidden") + ".");
+			view.displaySuccess("Project visibility toggled to " + (project.getProjectVisibility() ? "Visible" : "Hidden") + ".");
 		} catch (IOException e) {
-			view.showErrorMessage("Failed to toggle project visibility: " + e.getMessage());
+			view.displayError("Failed to toggle project visibility: " + e.getMessage());
 		}
 	}
 
@@ -279,7 +279,7 @@ public class ManagerProjectController implements IManagerProjectController {
         try {
             return ProjectDB.getAllProjects();
         } catch (IOException e) {
-            view.showErrorMessage("Error loading projects: " + e.getMessage());
+            view.displayError("Error loading projects: " + e.getMessage());
             return new ArrayList<>();
         }
     }
@@ -293,7 +293,7 @@ public class ManagerProjectController implements IManagerProjectController {
             }
             return ProjectDB.getProjectsByManager(loggedInManager.getNric()); // Changed to use name
         } catch (IOException e) {
-            view.showErrorMessage("Error loading projects: " + e.getMessage());
+            view.displayError("Error loading projects: " + e.getMessage());
             return new ArrayList<>();
         }
     }
@@ -352,7 +352,7 @@ public class ManagerProjectController implements IManagerProjectController {
 		ArrayList<Project> projects = getSpecificProject(projectName);
 	
 		if (projects.isEmpty()) {
-			view.showErrorMessage("No project found with the given name.");
+			view.displayError("No project found with the given name.");
 			return;
 		}
 	
@@ -362,9 +362,9 @@ public class ManagerProjectController implements IManagerProjectController {
 	
 		if (confirmation.equalsIgnoreCase("yes")) {
 			deleteProject(project);
-			view.showSuccessMessage("Project deleted successfully.");
+			view.displaySuccess("Project deleted successfully.");
 		} else {
-			view.showSuccessMessage("Project deletion canceled.");
+			view.displaySuccess("Project deletion canceled.");
 		}
 	}
 
@@ -389,7 +389,7 @@ public class ManagerProjectController implements IManagerProjectController {
 		}
 	
 		if (filteredProjects.isEmpty()) {
-			view.showErrorMessage("No projects found matching the keyword.");
+			view.displayError("No projects found matching the keyword.");
 		} else {
 			view.displayProjects(filteredProjects);
 		}

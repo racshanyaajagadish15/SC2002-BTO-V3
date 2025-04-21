@@ -11,13 +11,13 @@ import models.Enquiry;
 import models.Project;
 import utilities.ScannerUtility;
 
-public class ApplicantEnquiryView {
+public class ApplicantEnquiryView implements DisplayResult {
 
     public void showEnquiriesMenu(Map<Project, ArrayList<Enquiry>> projectEnquiriesMap) {
-        if (projectEnquiriesMap.size() == 0){
-			System.out.println("You are have not made any enquiries!");
-			return;
-		}
+        if (projectEnquiriesMap.size() == 0) {
+            displayInfo("You have not made any enquiries!");
+            return;
+        }
         List<Project> projectList = new ArrayList<>(projectEnquiriesMap.keySet());
         Project.sortProjectByName(projectList);
         ArrayList<Enquiry> enquiries;
@@ -42,7 +42,7 @@ public class ApplicantEnquiryView {
                 }
 
                 if (projectIndex < 0 || projectIndex >= projectList.size()) {
-                    System.out.println("Invalid selection. Please try again.");
+                    displayError("Invalid selection. Please try again.");
                     continue;
                 }
 
@@ -50,12 +50,12 @@ public class ApplicantEnquiryView {
                 enquiries = projectEnquiriesMap.get(selectedProject);
 
                 if (enquiries.isEmpty()) {
-                    System.out.println("No enquiries found for the selected project.");
+                    displayInfo("No enquiries found for the selected project.");
                     continue;
                 }
             }
             catch(InputMismatchException e){
-                System.out.println("Invalid selection. Please try again.");
+                displayError("Invalid selection. Please try again.");
                 ScannerUtility.SCANNER.nextLine();
                 continue;
             }
@@ -72,19 +72,19 @@ public class ApplicantEnquiryView {
                     if (enquiryIndex == -1) break;
 
                     if (enquiryIndex < 0 || enquiryIndex >= enquiries.size()) {
-                        System.out.println("Invalid selection. Please try again.");
+                        displayError("Invalid selection. Please try again.");
                         continue;
                     }
 
                     selectedEnquiry = enquiries.get(enquiryIndex);
 
                     if (!selectedEnquiry.getReply().isEmpty()) {
-                        System.out.println("This enquiry has already been replied to and cannot be modified.");
+                        displayInfo("This enquiry has already been replied to and cannot be modified.");
                         continue;
                     }
                 }
                 catch(InputMismatchException e){
-                    System.out.println("Invalid selection. Please try again.");
+                    displayError("Invalid selection. Please try again.");
                     ScannerUtility.SCANNER.nextLine();
                     continue;
                 }
@@ -109,16 +109,16 @@ public class ApplicantEnquiryView {
                         } else if (option == 2) {
                             controller.deleteEnquiry(selectedEnquiry.getEnquiryID());
                             enquiries.remove(enquiryIndex);
-                            System.out.println("Enquiry deleted successfully.");
+                            displaySuccess("Enquiry deleted successfully.");
                             break;
                         } else if (option == 0) {
                             break;
                         } else {
-                            System.out.println("Invalid option. Please try again.");
+                            displayError("Invalid option. Please try again.");
                         }
                     }
                     catch(InputMismatchException e){
-                        System.out.println("Invalid selection. Please try again.");
+                        displayError("Invalid selection. Please try again.");
                         ScannerUtility.SCANNER.nextLine();
                         continue;
                     }
@@ -132,18 +132,17 @@ public class ApplicantEnquiryView {
         System.out.println("\n=========================================");
         System.out.println("            CREATE NEW ENQUIRY           ");
         System.out.println("=========================================");
-
-        System.out.print("Enter your enquiry: ");
+        System.out.println("Project name: " + project.getProjectName());
+        System.out.print("Enter your enquiry (Blank to return): ");
         String enquiryText = ScannerUtility.SCANNER.nextLine();
 
         if (enquiryText.trim().isEmpty()) {
-            System.out.println("Enquiry cannot be empty. Please try again.");
             return;
         }
 
-        Enquiry newEnquiry = new Enquiry(enquiryText, applicant.getNric(), project.getProjectID());
-        applicantEnquiryController.submitEnquiry(newEnquiry);
-        System.out.println("Enquiry created successfully.");
+        Enquiry newEnquiry = new Enquiry(enquiryText, applicant.getNric(), project);
+        boolean success = applicantEnquiryController.submitEnquiry(newEnquiry);
+        showCreateEnquiryResult(success);
     }
 
     private void displayEnquiries(ArrayList<Enquiry> enquiries) {
@@ -161,10 +160,10 @@ public class ApplicantEnquiryView {
             int maxLines = Math.max(enquiryLines.size(), replyLines.size());
 
             for (int line = 0; line < maxLines; line++) {
-                String no = (line == 0) ? String.valueOf(i + 1) : "";
-                String date = (line == 0) ? String.valueOf(e.getEnquiryDate()) : "";
-                String enquiry = line < enquiryLines.size() ? enquiryLines.get(line) : "";
-                String reply = line < replyLines.size() ? replyLines.get(line) : "";
+                String no = (line == 0) ? String.valueOf(i + 1) : "-";
+                String date = (line == 0) ? String.valueOf(e.getEnquiryDate()) : "-";
+                String enquiry = line < enquiryLines.size() ? enquiryLines.get(line) : "-";
+                String reply = line < replyLines.size() ? replyLines.get(line) : "-";
                 String replyDate = (line == 0 && !e.getReply().isEmpty()) ? String.valueOf(e.getReplyDate()) : (line == 0 ? "-" : "");
 
                 System.out.printf("| %-3s | %-40s | %-30s | %-30s | %-40s |\n",
@@ -189,5 +188,13 @@ public class ApplicantEnquiryView {
         }
         if (!text.isEmpty()) lines.add(text);
         return lines;
+    }
+
+    public void showCreateEnquiryResult(boolean success) {
+        if (success) {
+            displaySuccess("Enquiry created successfully.");
+        } else {
+            displayError("Failed to create enquiry.");
+        }
     }
 }

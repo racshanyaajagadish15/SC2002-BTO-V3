@@ -10,6 +10,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import enums.EnquiryFileIndex;
 import models.Enquiry;
+import models.Project;
+import utilities.LoggerUtility;
 
 public class EnquiryDB {
     private static final String ENQUIRY_FILEPATH = "resources/data/ProjectEnquiry.xlsx";
@@ -47,27 +49,23 @@ public class EnquiryDB {
     }
 
     // Helper function to create Enquiry object from excel row
-    private static Enquiry createEnquiryFromRow(Row row) throws NumberFormatException {
+    private static Enquiry createEnquiryFromRow(Row row) throws NumberFormatException, IOException {
         if (row == null) {
             throw new IllegalArgumentException("Row is null");
         }
     
-        // Skip rows with invalid or missing data
-        Cell idCell = row.getCell(EnquiryFileIndex.ID.getIndex());
-        if (idCell == null) {
-            throw new IllegalArgumentException("Missing Enquiry ID in row: " + row.getRowNum());
-        }
-    
-        int enquiryID = (int) getNumericCellValue(idCell);
+        int enquiryID = (int) getNumericCellValue(row.getCell(EnquiryFileIndex.ID.getIndex()));
         String nric = getStringCellValue(row.getCell(EnquiryFileIndex.NRIC.getIndex()));
         int projectID = (int) getNumericCellValue(row.getCell(EnquiryFileIndex.PROJECT_ID.getIndex()));
+        Project project = Project.getProjectByIdDB(projectID); // Get Project object
         String enquiry = getStringCellValue(row.getCell(EnquiryFileIndex.ENQUIRY.getIndex()));
         String reply = getStringCellValue(row.getCell(EnquiryFileIndex.REPLY.getIndex()));
         Date enquiryDate = getDateCellValue(row.getCell(EnquiryFileIndex.ENQUIRY_DATE.getIndex()));
         Date replyDate = getDateCellValue(row.getCell(EnquiryFileIndex.REPLY_DATE.getIndex()));
     
-        return new Enquiry(enquiryID, nric, projectID, enquiry, reply, enquiryDate, replyDate);
+        return new Enquiry(enquiryID, nric, project, enquiry, reply, enquiryDate, replyDate);
     }
+
     // Helper function to create excel row from Enquiry object 
     private static void populateEnquiryRow(Row row, Enquiry enquiry) throws NumberFormatException {
         if (enquiry.getEnquiryID() != 0) {
@@ -76,8 +74,8 @@ public class EnquiryDB {
         if (enquiry.getNric() != null && !enquiry.getNric().isEmpty()) {
             row.createCell(EnquiryFileIndex.NRIC.getIndex()).setCellValue(enquiry.getNric());
         }
-        if (enquiry.getProjectID() != 0) {
-            row.createCell(EnquiryFileIndex.PROJECT_ID.getIndex()).setCellValue(enquiry.getProjectID());
+        if (enquiry.getProject() != null) {
+            row.createCell(EnquiryFileIndex.PROJECT_ID.getIndex()).setCellValue(enquiry.getProject().getProjectID());
         }
         if (enquiry.getEnquiry() != null && !enquiry.getEnquiry().isEmpty()) {
             row.createCell(EnquiryFileIndex.ENQUIRY.getIndex()).setCellValue(enquiry.getEnquiry());
@@ -119,7 +117,11 @@ public class EnquiryDB {
             try (FileOutputStream fileOut = new FileOutputStream(ENQUIRY_FILEPATH)) {
                 workbook.write(fileOut);
             }
+            LoggerUtility.logInfo("Created new enquiry ID: " + enquiry.getEnquiryID());
             return true;
+        } catch (IOException e) {
+            LoggerUtility.logError("Failed to create enquiry for user: " + enquiry.getNric(), e);
+            throw e;
         }
         // False will only occur when error is thrown to controller
     }
@@ -141,8 +143,11 @@ public class EnquiryDB {
                     System.out.println("Skipping invalid row: " + row.getRowNum() + " - " + e.getMessage());
                 }
             }
+            return enquiries;
+        } catch (IOException e) {
+            LoggerUtility.logError("Failed to retrieve enquiries from database", e);
+            throw e;
         }
-        return enquiries;
     }
 
     // Get all enquiries by user nric
@@ -217,9 +222,13 @@ public class EnquiryDB {
                 try (FileOutputStream fileOut = new FileOutputStream(ENQUIRY_FILEPATH)) {
                     workbook.write(fileOut);
                 }
+                LoggerUtility.logInfo("Deleted enquiry ID: " + ID);
                 return true;
             }
             return false;
+        } catch (IOException e) {
+            LoggerUtility.logError("Failed to delete enquiry ID: " + ID, e);
+            throw e;
         }
     }
     
