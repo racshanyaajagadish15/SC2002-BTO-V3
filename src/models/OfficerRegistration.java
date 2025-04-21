@@ -31,12 +31,8 @@ public class OfficerRegistration {
 	 * @param project
 	 * @param registrationStatus
 	 */
-	public static OfficerRegistration createOfficerRegistrationDB(HDBOfficer officer, Project project, String registrationStatus) {
-		try {
-			return OfficerRegistrationDB.createOfficerRegistration(officer, project, registrationStatus);
-		}catch (IOException e){
-			return null;
-		}
+	public static OfficerRegistration createOfficerRegistrationDB(HDBOfficer officer, Project project, String registrationStatus) throws IOException {
+		return OfficerRegistrationDB.createOfficerRegistration(officer, project, registrationStatus);
 	}
 
 	/**

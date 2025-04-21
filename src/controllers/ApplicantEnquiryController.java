@@ -33,7 +33,7 @@ public class ApplicantEnquiryController implements IApplicantEnquiryController {
 				if (projectIdMap.containsKey(projID)) {
 					project = projectIdMap.get(projID);
 				} else {
-					project = Project.getProjectsByIdDB(projID);
+					project = Project.getProjectByIdDB(projID);
 					projectIdMap.put(projID, project);
 					projectEnquiriesMap.put(project, new ArrayList<>());
 				}

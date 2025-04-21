@@ -34,11 +34,11 @@ public class OfficerJoinProjectView {
 				return;
 			} else {
 				for (OfficerRegistration registration : registrations) {
-					Project project = Project.getProjectsByIdDB(registration.getProjectID());
+					Project project = Project.getProjectByIdDB(registration.getProjectID());
 					if (project == null){
 						continue;
 					}
-					System.out.println("Project Name: " + Project.getProjectsByIdDB(registration.getProjectID()).getProjectName());
+					System.out.println("Project Name: " + Project.getProjectByIdDB(registration.getProjectID()).getProjectName());
 					System.out.println("Registration Status: " + registration.getRegistrationStatus());
 					System.out.println("-----------------------------------------");
 				}
