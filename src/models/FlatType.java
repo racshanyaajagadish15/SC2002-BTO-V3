@@ -53,4 +53,19 @@ public class FlatType {
     public String toString() {
         return flatType + ": " + numFlats + " units, $" + String.format("%,.2f", pricePerFlat);
     }
+
+    public void setNumFlats(int numFlats) {
+        validateNumFlats(numFlats);
+        this.numFlats = numFlats;
+    }
+    public void setPricePerFlat(double pricePerFlat) {
+        if (pricePerFlat < 0) {
+            throw new IllegalArgumentException("Price per flat cannot be negative");
+        }
+        this.pricePerFlat = pricePerFlat;
+    }
+    public void setFlatType(String flatType) {
+        validateFlatType(flatType);
+        this.flatType = flatType.trim().toUpperCase();
+    }
 }
