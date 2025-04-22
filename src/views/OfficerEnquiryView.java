@@ -11,13 +11,13 @@ import models.Enquiry;
 import models.Project;
 import utilities.ScannerUtility;
 
-public class OfficerEnquiryView {
+public class OfficerEnquiryView implements DisplayResult {
 
-	public void showProjectEnquiries(Map<Project, ArrayList<Enquiry>> projectEnquiriesMap) {
-		if (projectEnquiriesMap.size() == 0){
-			System.out.println("You are not handling any projects.");
-			return;
-		}
+    public void showProjectEnquiries(Map<Project, ArrayList<Enquiry>> projectEnquiriesMap) {
+        if (projectEnquiriesMap.size() == 0) {
+            displayInfo("You are not handling any projects.");
+            return;
+        }
         List<Project> projectList = new ArrayList<>(projectEnquiriesMap.keySet());
         Project.sortProjectByName(projectList);
         ArrayList<Enquiry> enquiries;

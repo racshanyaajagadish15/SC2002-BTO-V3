@@ -1,6 +1,7 @@
 package databases;
 
 import models.*;
+import utilities.LoggerUtility;
 import enums.ProjectListFileIndex;
 
 import java.io.FileInputStream;
@@ -134,7 +135,11 @@ public class ProjectDB {
             try (FileOutputStream fileOut = new FileOutputStream(PROJECT_FILEPATH)) {
                 workbook.write(fileOut);
             }
+            LoggerUtility.logInfo("Created new project: " + project.getProjectName());
             return true;
+        } catch (IOException e) {
+            LoggerUtility.logError("Failed to create project: " + project.getProjectName(), e);
+            throw e;
         }
     }
 
@@ -146,11 +151,18 @@ public class ProjectDB {
             Sheet sheet = workbook.getSheetAt(0);
             for (Row row : sheet) {
                 if (row.getRowNum() == 0) continue; // Skip header
-                Project project = createProjectFromRow(row);
-                if (project != null) {
-                    projects.add(project);
+                try {
+                    Project project = createProjectFromRow(row);
+                    if (project != null) {
+                        projects.add(project);
+                    }
+                } catch (Exception e) {
+                    LoggerUtility.logError("Failed to create project from row " + row.getRowNum(), e);
                 }
             }
+        } catch (IOException e) {
+            LoggerUtility.logError("Failed to read projects from file", e);
+            throw e;
         }
         return projects;
     }
@@ -227,23 +239,16 @@ public class ProjectDB {
                     try (FileOutputStream fileOut = new FileOutputStream(PROJECT_FILEPATH)) {
                         workbook.write(fileOut);
                     }
+                    LoggerUtility.logInfo("Deleted project: " + projectName);
                     return true;
                 }
             }
+        } catch (IOException e) {
+            LoggerUtility.logError("Failed to delete project: " + projectName, e);
+            throw e;
         }
         return false;
     }
-
-    // public static ArrayList<Project> getProjectsByManager(String hdbManagerID) throws IOException {
-    //     ArrayList<Project> allProjects = getAllProjects();
-    //     ArrayList<Project> filteredProjects = new ArrayList<>();
-    //     for (Project project : allProjects) {
-    //         if (project.getProjectManager().getNric() == hdbManagerID) {
-    //             filteredProjects.add(project);
-    //         }
-    //     }
-    //     return filteredProjects;
-    // }
 
     public static ArrayList<Project> getProjectsByManager(String managerNric) throws IOException {
         ArrayList<Project> projects = new ArrayList<>();
@@ -273,9 +278,16 @@ public class ProjectDB {
             for (Row row : sheet) {
                 if (row.getRowNum() == 0) continue; // Skip header
                 if (row.getRowNum() == projectID) { // Match row number with project ID
-                    return createProjectFromRow(row);
+                    Project project = createProjectFromRow(row);
+                    if (project == null) {
+                        LoggerUtility.logInfo("Project not found with ID: " + projectID);
+                    }
+                    return project;
                 }
             }
+        } catch (IOException e) {
+            LoggerUtility.logError("Error retrieving project with ID: " + projectID, e);
+            throw e;
         }
         return null; // Return null if no project matches the given ID
     }

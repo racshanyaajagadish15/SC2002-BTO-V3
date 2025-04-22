@@ -14,6 +14,11 @@ import models.Project;
 import views.OfficerEnquiryView;
 
 public class OfficerEnquiryController implements IOfficerEnquiryController {
+    private final OfficerEnquiryView view;
+
+    public OfficerEnquiryController() {
+        this.view = new OfficerEnquiryView();
+    }
 
     /**
      * Reply to an enquiry by updating its reply and reply date.
@@ -21,21 +26,21 @@ public class OfficerEnquiryController implements IOfficerEnquiryController {
      * @param enquiry The enquiry to reply to.
      * @param message The reply message.
      */
-	public void replyEnquiry(Enquiry enquiry, String message) {
+    @Override
+    public void replyEnquiry(Enquiry enquiry, String message) {
         try {
             enquiry.setReply(message);
             enquiry.setReplyDate(new Date()); // Set the current date as the reply date
             boolean success = Enquiry.updateEnquiryDB(enquiry);
-            if (!success) {
-                System.out.println("Failed to update the enquiry in the database.");
+            if (success) {
+                view.displaySuccess("Enquiry updated successfully.");
+            } else {
+                view.displayError("Failed to update the enquiry in the database.");
             }
-			else{
-				System.out.println("Enquiry updated successfully.");
-			}
         } catch (IOException e) {
-			System.out.println("An error occurred while replying to enquiries, contact admin if error persist");
+            view.displayError("An error occurred while replying to enquiries, contact admin if error persist");
         }		
-	}
+    }
 
     /**
      * Retrieve enquiries for a specific project.
@@ -44,43 +49,42 @@ public class OfficerEnquiryController implements IOfficerEnquiryController {
      * @return A list of enquiries for the specified project.
      */
 
-	public ArrayList<Enquiry> getProjectEnquiries(Project project) {
-		ArrayList<Enquiry> projectEnquiries = new ArrayList<>();
-		try {
-			ArrayList<Enquiry> allEnquiries = Enquiry.getAllEnquiriesDB();
-			for (Enquiry enquiry : allEnquiries) {
-				if (enquiry.getProjectID() == project.getProjectID()) {
-					projectEnquiries.add(enquiry);
-				}
-			}
-		} catch (IOException e) {
-			System.out.println("An error occurred while retrieving project enquiries, contact admin if error persist");
-		}
-		return projectEnquiries;		
-	}
+    public ArrayList<Enquiry> getProjectEnquiries(Project project) {
+        ArrayList<Enquiry> projectEnquiries = new ArrayList<>();
+        try {
+            ArrayList<Enquiry> allEnquiries = Enquiry.getAllEnquiriesDB();
+            for (Enquiry enquiry : allEnquiries) {
+                if (enquiry.getProject().getProjectID() == project.getProjectID()) {
+                    projectEnquiries.add(enquiry);
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("An error occurred while retrieving project enquiries, contact admin if error persist");
+        }
+        return projectEnquiries;		
+    }
 
-	public void enquiryActionMenu(HDBOfficer officer) {
-		try {
-			OfficerEnquiryView officerEnquiryView = new OfficerEnquiryView();
-			ArrayList<OfficerRegistration> officerRegistrations= OfficerRegistration.getOfficerRegistrationsByOfficerDB(officer);
-			ArrayList<Project> projectsAssigned = new ArrayList<Project>();
-			// Mapping of Project -> Enquiries ArrayList
-			Map<Project, ArrayList<Enquiry>> projectEnquiriesMap = new HashMap<>();
+    public void enquiryActionMenu(HDBOfficer officer) {
+        try {
+            ArrayList<OfficerRegistration> officerRegistrations= OfficerRegistration.getOfficerRegistrationsByOfficerDB(officer);
+            ArrayList<Project> projectsAssigned = new ArrayList<Project>();
+            // Mapping of Project -> Enquiries ArrayList
+            Map<Project, ArrayList<Enquiry>> projectEnquiriesMap = new HashMap<>();
 
-			for (OfficerRegistration officerRegistration : officerRegistrations){
-				if (officerRegistration.getRegistrationStatus().equals(OfficerRegisterationStatus.SUCESSFUL.getStatus())){
-					projectsAssigned.add(Project.getProjectByIdDB(officerRegistration.getProjectID()));
-				}
-			}
-			for (Project project : projectsAssigned){
-				ArrayList<Enquiry> projectEnquiries = Enquiry.getProjectEnquiries(project);
-				projectEnquiriesMap.put(project, projectEnquiries);
-			}
+            for (OfficerRegistration officerRegistration : officerRegistrations){
+                if (officerRegistration.getRegistrationStatus().equals(OfficerRegisterationStatus.SUCESSFUL.getStatus())){
+                    projectsAssigned.add(Project.getProjectByIdDB(officerRegistration.getProjectID()));
+                }
+            }
+            for (Project project : projectsAssigned){
+                ArrayList<Enquiry> projectEnquiries = Enquiry.getProjectEnquiries(project);
+                projectEnquiriesMap.put(project, projectEnquiries);
+            }
 
-			officerEnquiryView.showProjectEnquiries(projectEnquiriesMap);
-		} catch (IOException e) {
-			System.out.println("An error occurred while retrieving project enquiries, contact admin if error persist");
-		}
-	}
+            view.showProjectEnquiries(projectEnquiriesMap);
+        } catch (IOException e) {
+            System.out.println("An error occurred while retrieving project enquiries, contact admin if error persist");
+        }
+    }
 
 }
