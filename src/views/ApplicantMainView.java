@@ -20,7 +20,6 @@ public class ApplicantMainView implements IDisplayResult {
             ScannerUtility.SCANNER.nextLine();
             return option;
         } catch (Exception e) {
-            displayError("Invalid input. Please enter a number.");
             ScannerUtility.SCANNER.nextLine();
             return -1;
         }
