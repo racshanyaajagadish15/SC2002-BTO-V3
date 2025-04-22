@@ -98,3 +98,69 @@ Stacktrace: 	databases.ApplicationDB.createApplicationFromRow(ApplicationDB.java
 	controllers.AuthenticatorController.authenticate(AuthenticatorController.java:81)
 	Main.main(Main.java:7)
 
+[2025-04-22 23:13:08] ERROR: Invalid date format entered: Unparseable date: "" - Unparseable date: ""
+Stacktrace: 	java.base/java.text.DateFormat.parse(DateFormat.java:399)
+	views.ManagerProjectView.getDateInput(ManagerProjectView.java:307)
+	views.ManagerProjectView.editProjectMenu(ManagerProjectView.java:159)
+	controllers.ManagerProjectController.handleProjectMenu(ManagerProjectController.java:69)
+	views.ManagerMainView.handleProjects(ManagerMainView.java:90)
+	views.ManagerMainView.showManagerMenu(ManagerMainView.java:36)
+	controllers.ManagerMainController.managerSelectMenu(ManagerMainController.java:23)
+	controllers.AuthenticatorController.authenticate(AuthenticatorController.java:81)
+	Main.main(Main.java:7)
+
+[2025-04-22 23:13:09] ERROR: Invalid date format entered: Unparseable date: "" - Unparseable date: ""
+Stacktrace: 	java.base/java.text.DateFormat.parse(DateFormat.java:399)
+	views.ManagerProjectView.getDateInput(ManagerProjectView.java:307)
+	views.ManagerProjectView.editProjectMenu(ManagerProjectView.java:166)
+	controllers.ManagerProjectController.handleProjectMenu(ManagerProjectController.java:69)
+	views.ManagerMainView.handleProjects(ManagerMainView.java:90)
+	views.ManagerMainView.showManagerMenu(ManagerMainView.java:36)
+	controllers.ManagerMainController.managerSelectMenu(ManagerMainController.java:23)
+	controllers.AuthenticatorController.authenticate(AuthenticatorController.java:81)
+	Main.main(Main.java:7)
+
+[2025-04-22 23:21:10] ERROR: Invalid date format entered: Unparseable date: "" - Unparseable date: ""
+Stacktrace: 	java.base/java.text.DateFormat.parse(DateFormat.java:399)
+	views.ManagerProjectView.getDateInput(ManagerProjectView.java:309)
+	views.ManagerProjectView.editProjectMenu(ManagerProjectView.java:159)
+	controllers.ManagerProjectController.handleProjectMenu(ManagerProjectController.java:70)
+	views.ManagerMainView.handleProjects(ManagerMainView.java:90)
+	views.ManagerMainView.showManagerMenu(ManagerMainView.java:36)
+	controllers.ManagerMainController.managerSelectMenu(ManagerMainController.java:23)
+	controllers.AuthenticatorController.authenticate(AuthenticatorController.java:81)
+	Main.main(Main.java:7)
+
+[2025-04-22 23:21:11] ERROR: Invalid date format entered: Unparseable date: "" - Unparseable date: ""
+Stacktrace: 	java.base/java.text.DateFormat.parse(DateFormat.java:399)
+	views.ManagerProjectView.getDateInput(ManagerProjectView.java:309)
+	views.ManagerProjectView.editProjectMenu(ManagerProjectView.java:166)
+	controllers.ManagerProjectController.handleProjectMenu(ManagerProjectController.java:70)
+	views.ManagerMainView.handleProjects(ManagerMainView.java:90)
+	views.ManagerMainView.showManagerMenu(ManagerMainView.java:36)
+	controllers.ManagerMainController.managerSelectMenu(ManagerMainController.java:23)
+	controllers.AuthenticatorController.authenticate(AuthenticatorController.java:81)
+	Main.main(Main.java:7)
+
+[2025-04-22 23:25:09] ERROR: Invalid date format entered: Unparseable date: "" - Unparseable date: ""
+Stacktrace: 	java.base/java.text.DateFormat.parse(DateFormat.java:399)
+	views.ManagerProjectView.getDateInput(ManagerProjectView.java:311)
+	views.ManagerProjectView.editProjectMenu(ManagerProjectView.java:161)
+	controllers.ManagerProjectController.handleProjectMenu(ManagerProjectController.java:70)
+	views.ManagerMainView.handleProjects(ManagerMainView.java:90)
+	views.ManagerMainView.showManagerMenu(ManagerMainView.java:36)
+	controllers.ManagerMainController.managerSelectMenu(ManagerMainController.java:23)
+	controllers.AuthenticatorController.authenticate(AuthenticatorController.java:81)
+	Main.main(Main.java:7)
+
+[2025-04-22 23:25:09] ERROR: Invalid date format entered: Unparseable date: "" - Unparseable date: ""
+Stacktrace: 	java.base/java.text.DateFormat.parse(DateFormat.java:399)
+	views.ManagerProjectView.getDateInput(ManagerProjectView.java:311)
+	views.ManagerProjectView.editProjectMenu(ManagerProjectView.java:168)
+	controllers.ManagerProjectController.handleProjectMenu(ManagerProjectController.java:70)
+	views.ManagerMainView.handleProjects(ManagerMainView.java:90)
+	views.ManagerMainView.showManagerMenu(ManagerMainView.java:36)
+	controllers.ManagerMainController.managerSelectMenu(ManagerMainController.java:23)
+	controllers.AuthenticatorController.authenticate(AuthenticatorController.java:81)
+	Main.main(Main.java:7)
+

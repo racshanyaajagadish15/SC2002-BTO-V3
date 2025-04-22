@@ -1,10 +1,21 @@
 package views;
 
 import models.Project;
+import models.FlatType;
+import utilities.ScannerUtility;
+import utilities.LoggerUtility;
+
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
-public class ManagerProjectView implements IDisplayResult{
+import databases.ProjectDB;
+
+public class ManagerProjectView implements IDisplayResult {
 
     public void showProjectMenuHeader() {
         System.out.println("\n=========================================");
@@ -18,23 +29,405 @@ public class ManagerProjectView implements IDisplayResult{
         System.out.println("6. Toggle Project Visibility");
         System.out.println("7. Delete Project");
         System.out.println("0. Exit");
+        System.out.println("=========================================");
         System.out.print("Enter your choice: ");
+    }
+
+    public Project createNewProjectMenu() {
+        System.out.println("\n=========================================");
+        System.out.println("           CREATE NEW PROJECT            ");
+        System.out.println("=========================================");
+    
+        // Step 1: Enter Project Name
+        System.out.print("Enter Project Name: ");
+        String projectName = ScannerUtility.SCANNER.nextLine();
+    
+        // Step 2: Enter Neighborhood
+        System.out.print("Enter Neighborhood: ");
+        String neighborhood = ScannerUtility.SCANNER.nextLine();
+    
+        // Step 3: Enter Opening Date
+        System.out.print("Enter Opening Date (yyyy-MM-dd): ");
+        Date openingDate = getDateInput();
+        if (openingDate == null) {
+            displayError("Invalid date format. Please try again.");
+            return null;
+        }
+    
+        // Step 4: Enter Application Closing Date
+        System.out.print("Enter Application Closing Date (yyyy-MM-dd): ");
+        Date closingDate = getDateInput();
+        if (closingDate == null || closingDate.before(openingDate)) {
+            displayError("Invalid date format or closing date is before opening date. Please try again.");
+            return null;
+        }
+    
+        // Step 5: Enter Officer Slots
+        System.out.print("Enter Officer Slots: ");
+        int officerSlots = ScannerUtility.SCANNER.nextInt();
+        ScannerUtility.SCANNER.nextLine(); // Consume newline
+    
+        // Step 6: Add Flat Types
+        ArrayList<FlatType> flatTypes = new ArrayList<>();
+        editFlatTypes(flatTypes);
+    
+        // Step 7: Confirm Project Creation
+        System.out.println("\n=========================================");
+        System.out.println("           PROJECT SUMMARY               ");
+        System.out.println("=========================================");
+        System.out.println("Project Name: " + projectName);
+        System.out.println("Neighborhood: " + neighborhood);
+        System.out.println("Opening Date: " + openingDate);
+        System.out.println("Application Closing Date: " + closingDate);
+        System.out.println("Officer Slots: " + officerSlots);
+        System.out.println("Flat Types:");
+        for (FlatType flatType : flatTypes) {
+            System.out.println("- " + flatType.getFlatType() + ": " + flatType.getNumFlats() + " units at $" + flatType.getPricePerFlat());
+        }
+        System.out.print("Confirm project creation? (yes/no): ");
+        String confirm = ScannerUtility.SCANNER.nextLine().trim().toLowerCase();
+    
+        if (!confirm.equals("yes")) {
+            displayInfo("Project creation aborted.");
+            return null;
+        }
+    
+        // Step 8: Create and Return Project
+        System.out.println("=========================================");
+        System.out.println("Project created successfully!");
+        LoggerUtility.logInfo("New project created: " + projectName);
+    
+        return new Project(0, projectName, null, neighborhood, flatTypes, openingDate, closingDate, officerSlots, true);
+    }
+
+
+    public Project editProjectMenu(ArrayList<Project> projects) {
+        if (projects.isEmpty()) {
+            displayError("No projects available to edit.");
+            return null;
+        }
+    
+        // Display the list of projects
+        System.out.println("\n=========================================");
+        System.out.println("           AVAILABLE PROJECTS            ");
+        System.out.println("=========================================");
+        for (int i = 0; i < projects.size(); i++) {
+            Project project = projects.get(i);
+            System.out.printf("%d. %s (Neighborhood: %s)\n",
+                    i + 1,
+                    project.getProjectName(),
+                    project.getNeighborhood(),
+                    project.getApplicationOpeningDate());
+        }
+        System.out.println("0. Cancel");
+        System.out.println("=========================================");
+    
+        // Prompt the user to select a project
+        System.out.print("Enter the number of the project to edit: ");
+        int choice = ScannerUtility.SCANNER.nextInt();
+        ScannerUtility.SCANNER.nextLine(); // Consume newline
+    
+        if (choice == 0) {
+            displayInfo("Edit operation canceled.");
+            return null;
+        }
+    
+        if (choice < 1 || choice > projects.size()) {
+            displayError("Invalid selection. Please try again.");
+            return null;
+        }
+    
+        // Get the selected project
+        Project selectedProject = projects.get(choice - 1);
+    
+        // Edit the selected project
+        System.out.println("\n=========================================");
+        System.out.println("           EDIT PROJECT DETAILS          ");
+        System.out.println("=========================================");
+    
+        System.out.print("Enter new Project Name (current: " + selectedProject.getProjectName() + "): ");
+        String newName = ScannerUtility.SCANNER.nextLine();
+        if (!newName.isBlank()) {
+            selectedProject.setProjectName(newName);
+            LoggerUtility.logInfo("Project name updated to: " + newName);
+        }
+    
+        System.out.print("Enter new Neighborhood (current: " + selectedProject.getNeighborhood() + "): ");
+        String newNeighborhood = ScannerUtility.SCANNER.nextLine();
+        if (!newNeighborhood.isBlank()) {
+            selectedProject.setNeighborhood(newNeighborhood);
+            LoggerUtility.logInfo("Neighborhood updated to: " + newNeighborhood);
+        }
+    
+        System.out.print("Enter new Opening Date (yyyy-MM-dd) (current: " + selectedProject.getApplicationOpeningDate() + "): ");
+        Date newOpeningDate = getDateInput();
+        if (newOpeningDate != null) {
+            selectedProject.setApplicationOpeningDate(newOpeningDate);
+            LoggerUtility.logInfo("Opening date updated to: " + newOpeningDate);
+        }
+    
+        System.out.print("Enter new Application Closing Date (yyyy-MM-dd) (current: " + selectedProject.getApplicationClosingDate() + "): ");
+        Date newClosingDate = getDateInput();
+        if (newClosingDate != null && newClosingDate.after(selectedProject.getApplicationOpeningDate())) {
+            selectedProject.setApplicationClosingDate(newClosingDate);
+            LoggerUtility.logInfo("Closing date updated to: " + newClosingDate);
+        } else if (newClosingDate != null) {
+            displayError("Closing date must be after the opening date. Update failed.");
+        }
+    
+        System.out.print("Enter new Officer Slots (current: " + selectedProject.getOfficerSlots() + "): ");
+        String officerSlotsInput = ScannerUtility.SCANNER.nextLine();
+        if (!officerSlotsInput.isBlank()) {
+            try {
+                int newOfficerSlots = Integer.parseInt(officerSlotsInput);
+                selectedProject.setOfficerSlots(newOfficerSlots);
+                LoggerUtility.logInfo("Officer slots updated to: " + newOfficerSlots);
+            } catch (NumberFormatException e) {
+                displayError("Invalid number format. Update failed.");
+            }
+        }
+    
+        // Edit flat types
+        System.out.println("\nEditing Flat Types...");
+        editFlatTypes(selectedProject.getFlatTypes());
+    
+        // Confirm changes
+        System.out.println("\n=========================================");
+        System.out.println("           UPDATED PROJECT DETAILS       ");
+        System.out.println("=========================================");
+        System.out.println("Project Name: " + selectedProject.getProjectName());
+        System.out.println("Neighborhood: " + selectedProject.getNeighborhood());
+        System.out.println("Opening Date: " + selectedProject.getApplicationOpeningDate());
+        System.out.println("Application Closing Date: " + selectedProject.getApplicationClosingDate());
+        System.out.println("Officer Slots: " + selectedProject.getOfficerSlots());
+        System.out.println("Flat Types:");
+        for (FlatType flatType : selectedProject.getFlatTypes()) {
+            System.out.println("- " + flatType.getFlatType() + ": " + flatType.getNumFlats() + " units at $" + flatType.getPricePerFlat());
+        }
+        System.out.print("Confirm changes? (yes/no): ");
+        String confirm = ScannerUtility.SCANNER.nextLine().trim().toLowerCase();
+    
+        if (!confirm.equals("yes")) {
+            displayInfo("Changes discarded.");
+            return null;
+        } else {
+            displaySuccess("Project updated successfully!");
+            return selectedProject;
+        }
+    }
+    
+    /**
+     * Allows the user to edit the flat types of a project.
+     *
+     * @param flatTypes The list of flat types to edit.
+     */
+    private void editFlatTypes(ArrayList<FlatType> flatTypes) {
+        while (true) {
+            System.out.println("\n=========================================");
+            System.out.println("           EDIT FLAT TYPES               ");
+            System.out.println("=========================================");
+            System.out.println("1. Add Flat Type");
+            System.out.println("2. Edit Existing Flat Type");
+            System.out.println("3. Remove Flat Type");
+            System.out.println("0. Exit");
+            System.out.println("=========================================");
+            System.out.print("Enter your choice: ");
+    
+            int choice = ScannerUtility.SCANNER.nextInt();
+            ScannerUtility.SCANNER.nextLine(); // Consume newline
+    
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter Flat Type Name (e.g., 2-Room, 3-Room): ");
+                    String flatTypeName = ScannerUtility.SCANNER.nextLine();
+    
+                    System.out.print("Enter Number of Units: ");
+                    int numUnits = ScannerUtility.SCANNER.nextInt();
+    
+                    System.out.print("Enter Price per Flat: ");
+                    double pricePerFlat = ScannerUtility.SCANNER.nextDouble();
+                    ScannerUtility.SCANNER.nextLine(); // Consume newline
+    
+                    flatTypes.add(new FlatType(flatTypeName, numUnits, pricePerFlat));
+                    LoggerUtility.logInfo("Added Flat Type: " + flatTypeName + " with " + numUnits + " units at $" + pricePerFlat);
+                    break;
+    
+                case 2:
+                    System.out.print("Enter the index of the Flat Type to edit (1-based): ");
+                    int indexToEdit = ScannerUtility.SCANNER.nextInt() - 1;
+                    ScannerUtility.SCANNER.nextLine(); // Consume newline
+    
+                    if (indexToEdit >= 0 && indexToEdit < flatTypes.size()) {
+                        FlatType flatType = flatTypes.get(indexToEdit);
+    
+                        System.out.print("Enter new Flat Type Name (current: " + flatType.getFlatType() + "): ");
+                        flatType.setFlatType((ScannerUtility.SCANNER.nextLine()));
+    
+                        System.out.print("Enter new Number of Units (current: " + flatType.getNumFlats() + "): ");
+                        flatType.setNumFlats(ScannerUtility.SCANNER.nextInt());
+    
+                        System.out.print("Enter new Price per Flat (current: $" + flatType.getPricePerFlat() + "): ");
+                        flatType.setPricePerFlat(ScannerUtility.SCANNER.nextDouble());
+                        ScannerUtility.SCANNER.nextLine(); // Consume newline
+    
+                        LoggerUtility.logInfo("Updated Flat Type: " + flatType.getFlatType());
+                    } else {
+                        displayError("Invalid index. Please try again.");
+                    }
+                    break;
+    
+                case 3:
+                    System.out.print("Enter the index of the Flat Type to remove (1-based): ");
+                    int indexToRemove = ScannerUtility.SCANNER.nextInt() - 1;
+                    ScannerUtility.SCANNER.nextLine(); // Consume newline
+    
+                    if (indexToRemove >= 0 && indexToRemove < flatTypes.size()) {
+                        FlatType removedFlatType = flatTypes.remove(indexToRemove);
+                        LoggerUtility.logInfo("Removed Flat Type: " + removedFlatType.getFlatType());
+                    } else {
+                        displayError("Invalid index. Please try again.");
+                    }
+                    break;
+    
+                case 0:
+                    System.out.println("Exiting flat type edit menu...");
+                    return;
+    
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        }
+    }
+
+    public void toggleProjectVisibilityMenu(ArrayList<Project> projects) {
+        if (projects.isEmpty()) {
+            displayError("No projects available to toggle visibility.");
+            return;
+        }
+
+        // Display the list of projects
+        displayProjects(projects);
+
+        // Prompt the user to select a project
+        System.out.print("Enter the number of the project to toggle visibility: ");
+        int choice = ScannerUtility.SCANNER.nextInt();
+        ScannerUtility.SCANNER.nextLine(); // Consume newline
+
+        if (choice == 0) {
+            displayInfo("Toggle visibility operation canceled.");
+            return;
+        }
+
+        if (choice < 1 || choice > projects.size()) {
+            displayError("Invalid selection. Please try again.");
+            return;
+        }
+
+        // Get the selected project
+        Project selectedProject = projects.get(choice - 1);
+
+        // Toggle visibility
+        boolean currentVisibility = selectedProject.getProjectVisibility();
+        selectedProject.setProjectVisibility(!currentVisibility);
+
+        // Persist the change to the database
+        try {
+            if (ProjectDB.updateProject(selectedProject)) {
+                displaySuccess("Project visibility toggled to " + (selectedProject.getProjectVisibility() ? "Visible" : "Hidden") + ".");
+            } else {
+                displayError("Failed to update project visibility in the database.");
+            }
+        } catch (IOException e) {
+            displayError("Error updating project visibility: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Prompts the user to enter a date in the format yyyy-MM-dd and parses it.
+     *
+     * @return A valid Date object or null if the input is invalid.
+     */
+    private Date getDateInput() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        dateFormat.setLenient(false); // Ensure strict date parsing
+
+        try {
+            String dateInput = ScannerUtility.SCANNER.nextLine();
+            return dateFormat.parse(dateInput);
+        } catch (ParseException e) {
+            LoggerUtility.logError("Invalid date format entered: " + e.getMessage(), e);
+            return null;
+        }
     }
 
     public void displayProjects(ArrayList<Project> projects) {
         if (projects.isEmpty()) {
-            System.out.println("No projects found");
+            displayInfo("No projects found.");
             return;
         }
-
-        System.out.println("\n===== Project List =====");
+    
+        System.out.println("\n---------------------------------------------------------------------------------------------");
+        System.out.printf("| %-5s | %-20s | %-20s | %-10s | %-15s | %-15s | %-15s | %-15s |\n",
+                "ID", "Name", "Neighborhood", "Status", "Opening Date", "Closing Date", "Applications", "Officer Slots");
+        System.out.println("---------------------------------------------------------------------------------------------");
+    
         for (Project project : projects) {
-            System.out.println("ID: " + project.getProjectID());
-            System.out.println("Name: " + project.getProjectName());
-            System.out.println("Neighborhood: " + project.getNeighborhood());
-            System.out.println("Status: " + (project.getProjectVisibility() ? "Visible" : "Hidden"));
-            System.out.println("Applications: " + (project.getApplicationClosingDate().after(new Date()) ? "Open" : "Closed"));
-            System.out.println("----------------------------------");
+            // Wrap text for project name and neighborhood
+            List<String> nameLines = wrapText(project.getProjectName(), 20);
+            List<String> neighborhoodLines = wrapText(project.getNeighborhood(), 20);
+            int maxLines = Math.max(nameLines.size(), neighborhoodLines.size());
+    
+            for (int i = 0; i < maxLines; i++) {
+                System.out.printf("| %-5s | %-20s | %-20s | %-10s | %-15s | %-15s | %-15s | %-15s |\n",
+                        (i == 0 ? project.getProjectID() : ""), // Only show Project ID on the first line
+                        (i < nameLines.size() ? nameLines.get(i) : ""), // Project Name
+                        (i < neighborhoodLines.size() ? neighborhoodLines.get(i) : ""), // Neighborhood
+                        (i == 0 ? (project.getProjectVisibility() ? "Visible" : "Hidden") : ""), // Status
+                        (i == 0 ? project.getApplicationOpeningDate() : ""), // Opening Date
+                        (i == 0 ? project.getApplicationClosingDate() : ""), // Closing Date
+                        (i == 0 ? (project.getApplicationClosingDate().after(new Date()) ? "Open" : "Closed") : ""), // Applications
+                        (i == 0 ? project.getOfficerSlots() : "")); // Officer Slots
+            }
+            System.out.println("---------------------------------------------------------------------------------------------");
         }
+    }
+
+    public void displaySuccess(String message) {
+        System.out.println("SUCCESS: " + message);
+        LoggerUtility.logInfo(message);
+    }
+
+    public void displayError(String message) {
+        System.out.println("ERROR: " + message);
+        LoggerUtility.logError(message, new Exception("Error logged without stack trace"));
+    }
+
+    public void displayInfo(String message) {
+        System.out.println("INFO: " + message);
+        LoggerUtility.logInfo(message);
+    }
+
+    /**
+     * Wraps text into a list of strings, each with a maximum width.
+     *
+     * @param text  The text to wrap.
+     * @param width The maximum width of each line.
+     * @return A list of wrapped lines.
+     */
+    private List<String> wrapText(String text, int width) {
+        List<String> lines = new ArrayList<>();
+        if (text == null || text.isEmpty()) {
+            lines.add("");
+            return lines;
+        }
+
+        int currentIndex = 0;
+        while (currentIndex < text.length()) {
+            int endIndex = Math.min(currentIndex + width, text.length());
+            lines.add(text.substring(currentIndex, endIndex));
+            currentIndex = endIndex;
+        }
+
+        return lines;
     }
 }

@@ -85,7 +85,7 @@ public class EnquiryDB {
         }
         Workbook workbook = row.getSheet().getWorkbook();
         CellStyle dateCellStyle = workbook.createCellStyle();
-        dateCellStyle.setDataFormat(workbook.getCreationHelper().createDataFormat().getFormat("yyyy-MM-dd HH:mm:ss"));
+        dateCellStyle.setDataFormat(workbook.getCreationHelper().createDataFormat().getFormat("yyyy-MM-dd HH:mm:ss")); //Date formatter
 
         if (enquiry.getEnquiryDate() != null) {
             Cell enquiryDateCell = row.createCell(EnquiryFileIndex.ENQUIRY_DATE.getIndex());
