@@ -2,7 +2,6 @@ package controllers;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Scanner;
 import java.util.List;
 import java.util.Date;
 import java.text.ParseException;
