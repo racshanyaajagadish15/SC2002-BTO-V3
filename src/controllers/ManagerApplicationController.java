@@ -38,7 +38,7 @@ public class ManagerApplicationController implements IManagerApplicationControll
             // Persist the updated application to the database
             Application.updateApplicationDB(application);
         } catch (IOException e) {
-            throw new RuntimeException("Failed to update application withdrawal status: " + e.getMessage(), e);
+            throw new RuntimeException("Failed to update withdrawal status: " + e.getMessage(), e);
         }
     }
 }

@@ -10,7 +10,7 @@ public class Enquiry {
 
     private int enquiryID;
     private String nric;
-    private Project project; // Changed from projectID to Project
+    private Project project;
     private String enquiry;
     private String reply;
     private Date enquiryDate;

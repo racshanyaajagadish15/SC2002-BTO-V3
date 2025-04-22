@@ -13,17 +13,5 @@ public interface IOfficerJoinProjectController {
 	 */
 	boolean registerForProject(HDBOfficer officer, Project project);
 
-	/**
-	 * 
-	 * @param officerRegistrationID
-	 */
-	String getRegistrationStatus(int officerRegistrationID);
-
-	/**
-	 * 
-	 * @param project
-	 */
-	boolean checkProjectEligibility(Project project);
-
 	ArrayList<Project> getRegistrableProjects(HDBOfficer officer);
 }

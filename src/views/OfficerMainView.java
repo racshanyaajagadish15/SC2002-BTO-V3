@@ -2,7 +2,7 @@ package views;
 
 import utilities.ScannerUtility;
 
-public class OfficerMainView implements DisplayResult {
+public class OfficerMainView implements IDisplayResult {
 
     public int showOfficerMenu() {
         System.out.println("\n=========================================");
@@ -13,9 +13,10 @@ public class OfficerMainView implements DisplayResult {
         System.out.println("3. Manage Personal Enquiries");
         System.out.println("4. View Project Registrations");
         System.out.println("5. Register for Project");
-        System.out.println("6. Handle Project Enquiries");
-        System.out.println("7. Change Password");
-        System.out.println("8. Logout");
+        System.out.println("6. Reply Project Enquiries");
+        System.out.println("7. Manage Project Bookings");
+        System.out.println("8. Change Password");
+        System.out.println("9. Logout");
         System.out.print("\nEnter option: ");
 
         try {

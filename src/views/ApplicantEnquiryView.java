@@ -11,7 +11,7 @@ import models.Enquiry;
 import models.Project;
 import utilities.ScannerUtility;
 
-public class ApplicantEnquiryView implements DisplayResult {
+public class ApplicantEnquiryView implements IDisplayResult {
 
     public void showEnquiriesMenu(Map<Project, ArrayList<Enquiry>> projectEnquiriesMap) {
         if (projectEnquiriesMap.size() == 0) {
@@ -37,7 +37,6 @@ public class ApplicantEnquiryView implements DisplayResult {
                 ScannerUtility.SCANNER.nextLine(); 
 
                 if (projectIndex == -1) {
-                    System.out.println("Returning to Applicant Dashboard...");
                     return;
                 }
 
@@ -133,7 +132,7 @@ public class ApplicantEnquiryView implements DisplayResult {
         System.out.println("            CREATE NEW ENQUIRY           ");
         System.out.println("=========================================");
         System.out.println("Project name: " + project.getProjectName());
-        System.out.print("Enter your enquiry (Blank to return): ");
+        System.out.print("\nEnter your enquiry (Blank to return): ");
         String enquiryText = ScannerUtility.SCANNER.nextLine();
 
         if (enquiryText.trim().isEmpty()) {

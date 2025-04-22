@@ -21,9 +21,9 @@ import enums.OfficerRegistrationFileIndex;
 public class OfficerRegistrationDB {
     private static final String REGISTRATION_FILEPATH = "resources/data/OfficerRegistration.xlsx";
 
-    public static OfficerRegistration createOfficerRegistration(HDBOfficer officer, Project project, String registrationStatus) throws IOException{
+    public static OfficerRegistration createOfficerRegistration(HDBOfficer officer, Project project, String registrationStatus) throws IOException {
         try (FileInputStream fileStreamIn = new FileInputStream(REGISTRATION_FILEPATH);
-        Workbook workbook = new XSSFWorkbook(fileStreamIn)) {
+             Workbook workbook = new XSSFWorkbook(fileStreamIn)) {
             Sheet sheet = workbook.getSheetAt(0);
             Row row = sheet.createRow(sheet.getLastRowNum() + 1);
             Row lastRow = sheet.getRow(sheet.getLastRowNum());
@@ -36,7 +36,7 @@ public class OfficerRegistrationDB {
                 workbook.write(fos);
             }
             workbook.close();
-            return new OfficerRegistration(registrationID, officer, project.getProjectID(), registrationStatus);
+            return new OfficerRegistration(registrationID, officer, project, registrationStatus);
         }
     }
 
@@ -56,15 +56,16 @@ public class OfficerRegistrationDB {
                 int projectId = (int) row.getCell(OfficerRegistrationFileIndex.PROJECT.getIndex()).getNumericCellValue();
                 String status = row.getCell(OfficerRegistrationFileIndex.STATUS.getIndex()).getStringCellValue();
     
-                HDBOfficer officer = HDBOfficerDB.getOfficerByNRIC(officerNric);    
-
-                OfficerRegistration registration = new OfficerRegistration(registrationId, officer, projectId, status);
-                officerRegistrations.add(registration);
+                HDBOfficer officer = HDBOfficerDB.getOfficerByNRIC(officerNric);
+                Project project = Project.getProjectByIdDB(projectId);
+                
+                OfficerRegistration registration = new OfficerRegistration(registrationId, officer, project, status);
+                officerRegistrations.add(registration);                    
+                }
             }
+            return officerRegistrations;
         }
     
-        return officerRegistrations;
-    }
 
     public static void updateOfficerRegistration(int registrationID, String newStatus) throws IOException {
         try (FileInputStream fileStreamIn = new FileInputStream(REGISTRATION_FILEPATH);
@@ -92,8 +93,6 @@ public class OfficerRegistrationDB {
                     try (FileOutputStream fileOut = new FileOutputStream(REGISTRATION_FILEPATH)) {
                         workbook.write(fileOut);
                     }
-    
-                    System.out.println("[SUCCESS] Registration ID " + registrationID + " updated to status: " + newStatus);
                     return;
                 }
             }
@@ -102,9 +101,6 @@ public class OfficerRegistrationDB {
             throw new IllegalArgumentException("No matching registration found for ID: " + registrationID);
         }
     }
-
-    
-
 
     private static void populateRegistrationRow(Row row, int registrationID, HDBOfficer officer, Project project, String status) {
         row.createCell(OfficerRegistrationFileIndex.ID.getIndex()).setCellValue(registrationID); // Using row number as ID

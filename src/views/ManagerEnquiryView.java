@@ -10,21 +10,16 @@ import models.Project;
 import utilities.ScannerUtility;
 import models.HDBManager;
 
-public class ManagerEnquiryView implements DisplayResult {
+public class ManagerEnquiryView implements IDisplayResult {
 
     private ManagerEnquiryController controller;
-    private Scanner scanner;
-    private HDBManager loggedInManager;
 
     public ManagerEnquiryView(ManagerEnquiryController controller) {
         this.controller = controller;
-        this.scanner = ScannerUtility.SCANNER; // Use shared scanner
     }
 
     public ManagerEnquiryView(HDBManager HDBManager) {
         this.controller = new ManagerEnquiryController();
-        this.loggedInManager = HDBManager;
-        this.scanner = ScannerUtility.SCANNER; // Use shared scanner
     }
 
     public void showEnquiryMenu() {
@@ -38,8 +33,8 @@ public class ManagerEnquiryView implements DisplayResult {
             System.out.println("0. Exit");
             System.out.println("=========================================");
             System.out.print("Enter your choice: ");
-            int choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+            int choice = ScannerUtility.SCANNER.nextInt();
+            ScannerUtility.SCANNER.nextLine(); // Consume newline
     
             switch (choice) {
                 case 1:
@@ -62,11 +57,11 @@ public class ManagerEnquiryView implements DisplayResult {
 
     private void replyToEnquiry() {
         System.out.print("Enter Enquiry ID: ");
-        int enquiryID = scanner.nextInt();
-        scanner.nextLine(); // Consume newline
+        int enquiryID = ScannerUtility.SCANNER.nextInt();
+        ScannerUtility.SCANNER.nextLine(); // Consume newline
 
         System.out.print("Enter your reply: ");
-        String reply = scanner.nextLine();
+        String reply = ScannerUtility.SCANNER.nextLine();
 
         try {
             ArrayList<Enquiry> allEnquiries = controller.getAllProjectEnquiries();
@@ -94,8 +89,8 @@ public class ManagerEnquiryView implements DisplayResult {
 
     private void viewProjectEnquiries() {
         System.out.print("Enter Project ID: ");
-        int projectID = scanner.nextInt();
-        scanner.nextLine(); // Consume newline
+        int projectID = ScannerUtility.SCANNER.nextInt();
+        ScannerUtility.SCANNER.nextLine(); // Consume newline
 
         try {
             // Create a Project object with default values for other parameters

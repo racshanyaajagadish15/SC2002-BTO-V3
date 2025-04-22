@@ -10,18 +10,17 @@ import java.text.ParseException;
 import databases.ProjectDB;
 import views.ManagerProjectView;
 import models.Project;
+import utilities.ScannerUtility;
 import models.FlatType;
 import models.HDBManager;
 
 public class ManagerProjectController implements IManagerProjectController {
 
 	private ManagerProjectView view;
-	private Scanner scanner;
 	private HDBManager loggedInManager;
 
 	public ManagerProjectController() {
 		this.view = new ManagerProjectView();
-		this.scanner = new Scanner(System.in);
 	}
 	
 
@@ -67,12 +66,12 @@ public class ManagerProjectController implements IManagerProjectController {
 	
 
     private int getValidChoice(int min, int max) {
-        while (!scanner.hasNextInt()) {
+        while (!ScannerUtility.SCANNER.hasNextInt()) {
             System.out.print("Invalid input. Please enter a number: ");
-            scanner.next();
+            ScannerUtility.SCANNER.next();
         }
-        int choice = scanner.nextInt();
-        scanner.nextLine(); // Clear newline
+        int choice = ScannerUtility.SCANNER.nextInt();
+        ScannerUtility.SCANNER.nextLine(); // Clear newline
         return choice;
     }
 
@@ -80,22 +79,22 @@ public class ManagerProjectController implements IManagerProjectController {
 	public void createProject() {
         try {
             System.out.print("Enter Project Name: ");
-            String projectName = scanner.nextLine();
+            String projectName = ScannerUtility.SCANNER.nextLine();
 
             System.out.print("Enter Neighborhood: ");
-            String neighborhood = scanner.nextLine();
+            String neighborhood = ScannerUtility.SCANNER.nextLine();
 
             System.out.print("Enter Application Opening Date (yyyy-MM-dd): ");
-            String openingDateInput = scanner.nextLine();
+            String openingDateInput = ScannerUtility.SCANNER.nextLine();
             Date openingDate = new SimpleDateFormat("yyyy-MM-dd").parse(openingDateInput);
 
             System.out.print("Enter Application Closing Date (yyyy-MM-dd): ");
-            String closingDateInput = scanner.nextLine();
+            String closingDateInput = ScannerUtility.SCANNER.nextLine();
             Date closingDate = new SimpleDateFormat("yyyy-MM-dd").parse(closingDateInput);
 
             System.out.print("Enter Number of Officer Slots: ");
-            int officerSlots = scanner.nextInt();
-            scanner.nextLine();
+            int officerSlots = ScannerUtility.SCANNER.nextInt();
+            ScannerUtility.SCANNER.nextLine();
 
             ArrayList<FlatType> flatTypes = new ArrayList<>();
             System.out.println("Enter Flat Types:");
@@ -105,8 +104,8 @@ public class ManagerProjectController implements IManagerProjectController {
                 System.out.println("2. 3-Room");
                 System.out.println("0. Done");
                 System.out.print("Enter your choice: ");
-                int choice = scanner.nextInt();
-                scanner.nextLine();
+                int choice = ScannerUtility.SCANNER.nextInt();
+                ScannerUtility.SCANNER.nextLine();
 
                 if (choice == 0) {
                     break;
@@ -123,19 +122,19 @@ public class ManagerProjectController implements IManagerProjectController {
                 }
 
                 System.out.print("Enter Number of Units: ");
-                int numUnits = scanner.nextInt();
-                scanner.nextLine();
+                int numUnits = ScannerUtility.SCANNER.nextInt();
+                ScannerUtility.SCANNER.nextLine();
 
                 System.out.print("Enter Price per Flat: ");
-                double pricePerFlat = scanner.nextDouble();
-                scanner.nextLine();
+                double pricePerFlat = ScannerUtility.SCANNER.nextDouble();
+                ScannerUtility.SCANNER.nextLine();
 
                 flatTypes.add(new FlatType(flatType, numUnits, pricePerFlat));
             }
 
             System.out.print("Enter Project Visibility (true/false): ");
-            boolean visibility = scanner.nextBoolean();
-            scanner.nextLine();
+            boolean visibility = ScannerUtility.SCANNER.nextBoolean();
+            ScannerUtility.SCANNER.nextLine();
 
             if (loggedInManager == null) {
                 throw new IllegalStateException("No manager is logged in. Cannot create project.");
@@ -181,7 +180,7 @@ public class ManagerProjectController implements IManagerProjectController {
 	private void editProjectMenu() {
         try {
             System.out.print("Enter the name of the project to edit: ");
-            String projectName = scanner.nextLine().trim();
+            String projectName = ScannerUtility.SCANNER.nextLine().trim();
         
             Project project = ProjectDB.getProjectByName(projectName);
             if (project == null) {
@@ -199,19 +198,19 @@ public class ManagerProjectController implements IManagerProjectController {
             System.out.println("Leave field blank to keep current value.");
         
             System.out.print("New Project Name [" + project.getProjectName() + "]: ");
-            String newName = scanner.nextLine();
+            String newName = ScannerUtility.SCANNER.nextLine();
             if (!newName.isBlank()) {
                 project.setProjectName(newName);
             }
         
             System.out.print("New Neighborhood [" + project.getNeighborhood() + "]: ");
-            String newNeighborhood = scanner.nextLine();
+            String newNeighborhood = ScannerUtility.SCANNER.nextLine();
             if (!newNeighborhood.isBlank()) {
                 project.setNeighborhood(newNeighborhood);
             }
         
             System.out.print("New Officer Slots [" + project.getOfficerSlots() + "]: ");
-            String officerSlotsInput = scanner.nextLine();
+            String officerSlotsInput = ScannerUtility.SCANNER.nextLine();
             if (!officerSlotsInput.isBlank()) {
                 try {
                     project.setOfficerSlots(Integer.parseInt(officerSlotsInput));
@@ -252,7 +251,7 @@ public class ManagerProjectController implements IManagerProjectController {
 
 	private void toggleProjectVisibilityMenu() {
 		System.out.print("Enter the name of the project to toggle visibility: ");
-		String projectName = scanner.nextLine().trim();
+		String projectName = ScannerUtility.SCANNER.nextLine().trim();
 	
 		ArrayList<Project> projects = getSpecificProject(projectName);
 	
@@ -348,7 +347,7 @@ public class ManagerProjectController implements IManagerProjectController {
 
 	private void deleteProjectMenu() {
 		System.out.print("Enter the name of the project to delete: ");
-		String projectName = scanner.nextLine();
+		String projectName = ScannerUtility.SCANNER.nextLine();
 		ArrayList<Project> projects = getSpecificProject(projectName);
 	
 		if (projects.isEmpty()) {
@@ -358,7 +357,7 @@ public class ManagerProjectController implements IManagerProjectController {
 	
 		Project project = projects.get(0); // Assuming only one project matches the name
 		System.out.print("Are you sure you want to delete this project? (yes/no): ");
-		String confirmation = scanner.nextLine();
+		String confirmation = ScannerUtility.SCANNER.nextLine();
 	
 		if (confirmation.equalsIgnoreCase("yes")) {
 			deleteProject(project);
@@ -374,7 +373,7 @@ public class ManagerProjectController implements IManagerProjectController {
 
 	private void searchProjects() {
 		System.out.print("Enter search keyword (e.g., project name or neighborhood): ");
-		String keyword = scanner.nextLine().trim().toLowerCase(); // Normalize input for case-insensitive search
+		String keyword = ScannerUtility.SCANNER.nextLine().trim().toLowerCase(); // Normalize input for case-insensitive search
 	
 		ArrayList<Project> allProjects = getAllProjects();
 		ArrayList<Project> filteredProjects = new ArrayList<>();

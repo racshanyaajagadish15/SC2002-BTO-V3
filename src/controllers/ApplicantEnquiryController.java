@@ -48,7 +48,6 @@ public class ApplicantEnquiryController implements IApplicantEnquiryController {
     public boolean submitEnquiry(Enquiry enquiry) {
         try {
             boolean success = Enquiry.createEnquiryDB(enquiry);
-            view.showCreateEnquiryResult(success);
             return success;
         } catch (Exception e) {
             view.displayError("An error occurred: " + e.getMessage());

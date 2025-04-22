@@ -4,7 +4,7 @@ import models.Project;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class ManagerProjectView implements DisplayResult{
+public class ManagerProjectView implements IDisplayResult{
 
     public void showProjectMenuHeader() {
         System.out.println("\n=========================================");

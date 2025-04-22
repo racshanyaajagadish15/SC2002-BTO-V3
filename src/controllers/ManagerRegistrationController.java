@@ -20,7 +20,7 @@ public class ManagerRegistrationController implements IManagerRegistrationContro
 		try {
 			// Update the registration status in the database
 			officerApplication.setRegistrationStatus(status);
-			OfficerRegistrationDB.updateOfficerRegistration(
+			OfficerRegistration.updateOfficerApplicationStatusDB(
 				officerApplication.getOfficerRegistrationID(),
 				status
 			);

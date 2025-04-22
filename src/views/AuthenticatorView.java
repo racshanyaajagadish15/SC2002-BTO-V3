@@ -2,7 +2,7 @@ package views;
 
 import utilities.ScannerUtility;
 
-public class AuthenticatorView implements DisplayResult {
+public class AuthenticatorView implements IDisplayResult {
 
     public void showLoginBanner() {
         System.out.println("\n=========================================");

@@ -2,7 +2,7 @@ package views;
 
 import utilities.ScannerUtility;
 
-public class ApplicantMainView implements DisplayResult {
+public class ApplicantMainView implements IDisplayResult {
 
     public int showApplicantMenu() {
         System.out.println("\n=========================================");

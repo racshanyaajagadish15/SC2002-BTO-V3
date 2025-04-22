@@ -10,7 +10,7 @@ import models.Enquiry;
 import models.Project;
 import utilities.ScannerUtility;
 
-public class OfficerEnquiryView implements DisplayResult {
+public class OfficerEnquiryView implements IDisplayResult {
 
     public void showProjectEnquiries(Map<Project, ArrayList<Enquiry>> projectEnquiriesMap) {
         if (projectEnquiriesMap.size() == 0) {
@@ -36,12 +36,11 @@ public class OfficerEnquiryView implements DisplayResult {
                 ScannerUtility.SCANNER.nextLine(); 
 
                 if (projectIndex == -1) {
-                    System.out.println("Returning to Applicant Dashboard...");
                     return;
                 }
 
                 if (projectIndex < 0 || projectIndex >= projectList.size()) {
-                    System.out.println("Invalid selection. Please try again.");
+                    displayError("Invalid selection. Please try again.");
                     continue;
                 }
 
@@ -49,12 +48,12 @@ public class OfficerEnquiryView implements DisplayResult {
                 enquiries = projectEnquiriesMap.get(selectedProject);
 
                 if (enquiries.isEmpty()) {
-                    System.out.println("No enquiries found for the selected project.");
+                    displayInfo("No enquiries made for the selected project.");
                     continue;
                 }
             }
             catch(InputMismatchException e){
-                System.out.println("Invalid selection. Please try again.");
+                displayError("Invalid selection. Please try again.");
                 ScannerUtility.SCANNER.nextLine();
                 continue;
             }
@@ -70,14 +69,14 @@ public class OfficerEnquiryView implements DisplayResult {
                     if (enquiryIndex == -1) break;
 
                     if (enquiryIndex < 0 || enquiryIndex >= enquiries.size()) {
-                        System.out.println("Invalid selection. Please try again.");
+                        displayError("Invalid selection. Please try again.");
                         continue;
                     }
 
                     selectedEnquiry = enquiries.get(enquiryIndex);
                 }
                 catch(InputMismatchException e){
-                    System.out.println("Invalid selection. Please try again.");
+                    displayError("Invalid selection. Please try again.");
                     ScannerUtility.SCANNER.nextLine();
                     continue;
                 }
@@ -100,11 +99,11 @@ public class OfficerEnquiryView implements DisplayResult {
                         } else if (option == 0) {
                             break;
                         } else {
-                            System.out.println("Invalid option. Please try again.");
+                            displayError("Invalid option. Please try again.");
                         }
                     }
                     catch(InputMismatchException e){
-                        System.out.println("Invalid selection. Please try again.");
+                        displayError("Invalid selection. Please try again.");
                         ScannerUtility.SCANNER.nextLine();
                         continue;
                     }

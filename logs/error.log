@@ -18,3 +18,83 @@ Stacktrace: 	java.base/java.io.FileInputStream.open0(Native Method)
 	controllers.AuthenticatorController.authenticate(AuthenticatorController.java:32)
 	Main.main(Main.java:7)
 
+[2025-04-22 21:17:52] ERROR: Failed to process row: 3 - Cannot invoke "org.apache.poi.ss.usermodel.Cell.getStringCellValue()" because the return value of "org.apache.poi.ss.usermodel.Row.getCell(int)" is null
+Stacktrace: 	databases.ApplicationDB.createApplicationFromRow(ApplicationDB.java:142)
+	databases.ApplicationDB.getAllApplications(ApplicationDB.java:191)
+	controllers.ManagerMainController.generateApplicantReport(ManagerMainController.java:29)
+	views.ManagerMainView.handleReportGeneration(ManagerMainView.java:124)
+	views.ManagerMainView.showManagerMenu(ManagerMainView.java:45)
+	controllers.ManagerMainController.managerSelectMenu(ManagerMainController.java:23)
+	controllers.AuthenticatorController.authenticate(AuthenticatorController.java:81)
+	Main.main(Main.java:7)
+
+[2025-04-22 21:17:52] ERROR: Failed to process row: 4 - Cannot invoke "org.apache.poi.ss.usermodel.Cell.getStringCellValue()" because the return value of "org.apache.poi.ss.usermodel.Row.getCell(int)" is null
+Stacktrace: 	databases.ApplicationDB.createApplicationFromRow(ApplicationDB.java:142)
+	databases.ApplicationDB.getAllApplications(ApplicationDB.java:191)
+	controllers.ManagerMainController.generateApplicantReport(ManagerMainController.java:29)
+	views.ManagerMainView.handleReportGeneration(ManagerMainView.java:124)
+	views.ManagerMainView.showManagerMenu(ManagerMainView.java:45)
+	controllers.ManagerMainController.managerSelectMenu(ManagerMainController.java:23)
+	controllers.AuthenticatorController.authenticate(AuthenticatorController.java:81)
+	Main.main(Main.java:7)
+
+[2025-04-22 21:18:05] ERROR: Failed to process row: 3 - Cannot invoke "org.apache.poi.ss.usermodel.Cell.getStringCellValue()" because the return value of "org.apache.poi.ss.usermodel.Row.getCell(int)" is null
+Stacktrace: 	databases.ApplicationDB.createApplicationFromRow(ApplicationDB.java:142)
+	databases.ApplicationDB.getAllApplications(ApplicationDB.java:191)
+	controllers.ManagerMainController.generateApplicantReport(ManagerMainController.java:29)
+	views.ManagerMainView.handleReportGeneration(ManagerMainView.java:124)
+	views.ManagerMainView.showManagerMenu(ManagerMainView.java:45)
+	controllers.ManagerMainController.managerSelectMenu(ManagerMainController.java:23)
+	controllers.AuthenticatorController.authenticate(AuthenticatorController.java:81)
+	Main.main(Main.java:7)
+
+[2025-04-22 21:18:05] ERROR: Failed to process row: 4 - Cannot invoke "org.apache.poi.ss.usermodel.Cell.getStringCellValue()" because the return value of "org.apache.poi.ss.usermodel.Row.getCell(int)" is null
+Stacktrace: 	databases.ApplicationDB.createApplicationFromRow(ApplicationDB.java:142)
+	databases.ApplicationDB.getAllApplications(ApplicationDB.java:191)
+	controllers.ManagerMainController.generateApplicantReport(ManagerMainController.java:29)
+	views.ManagerMainView.handleReportGeneration(ManagerMainView.java:124)
+	views.ManagerMainView.showManagerMenu(ManagerMainView.java:45)
+	controllers.ManagerMainController.managerSelectMenu(ManagerMainController.java:23)
+	controllers.AuthenticatorController.authenticate(AuthenticatorController.java:81)
+	Main.main(Main.java:7)
+
+[2025-04-22 21:18:12] ERROR: Failed to process row: 3 - Cannot invoke "org.apache.poi.ss.usermodel.Cell.getStringCellValue()" because the return value of "org.apache.poi.ss.usermodel.Row.getCell(int)" is null
+Stacktrace: 	databases.ApplicationDB.createApplicationFromRow(ApplicationDB.java:142)
+	databases.ApplicationDB.getAllApplications(ApplicationDB.java:191)
+	controllers.ManagerMainController.generateApplicantReport(ManagerMainController.java:29)
+	views.ManagerMainView.handleReportGeneration(ManagerMainView.java:124)
+	views.ManagerMainView.showManagerMenu(ManagerMainView.java:45)
+	controllers.ManagerMainController.managerSelectMenu(ManagerMainController.java:23)
+	controllers.AuthenticatorController.authenticate(AuthenticatorController.java:81)
+	Main.main(Main.java:7)
+
+[2025-04-22 21:18:12] ERROR: Failed to process row: 4 - Cannot invoke "org.apache.poi.ss.usermodel.Cell.getStringCellValue()" because the return value of "org.apache.poi.ss.usermodel.Row.getCell(int)" is null
+Stacktrace: 	databases.ApplicationDB.createApplicationFromRow(ApplicationDB.java:142)
+	databases.ApplicationDB.getAllApplications(ApplicationDB.java:191)
+	controllers.ManagerMainController.generateApplicantReport(ManagerMainController.java:29)
+	views.ManagerMainView.handleReportGeneration(ManagerMainView.java:124)
+	views.ManagerMainView.showManagerMenu(ManagerMainView.java:45)
+	controllers.ManagerMainController.managerSelectMenu(ManagerMainController.java:23)
+	controllers.AuthenticatorController.authenticate(AuthenticatorController.java:81)
+	Main.main(Main.java:7)
+
+[2025-04-22 21:19:44] ERROR: Failed to process row: 3 - Cannot invoke "org.apache.poi.ss.usermodel.Cell.getStringCellValue()" because the return value of "org.apache.poi.ss.usermodel.Row.getCell(int)" is null
+Stacktrace: 	databases.ApplicationDB.createApplicationFromRow(ApplicationDB.java:142)
+	databases.ApplicationDB.getAllApplications(ApplicationDB.java:191)
+	controllers.ManagerMainController.generateApplicantReport(ManagerMainController.java:29)
+	views.ManagerMainView.handleReportGeneration(ManagerMainView.java:124)
+	views.ManagerMainView.showManagerMenu(ManagerMainView.java:45)
+	controllers.ManagerMainController.managerSelectMenu(ManagerMainController.java:23)
+	controllers.AuthenticatorController.authenticate(AuthenticatorController.java:81)
+	Main.main(Main.java:7)
+
+[2025-04-22 21:19:44] ERROR: Failed to process row: 4 - Cannot invoke "org.apache.poi.ss.usermodel.Cell.getStringCellValue()" because the return value of "org.apache.poi.ss.usermodel.Row.getCell(int)" is null
+Stacktrace: 	databases.ApplicationDB.createApplicationFromRow(ApplicationDB.java:142)
+	databases.ApplicationDB.getAllApplications(ApplicationDB.java:191)
+	controllers.ManagerMainController.generateApplicantReport(ManagerMainController.java:29)
+	views.ManagerMainView.handleReportGeneration(ManagerMainView.java:124)
+	views.ManagerMainView.showManagerMenu(ManagerMainView.java:45)
+	controllers.ManagerMainController.managerSelectMenu(ManagerMainController.java:23)
+	controllers.AuthenticatorController.authenticate(AuthenticatorController.java:81)
+	Main.main(Main.java:7)
+
