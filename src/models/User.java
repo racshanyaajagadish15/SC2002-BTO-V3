@@ -85,6 +85,19 @@ public class User {
 		this.filter = filter;
 	}
 
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	public void setNric(String nric) {
+		this.nric = nric;
+	}
+	public void setAge(int age) {
+		this.age = age;
+	}
+	public void setMaritalStatus(String maritalStatus) {
+		this.maritalStatus = maritalStatus;
+    
 	public boolean validatePassword(String password) {
 		return this.getPassword().equals(password);
 	}
@@ -109,5 +122,6 @@ public class User {
 			return HDBManagerDB.saveUser((HDBManager) this);
 		}
 		return false;
+
 	}
 }

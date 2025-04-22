@@ -32,7 +32,7 @@ public class OfficerApplicationController extends AbstractApplicationController 
 
 				// Check if there are registrations to be an officer
 				HDBOfficer officer = (HDBOfficer) applicant;
-				List<OfficerRegistration> officerRegistrations = OfficerRegistration.getOfficerRegistrationsByOfficerDB(officer);
+				List<OfficerRegistration> officerRegistrations = OfficerRegistration.getOfficerRegistrationsByOfficer(officer);
 				boolean toSkip = false;
 				for (OfficerRegistration officerRegistration : officerRegistrations){
 					if (officerRegistration.getProjectID() == project.getProjectID()){

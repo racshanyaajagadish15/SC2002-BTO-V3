@@ -3,16 +3,14 @@ package views;
 import utilities.ScannerUtility;
 import controllers.ManagerProjectController;
 import models.HDBManager;
-import controllers.ManagerEnquiryController;
-import views.ManagerEnquiryView;
+
 
 public class ManagerMainView {
     private ManagerApplicationView applicationView;
+    private ManagerRegistrationView registrationView;
     private ManagerProjectView projectView;
     private ManagerEnquiryView enquiryView;
-    private ManagerRegistrationView registrationView;
     private HDBManager loggedInManager;
-    private ManagerEnquiryController enquiryController;
 
     
 

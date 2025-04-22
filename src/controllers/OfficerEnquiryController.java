@@ -70,7 +70,6 @@ public class OfficerEnquiryController implements IOfficerEnquiryController {
             ArrayList<Project> projectsAssigned = new ArrayList<Project>();
             // Mapping of Project -> Enquiries ArrayList
             Map<Project, ArrayList<Enquiry>> projectEnquiriesMap = new HashMap<>();
-
             for (OfficerRegistration officerRegistration : officerRegistrations){
                 if (officerRegistration.getRegistrationStatus().equals(OfficerRegisterationStatus.SUCESSFUL.getStatus())){
                     projectsAssigned.add(Project.getProjectByIdDB(officerRegistration.getProjectID()));

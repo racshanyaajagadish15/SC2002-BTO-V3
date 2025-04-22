@@ -11,6 +11,7 @@ import models.OfficerRegistration;
 import models.Project;
 
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -19,31 +20,6 @@ import enums.OfficerRegistrationFileIndex;
 
 public class OfficerRegistrationDB {
     private static final String REGISTRATION_FILEPATH = "resources/data/OfficerRegistration.xlsx";
-
-    public static ArrayList<OfficerRegistration> getOfficerRegistrationsByOfficer(HDBOfficer officer) throws IOException {
-        ArrayList<OfficerRegistration> officerRegistrations = new ArrayList<>();
-
-        try (FileInputStream fileStreamIn = new FileInputStream(REGISTRATION_FILEPATH);
-             Workbook workbook = new XSSFWorkbook(fileStreamIn)) {
-            Sheet sheet = workbook.getSheetAt(0);
-
-            for (Row row : sheet) {
-                // Skip header
-                if (row.getRowNum() == 0) continue;
-                String officerNric = row.getCell(OfficerRegistrationFileIndex.NRIC.getIndex()).getStringCellValue();
-
-                if (officerNric.equals(officer.getNric())) {
-                    int registrationId = (int) row.getCell(OfficerRegistrationFileIndex.ID.getIndex()).getNumericCellValue();
-                    int projectId = (int) row.getCell(OfficerRegistrationFileIndex.PROJECT.getIndex()).getNumericCellValue();
-                    String status = row.getCell(OfficerRegistrationFileIndex.STATUS.getIndex()).getStringCellValue();
-                    
-                    OfficerRegistration registration = new OfficerRegistration(registrationId, officer, projectId, status);
-                    officerRegistrations.add(registration);
-                }
-            }
-        }
-        return officerRegistrations;
-    }
 
     public static OfficerRegistration createOfficerRegistration(HDBOfficer officer, Project project, String registrationStatus) throws IOException{
         try (FileInputStream fileStreamIn = new FileInputStream(REGISTRATION_FILEPATH);
@@ -63,6 +39,72 @@ public class OfficerRegistrationDB {
             return new OfficerRegistration(registrationID, officer, project.getProjectID(), registrationStatus);
         }
     }
+
+    public static ArrayList<OfficerRegistration> getAllOfficerRegistrations() throws IOException {
+        ArrayList<OfficerRegistration> officerRegistrations = new ArrayList<>();
+    
+        try (FileInputStream fileStreamIn = new FileInputStream(REGISTRATION_FILEPATH);
+             Workbook workbook = new XSSFWorkbook(fileStreamIn)) {
+            Sheet sheet = workbook.getSheetAt(0);
+    
+            for (Row row : sheet) {
+                // Skip header row
+                if (row.getRowNum() == 0) continue;
+    
+                int registrationId = (int) row.getCell(OfficerRegistrationFileIndex.ID.getIndex()).getNumericCellValue();
+                String officerNric = row.getCell(OfficerRegistrationFileIndex.NRIC.getIndex()).getStringCellValue();
+                int projectId = (int) row.getCell(OfficerRegistrationFileIndex.PROJECT.getIndex()).getNumericCellValue();
+                String status = row.getCell(OfficerRegistrationFileIndex.STATUS.getIndex()).getStringCellValue();
+    
+                HDBOfficer officer = HDBOfficerDB.getOfficerByNRIC(officerNric);    
+
+                OfficerRegistration registration = new OfficerRegistration(registrationId, officer, projectId, status);
+                officerRegistrations.add(registration);
+            }
+        }
+    
+        return officerRegistrations;
+    }
+
+    public static void updateOfficerRegistration(int registrationID, String newStatus) throws IOException {
+        try (FileInputStream fileStreamIn = new FileInputStream(REGISTRATION_FILEPATH);
+             Workbook workbook = new XSSFWorkbook(fileStreamIn)) {
+    
+            Sheet sheet = workbook.getSheetAt(0);
+    
+            // Iterate through the rows to find the matching registration ID
+            for (Row row : sheet) {
+                if (row.getRowNum() == 0) continue; // Skip header row
+    
+                // Retrieve the registration ID from the row
+                int rowRegistrationID = (int) row.getCell(OfficerRegistrationFileIndex.ID.getIndex()).getNumericCellValue();
+    
+                // Check if the registration ID matches
+                if (rowRegistrationID == registrationID) {
+                    // Update the status in the row
+                    Cell statusCell = row.getCell(OfficerRegistrationFileIndex.STATUS.getIndex());
+                    if (statusCell == null) {
+                        statusCell = row.createCell(OfficerRegistrationFileIndex.STATUS.getIndex());
+                    }
+                    statusCell.setCellValue(newStatus);
+    
+                    // Save the changes to the file
+                    try (FileOutputStream fileOut = new FileOutputStream(REGISTRATION_FILEPATH)) {
+                        workbook.write(fileOut);
+                    }
+    
+                    System.out.println("[SUCCESS] Registration ID " + registrationID + " updated to status: " + newStatus);
+                    return;
+                }
+            }
+    
+            // If no matching registration ID is found, throw an exception
+            throw new IllegalArgumentException("No matching registration found for ID: " + registrationID);
+        }
+    }
+
+    
+
 
     private static void populateRegistrationRow(Row row, int registrationID, HDBOfficer officer, Project project, String status) {
         row.createCell(OfficerRegistrationFileIndex.ID.getIndex()).setCellValue(registrationID); // Using row number as ID

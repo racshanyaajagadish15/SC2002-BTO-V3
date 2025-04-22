@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import databases.OfficerRegistrationDB;
 import enums.OfficerRegisterationStatus;
 import models.Application;
 
@@ -30,24 +31,51 @@ public class OfficerJoinProjectController implements IOfficerJoinProjectControll
 
 	}
 
-	/**
-	 * 
-	 * @param officerRegistrationID
-	 */
+	@Override
 	public String getRegistrationStatus(int officerRegistrationID) {
-		// TODO - implement OfficerJoinProjectController.getRegistrationStatus
-		return null;
+		try {
+			// Retrieve all officer registrations from the database
+			ArrayList<OfficerRegistration> allRegistrations = OfficerRegistrationDB.getAllOfficerRegistrations();
+
+			// Find the registration with the matching ID
+			for (OfficerRegistration registration : allRegistrations) {
+				if (registration.getOfficerRegistrationID() == officerRegistrationID) {
+					return registration.getRegistrationStatus();
+				}
+			}
+
+			// If no matching registration is found, return a default message
+			return "Registration not found.";
+		} catch (IOException e) {
+			System.out.println("[ERROR] Failed to retrieve registration status: " + e.getMessage());
+			return "Error retrieving registration status.";
+		}
 	}
 
 	/**
 	 * 
 	 * @param project
 	 */
+	@Override
 	public boolean checkProjectEligibility(Project project) {
-		// TODO - implement OfficerJoinProjectController.checkProjectEligibility
-		return false;
-	}
+		try {
+			// Check if the project is visible
+			if (!project.getProjectVisibility()) {
+				return false;
+			}
 
+			// Check if the project is still open for applications
+			if (!project.getApplicationClosingDate().after(new Date())) {
+				return false;
+			}
+
+			// Additional eligibility checks can be added here
+			return true;
+		} catch (Exception e) {
+			System.out.println("[ERROR] Failed to check project eligibility: " + e.getMessage());
+			return false;
+		}
+	}
     public void joinProjectAction(HDBOfficer officer) {
 		OfficerJoinProjectView officerJoinProjectView = new OfficerJoinProjectView();
 		OfficerJoinProjectController officerJoinProjectController = new OfficerJoinProjectController();
@@ -58,7 +86,7 @@ public class OfficerJoinProjectController implements IOfficerJoinProjectControll
 		OfficerJoinProjectView officerJoinProjectView = new OfficerJoinProjectView();
 		try {
 			// Get all registrations the user has made
-			ArrayList<OfficerRegistration> registrations = OfficerRegistration.getOfficerRegistrationsByOfficerDB(officer);
+			ArrayList<OfficerRegistration> registrations = OfficerRegistration.getOfficerRegistrationsByOfficer(officer);
 			officerJoinProjectView.showRegistrationStatus(registrations);
 		} catch (IOException | NumberFormatException e) {
 			System.out.println("Cannot show project registrations due to error, contact admin if error persist.");
@@ -70,7 +98,7 @@ public class OfficerJoinProjectController implements IOfficerJoinProjectControll
 			List<Project> allProjects = Project.getAllProjectsDB();
 			ArrayList<Project> registrableProjects = new ArrayList<Project>();
 			// Get all registrations the user has made
-			ArrayList<OfficerRegistration> registrations = OfficerRegistration.getOfficerRegistrationsByOfficerDB(officer);
+			ArrayList<OfficerRegistration> registrations = OfficerRegistration.getOfficerRegistrationsByOfficer(officer);
 			Application application = Application.getApplicationByNricDB(officer.getNric());
 			Project applicationProject = null;
 			if (application != null){

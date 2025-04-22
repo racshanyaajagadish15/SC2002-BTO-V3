@@ -291,4 +291,66 @@ public class ProjectDB {
         }
         return null; // Return null if no project matches the given ID
     }
+
+    public static void addOfficerNRICToExcel(int projectID, String officerNRIC) throws IOException {
+        try (FileInputStream fis = new FileInputStream(PROJECT_FILEPATH);
+             Workbook workbook = new XSSFWorkbook(fis)) {
+    
+            Sheet sheet = workbook.getSheetAt(0);
+            int columnIdx = -1;
+            int projectRowIdx = -1;
+    
+            // Find the column index for "Officer"
+            Row headerRow = sheet.getRow(0);
+            for (Cell cell : headerRow) {
+                if (cell.getStringCellValue().equalsIgnoreCase("Officer")) {
+                    columnIdx = cell.getColumnIndex();
+                    break;
+                }
+            }
+    
+            // Find the row index for the specified project ID
+            for (Row row : sheet) {
+                Cell cell = row.getCell(ProjectListFileIndex.PROJECT_ID.getIndex());
+                if (cell != null) {
+                    int cellProjectID = -1;
+                    if (cell.getCellType() == CellType.NUMERIC) {
+                        cellProjectID = (int) cell.getNumericCellValue();
+                    } else if (cell.getCellType() == CellType.STRING) {
+                        try {
+                            cellProjectID = Integer.parseInt(cell.getStringCellValue());
+                        } catch (NumberFormatException e) {
+                            continue;
+                        }
+                    }
+    
+                    if (cellProjectID == projectID) {
+                        projectRowIdx = row.getRowNum();
+                        break;
+                    }
+                }
+            }
+    
+            if (columnIdx == -1 || projectRowIdx == -1) {
+                throw new IOException("Column or Project ID not found in the Excel sheet.");
+            }
+    
+            // Append the NRIC to the "Officer" column
+            Row projectRow = sheet.getRow(projectRowIdx);
+            Cell cell = projectRow.getCell(columnIdx);
+            if (cell == null) {
+                cell = projectRow.createCell(columnIdx);
+            }
+            String existingValue = cell.getStringCellValue();
+            String newValue = existingValue.isEmpty() ? officerNRIC : existingValue + ", " + officerNRIC;
+            cell.setCellValue(newValue);
+    
+            // Save the changes
+            try (FileOutputStream fos = new FileOutputStream(PROJECT_FILEPATH)) {
+                workbook.write(fos);
+            }
+        } catch (IOException e) {
+            throw e;
+        }
+    }
 }

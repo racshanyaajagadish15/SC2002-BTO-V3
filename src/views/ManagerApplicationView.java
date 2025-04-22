@@ -180,27 +180,6 @@ public class ManagerApplicationView implements DisplayResult{
             System.out.println("[ERROR] Failed to retrieve applications: " + e.getMessage());
         }
     }
-    private boolean isManagerAuthorized(Project project) {
-        try {
-            // Fetch the project using the Project ID
-            Project managedProject = ProjectDB.getProjectByID(project.getProjectID());
-            if (managedProject == null) {
-                System.out.println("[DEBUG] Project not found for ID: " + project.getProjectID());
-                return false;
-            }
-    
-            // Check if the logged-in manager owns the project
-            boolean isAuthorized = managedProject.getProjectManager().getNric().equals(loggedInManager.getNric());
-            System.out.println("[DEBUG] Checking authorization: Manager NRIC = " + loggedInManager.getNric() +
-                               ", Project Manager NRIC = " + managedProject.getProjectManager().getNric() +
-                               ", Authorized = " + isAuthorized);
-            return isAuthorized;
-        } catch (IOException e) {
-            System.out.println("[ERROR] Failed to verify project ownership: " + e.getMessage());
-            return false;
-        }
-    }
-
     // Fetch an application by ID (replace with actual logic)
     private Application fetchApplicationByID(int applicationID) {
         try {
