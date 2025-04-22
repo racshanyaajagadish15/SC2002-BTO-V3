@@ -1,3 +1,8 @@
+package controllers;
+import java.util.ArrayList;
+import models.OfficerRegistration;
+
+
 public interface IManagerRegistrationController {
 
 	/**
@@ -5,8 +10,7 @@ public interface IManagerRegistrationController {
 	 * @param officerApplication
 	 * @param status
 	 */
-	void updateOfficerApplicationStatus(OfficerApplication officerApplication, String status);
-
-	ArrayList<OfficerRegistrations> getPendingRegistrations();
+	public void updateOfficerApplicationStatus(OfficerRegistration officerApplication, String status);
+	public ArrayList<OfficerRegistration> getPendingRegistrations();
 
 }

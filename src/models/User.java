@@ -81,4 +81,17 @@ public class User {
 	public void setFilter(List<String> filter) {
 		this.filter = filter;
 	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	public void setNric(String nric) {
+		this.nric = nric;
+	}
+	public void setAge(int age) {
+		this.age = age;
+	}
+	public void setMaritalStatus(String maritalStatus) {
+		this.maritalStatus = maritalStatus;
+	}
 }

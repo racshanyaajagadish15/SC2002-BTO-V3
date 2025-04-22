@@ -35,26 +35,6 @@ public class OfficerRegistration {
 		return OfficerRegistrationDB.createOfficerRegistration(officer, project, registrationStatus);
 	}
 
-	/**
-	 * 
-	 * @param officer
-	 * @throws IOException 
-	 */
-	public static ArrayList<OfficerRegistration> getOfficerRegistrationsByOfficerDB(HDBOfficer officer) throws IOException {
-		return OfficerRegistrationDB.getOfficerRegistrationsByOfficer(officer);
-	}
-
-	/**
-	 * 
-	 * @param officer
-	 * @param project
-	 * @param registrationStatus
-	 */
-	public static OfficerRegistration updateOfficerRegistrationDB(HDBOfficer officer, Project project, String registrationStatus) {
-		// TODO - implement OfficerRegistration.updateOfficerRegistrationDB
-		
-	}
-
 	public int getOfficerRegistrationID() {
 		return this.officerRegistrationID;
 	}
@@ -102,5 +82,40 @@ public class OfficerRegistration {
 	public void setRegistrationStatus(String registrationStatus) {
 		this.registrationStatus = registrationStatus;
 	}
+	
+	public static ArrayList<OfficerRegistration> getPendingRegistrations() throws IOException {
+		ArrayList<OfficerRegistration> allRegistrations = OfficerRegistrationDB.getAllOfficerRegistrations();
+		ArrayList<OfficerRegistration> pendingRegistrations = new ArrayList<>();
+	
+		for (OfficerRegistration registration : allRegistrations) {
+			if ("Pending".equalsIgnoreCase(registration.getRegistrationStatus())) {
+				pendingRegistrations.add(registration);
+			}
+		}
+	
+		return pendingRegistrations;
+	}
 
+	public static ArrayList<OfficerRegistration> getOfficerRegistrationsByOfficer(HDBOfficer officer) throws IOException {
+        ArrayList<OfficerRegistration> allRegistrations = OfficerRegistrationDB.getAllOfficerRegistrations();
+        ArrayList<OfficerRegistration> officerRegistrations = new ArrayList<>();
+
+        for (OfficerRegistration registration : allRegistrations) {
+            if (registration.getOfficer().getNric().equalsIgnoreCase(officer.getNric())) {
+                officerRegistrations.add(registration);
+            }
+        }
+
+        return officerRegistrations;
+    }
+
+	public static void updateOfficerApplicationStatus(OfficerRegistration registration, String status) throws IOException {
+		// Update the registration status in the object
+		registration.setRegistrationStatus(status);
+	
+		// Persist the updated status in the database
+		OfficerRegistrationDB.updateOfficerRegistration(registration.getOfficerRegistrationID(), status);
+	
+		System.out.println("[SUCCESS] Registration ID " + registration.getOfficerRegistrationID() + " updated to status: " + status);
+	}
 }

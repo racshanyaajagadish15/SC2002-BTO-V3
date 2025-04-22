@@ -62,7 +62,7 @@ public class OfficerEnquiryController implements IOfficerEnquiryController {
 	public void enquiryActionMenu(HDBOfficer officer) {
 		try {
 			OfficerEnquiryView officerEnquiryView = new OfficerEnquiryView();
-			ArrayList<OfficerRegistration> officerRegistrations= OfficerRegistration.getOfficerRegistrationsByOfficerDB(officer);
+			ArrayList<OfficerRegistration> officerRegistrations= OfficerRegistration.getOfficerRegistrationsByOfficer(officer);
 			ArrayList<Project> projectsAssigned = new ArrayList<Project>();
 			// Mapping of Project -> Enquiries ArrayList
 			Map<Project, ArrayList<Enquiry>> projectEnquiriesMap = new HashMap<>();

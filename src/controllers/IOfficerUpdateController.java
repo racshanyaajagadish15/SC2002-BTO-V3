@@ -1,5 +1,7 @@
 package controllers;
 
+import models.Application;
+
 public interface IOfficerUpdateController {
 
 	/**
