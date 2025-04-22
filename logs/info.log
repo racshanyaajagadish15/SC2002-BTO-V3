@@ -11,3 +11,29 @@
 [2025-04-22 22:54:55] INFO: Created new enquiry ID: 13
 [2025-04-22 22:55:51] INFO: Created application for NRIC: T2345678D, Project: Acacia Breeze
 [2025-04-23 00:05:15] INFO: Deleted enquiry ID: 13
+[2025-04-22 22:12:35] INFO: Reply sent successfully.
+[2025-04-22 22:12:35] INFO: Reply sent successfully.
+[2025-04-22 22:12:35] INFO: Reply sent successfully for Enquiry ID: 2
+[2025-04-22 22:12:39] INFO: Viewed all enquiries.
+[2025-04-22 22:13:21] INFO: Viewed all enquiries.
+[2025-04-22 22:15:28] INFO: Viewed all enquiries.
+[2025-04-22 22:18:55] INFO: Returning to the previous menu.
+[2025-04-22 22:19:01] INFO: Manager exited the enquiry menu.
+[2025-04-22 22:50:41] INFO: New project created: Sunshine Residences
+[2025-04-22 22:55:25] INFO: Added Flat Type: 2-Room with 10 units at $1000000.0
+[2025-04-22 22:55:41] INFO: Added Flat Type: 3-Room with 10 units at $2000000.0
+[2025-04-22 22:55:46] INFO: New project created: Archipelago
+[2025-04-22 22:55:47] INFO: Created new project: Archipelago
+[2025-04-22 22:55:47] INFO: Project created successfully!
+[2025-04-22 23:13:07] INFO: Neighborhood updated to: Simei
+[2025-04-22 23:13:19] INFO: Project updated successfully!
+[2025-04-22 23:21:09] INFO: Neighborhood updated to: Simei
+[2025-04-22 23:21:14] INFO: Project updated successfully!
+[2025-04-22 23:21:20] INFO: Project updated successfully and saved to storage.
+[2025-04-22 23:25:09] INFO: Neighborhood updated to: Tampines
+[2025-04-22 23:25:14] INFO: Project updated successfully!
+[2025-04-22 23:25:14] INFO: Project updated successfully and saved to storage.
+[2025-04-22 23:25:32] INFO: Project visibility toggled to Visible.
+[2025-04-22 23:39:39] INFO: Project visibility toggled to Hidden.
+[2025-04-22 23:41:46] INFO: Project visibility toggled to Hidden.
+[2025-04-22 23:41:56] INFO: Project visibility toggled to Visible.

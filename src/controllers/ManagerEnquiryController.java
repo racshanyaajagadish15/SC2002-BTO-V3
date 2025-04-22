@@ -5,8 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import models.Enquiry;
-import models.Project;
-import utilities.ScannerUtility;
+
 import views.ManagerEnquiryView;
 
 public class ManagerEnquiryController implements IManagerEnquiryController {
@@ -50,35 +49,6 @@ public class ManagerEnquiryController implements IManagerEnquiryController {
         } catch (IOException e) {
             System.out.println("An error occurred while retrieving all project enquiries: " + e.getMessage());
             return new ArrayList<>();
-        }
-    }
-
-    private void viewProjectEnquiries() {
-        try {
-            System.out.print("Enter Project ID: ");
-            int projectID = ScannerUtility.SCANNER.nextInt();
-            ScannerUtility.SCANNER.nextLine();
-
-            Project project = Project.getProjectByIdDB(projectID);
-            if (project == null) {
-                System.out.println("Project not found.");
-                return;
-            }
-
-            ArrayList<Enquiry> enquiries = Enquiry.getProjectEnquiries(project);
-            if (enquiries.isEmpty()) {
-                System.out.println("No enquiries found for the specified project.");
-                return;
-            }
-            displayEnquiries(enquiries);
-        } catch (Exception e) {
-            System.out.println("An error occurred: " + e.getMessage());
-        }
-    }
-
-    private void displayEnquiries(ArrayList<Enquiry> enquiries) {
-        for (Enquiry enquiry : enquiries) {
-            System.out.println(enquiry);
         }
     }
 }

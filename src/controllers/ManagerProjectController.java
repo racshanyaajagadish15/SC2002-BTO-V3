@@ -1,68 +1,102 @@
 package controllers;
+
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Date;
-import java.text.ParseException;
 
 import databases.ProjectDB;
 import views.ManagerProjectView;
 import models.Project;
 import utilities.ScannerUtility;
-import models.FlatType;
 import models.HDBManager;
 
 public class ManagerProjectController implements IManagerProjectController {
 
-	private ManagerProjectView view;
-	private HDBManager loggedInManager;
+    @Override
+    public ArrayList<Project> getFilteredProjects(List<String> filters) {
+        ArrayList<Project> allProjects = getAllProjects();
+        ArrayList<Project> filteredProjects = new ArrayList<>();
 
-	public ManagerProjectController() {
-		this.view = new ManagerProjectView();
-	}
-	
+        for (Project project : allProjects) {
+            boolean matches = filters.stream().allMatch(filter -> 
+                project.getProjectName().toLowerCase().contains(filter.toLowerCase()) ||
+                project.getNeighborhood().toLowerCase().contains(filter.toLowerCase()) ||
+                project.getFlatTypes().stream().anyMatch(ft -> ft.getFlatType().toLowerCase().contains(filter.toLowerCase()))
+            );
+            if (matches) {
+                filteredProjects.add(project);
+            }
+        }
 
-	public void handleProjectMenu() {
-		int choice;
-	
-		do {
-			view.showProjectMenuHeader();
-			choice = getValidChoice(0, 7);
-	
-			switch (choice) {
-				case 1:
-					createProject();
-					break;
-				case 2:
-					ArrayList<Project> allProjects = getAllProjects();
-					view.displayProjects(allProjects);
-					break;
-				case 3:
-					ArrayList<Project> myProjects = getOwnedProjects();
-					view.displayProjects(myProjects);
-					break;
-				case 4:
-					searchProjects();
-					break;
-				case 5:
-					editProjectMenu();
-					break;
-				case 6:
-					toggleProjectVisibilityMenu();
-					break;
-				case 7:
-					deleteProjectMenu();
-					break;
-				case 0:
-					view.displaySuccess("Returning to main menu.");
-					break;
-				default:
-					view.displayError("Invalid choice. Try again.");
-			}
-		} while (choice != 0);
-	}
-	
+        return filteredProjects;
+    }
+
+    private ManagerProjectView view;
+    private HDBManager loggedInManager;
+
+    public ManagerProjectController() {
+        this.view = new ManagerProjectView();
+    }
+
+    public void handleProjectMenu() {
+        int choice;
+
+        do {
+            view.showProjectMenuHeader();
+            choice = getValidChoice(0, 7);
+
+            switch (choice) {
+                case 1:
+                    createProject();
+                    break;
+                case 2:
+                    ArrayList<Project> allProjects = getAllProjects();
+                    view.displayProjects(allProjects);
+                    break;
+                case 3:
+                    ArrayList<Project> myProjects = getOwnedProjects();
+                    view.displayProjects(myProjects);
+                    break;
+                case 4:
+                    searchProjects();
+                    break;
+                case 5:
+                    // Display the list of projects and allow the user to select and edit one
+                    ArrayList<Project> allProjectsToEdit = getAllProjects();
+                    if (allProjectsToEdit.isEmpty()) {
+                        view.displayError("No projects available to edit.");
+                    } else {
+                        // Let the view handle the selection and editing process
+                        Project selectedProject = view.editProjectMenu(allProjectsToEdit); // Returns the edited project
+                        if (selectedProject != null) {
+                            try {
+                                // Update the project in the database
+                                if (ProjectDB.updateProject(selectedProject)) {
+                                    view.displaySuccess("Project updated successfully and saved to storage.");
+                                } else {
+                                    view.displayError("Failed to update project in storage.");
+                                }
+                            } catch (IOException e) {
+                                view.displayError("Error saving project: " + e.getMessage());
+                            }
+                        }
+                    }
+                    break;
+                case 6:
+                    ArrayList<Project> allProjectsForVisibility = getAllProjects();
+                    view.toggleProjectVisibilityMenu(allProjectsForVisibility);
+                    break;
+                case 7:
+                    deleteProjectMenu();
+                    break;
+                case 0:
+                    view.displaySuccess("Returning to main menu.");
+                    break;
+                default:
+                    view.displayError("Invalid choice. Try again.");
+            }
+        } while (choice != 0);
+    }
 
     private int getValidChoice(int min, int max) {
         while (!ScannerUtility.SCANNER.hasNextInt()) {
@@ -74,85 +108,25 @@ public class ManagerProjectController implements IManagerProjectController {
         return choice;
     }
 
-	@Override
-	public void createProject() {
+    @Override
+    public void createProject() {
         try {
-            System.out.print("Enter Project Name: ");
-            String projectName = ScannerUtility.SCANNER.nextLine();
-
-            System.out.print("Enter Neighborhood: ");
-            String neighborhood = ScannerUtility.SCANNER.nextLine();
-
-            System.out.print("Enter Application Opening Date (yyyy-MM-dd): ");
-            String openingDateInput = ScannerUtility.SCANNER.nextLine();
-            Date openingDate = new SimpleDateFormat("yyyy-MM-dd").parse(openingDateInput);
-
-            System.out.print("Enter Application Closing Date (yyyy-MM-dd): ");
-            String closingDateInput = ScannerUtility.SCANNER.nextLine();
-            Date closingDate = new SimpleDateFormat("yyyy-MM-dd").parse(closingDateInput);
-
-            System.out.print("Enter Number of Officer Slots: ");
-            int officerSlots = ScannerUtility.SCANNER.nextInt();
-            ScannerUtility.SCANNER.nextLine();
-
-            ArrayList<FlatType> flatTypes = new ArrayList<>();
-            System.out.println("Enter Flat Types:");
-            while (true) {
-                System.out.println("Select Flat Type:");
-                System.out.println("1. 2-Room");
-                System.out.println("2. 3-Room");
-                System.out.println("0. Done");
-                System.out.print("Enter your choice: ");
-                int choice = ScannerUtility.SCANNER.nextInt();
-                ScannerUtility.SCANNER.nextLine();
-
-                if (choice == 0) {
-                    break;
-                }
-
-                String flatType;
-                if (choice == 1) {
-                    flatType = "2-Room";
-                } else if (choice == 2) {
-                    flatType = "3-Room";
-                } else {
-                    System.out.println("Invalid choice. Please try again.");
-                    continue;
-                }
-
-                System.out.print("Enter Number of Units: ");
-                int numUnits = ScannerUtility.SCANNER.nextInt();
-                ScannerUtility.SCANNER.nextLine();
-
-                System.out.print("Enter Price per Flat: ");
-                double pricePerFlat = ScannerUtility.SCANNER.nextDouble();
-                ScannerUtility.SCANNER.nextLine();
-
-                flatTypes.add(new FlatType(flatType, numUnits, pricePerFlat));
+            Project project = view.createNewProjectMenu();
+            if (project == null) {
+                view.displayError("Project creation canceled.");
+                return;
             }
-
-            System.out.print("Enter Project Visibility (true/false): ");
-            boolean visibility = ScannerUtility.SCANNER.nextBoolean();
-            ScannerUtility.SCANNER.nextLine();
 
             if (loggedInManager == null) {
                 throw new IllegalStateException("No manager is logged in. Cannot create project.");
             }
 
+            // Assign the logged-in manager to the project
+            project.setProjectManager(loggedInManager);
+
             // Generate ID based on existing projects
             int projectID = ProjectDB.getAllProjects().size() + 1;
-
-            Project project = new Project(
-                projectID,
-                projectName,
-                loggedInManager,
-                neighborhood,
-                flatTypes,
-                openingDate,
-                closingDate,
-                officerSlots,
-                visibility
-            );
+            project.setProjectID(projectID);
 
             if (ProjectDB.createProject(project)) {
                 view.displaySuccess("Project created successfully!");
@@ -160,65 +134,19 @@ public class ManagerProjectController implements IManagerProjectController {
                 view.displayError("Failed to create project.");
             }
 
-        } catch (IOException | ParseException e) {
+        } catch (IOException e) {
             view.displayError("Error: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    // Edit an existing project
     @Override
     public void editProject(Project project) {
         try {
-            ProjectDB.updateProject(project);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+            ArrayList<Project> projectList = new ArrayList<>();
+            projectList.add(project);
+            view.editProjectMenu(projectList);
 
-	private void editProjectMenu() {
-        try {
-            System.out.print("Enter the name of the project to edit: ");
-            String projectName = ScannerUtility.SCANNER.nextLine().trim();
-        
-            Project project = ProjectDB.getProjectByName(projectName);
-            if (project == null) {
-                view.displayError("No project found with the given name.");
-                return;
-            }
-        
-            // Verify the project belongs to the logged-in manager
-            if (!project.getProjectManager().getNric().equals(loggedInManager.getNric())) {
-                view.displayError("You can only edit projects you manage.");
-                return;
-            }
-        
-            System.out.println("Editing project: " + project.getProjectName());
-            System.out.println("Leave field blank to keep current value.");
-        
-            System.out.print("New Project Name [" + project.getProjectName() + "]: ");
-            String newName = ScannerUtility.SCANNER.nextLine();
-            if (!newName.isBlank()) {
-                project.setProjectName(newName);
-            }
-        
-            System.out.print("New Neighborhood [" + project.getNeighborhood() + "]: ");
-            String newNeighborhood = ScannerUtility.SCANNER.nextLine();
-            if (!newNeighborhood.isBlank()) {
-                project.setNeighborhood(newNeighborhood);
-            }
-        
-            System.out.print("New Officer Slots [" + project.getOfficerSlots() + "]: ");
-            String officerSlotsInput = ScannerUtility.SCANNER.nextLine();
-            if (!officerSlotsInput.isBlank()) {
-                try {
-                    project.setOfficerSlots(Integer.parseInt(officerSlotsInput));
-                } catch (NumberFormatException e) {
-                    view.displayError("Invalid number format.");
-                    return;
-                }
-            }
-        
             if (ProjectDB.updateProject(project)) {
                 view.displaySuccess("Project updated successfully.");
             } else {
@@ -229,49 +157,24 @@ public class ManagerProjectController implements IManagerProjectController {
         }
     }
 
-    // Toggle the visibility of a project
+
     @Override
+    public void toggleProjectVisibility(Project project) {
+        try {
+            // Toggle the visibility
+            boolean currentVisibility = project.getProjectVisibility();
+            project.setProjectVisibility(!currentVisibility);
 
-	public void toggleProjectVisibility(Project project) {
-		try {
-			// Toggle the visibility
-			boolean currentVisibility = project.getProjectVisibility();
-			project.setProjectVisibility(!currentVisibility);
+            // Save the updated project to the database
+            ProjectDB.updateProject(project);
 
-			// Save the updated project to the database
-			ProjectDB.updateProject(project);
+            // Display success message
+            view.displaySuccess("Project visibility toggled to " + (project.getProjectVisibility() ? "Visible" : "Hidden") + ".");
+        } catch (IOException e) {
+            view.displayError("Failed to toggle project visibility: " + e.getMessage());
+        }
+    }
 
-			// Display success message
-			view.displaySuccess("Project visibility toggled to " + (project.getProjectVisibility() ? "Visible" : "Hidden") + ".");
-		} catch (IOException e) {
-			view.displayError("Failed to toggle project visibility: " + e.getMessage());
-		}
-	}
-
-	private void toggleProjectVisibilityMenu() {
-		System.out.print("Enter the name of the project to toggle visibility: ");
-		String projectName = ScannerUtility.SCANNER.nextLine().trim();
-	
-		ArrayList<Project> projects = getSpecificProject(projectName);
-	
-		if (projects.isEmpty()) {
-			view.displayError("No project found with the given name.");
-			return;
-		}
-	
-		Project project = projects.get(0); // Assuming only one project matches the name
-		boolean currentVisibility = project.getProjectVisibility();
-		project.setProjectVisibility(!currentVisibility);
-	
-		try {
-			ProjectDB.updateProject(project); // Save the updated project to the database
-			view.displaySuccess("Project visibility toggled to " + (project.getProjectVisibility() ? "Visible" : "Hidden") + ".");
-		} catch (IOException e) {
-			view.displayError("Failed to toggle project visibility: " + e.getMessage());
-		}
-	}
-
-    // Get all projects
     @Override
     public ArrayList<Project> getAllProjects() {
         try {
@@ -282,41 +185,19 @@ public class ManagerProjectController implements IManagerProjectController {
         }
     }
 
-    // Get all projects owned by a manager
     @Override
     public ArrayList<Project> getOwnedProjects() {
         try {
             if (loggedInManager == null) {
                 return new ArrayList<>();
             }
-            return ProjectDB.getProjectsByManager(loggedInManager.getNric()); // Changed to use name
+            return ProjectDB.getProjectsByManager(loggedInManager.getNric());
         } catch (IOException e) {
             view.displayError("Error loading projects: " + e.getMessage());
             return new ArrayList<>();
         }
     }
 
-    // Get filtered projects based on a filter list
-    @Override
-    public ArrayList<Project> getFilteredProjects(List<String> filter) {
-        try {
-            ArrayList<Project> allProjects = ProjectDB.getAllProjects();
-            ArrayList<Project> filteredProjects = new ArrayList<>();
-            for (Project project : allProjects) {
-                // Implement filtering logic based on the filter list
-                // For example, filtering based on neighborhood or project name
-                if (filter.contains(project.getNeighborhood())) {
-                    filteredProjects.add(project);
-                }
-            }
-            return filteredProjects;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
-        }
-    }
-
-    // Get a specific project by name
     @Override
     public ArrayList<Project> getSpecificProject(String projectName) {
         try {
@@ -334,7 +215,6 @@ public class ManagerProjectController implements IManagerProjectController {
         }
     }
 
-    // Delete a project
     @Override
     public void deleteProject(Project project) {
         try {
@@ -344,52 +224,52 @@ public class ManagerProjectController implements IManagerProjectController {
         }
     }
 
-	private void deleteProjectMenu() {
-		System.out.print("Enter the name of the project to delete: ");
-		String projectName = ScannerUtility.SCANNER.nextLine();
-		ArrayList<Project> projects = getSpecificProject(projectName);
-	
-		if (projects.isEmpty()) {
-			view.displayError("No project found with the given name.");
-			return;
-		}
-	
-		Project project = projects.get(0); // Assuming only one project matches the name
-		System.out.print("Are you sure you want to delete this project? (yes/no): ");
-		String confirmation = ScannerUtility.SCANNER.nextLine();
-	
-		if (confirmation.equalsIgnoreCase("yes")) {
-			deleteProject(project);
-			view.displaySuccess("Project deleted successfully.");
-		} else {
-			view.displaySuccess("Project deletion canceled.");
-		}
-	}
+    private void deleteProjectMenu() {
+        System.out.print("Enter the name of the project to delete: ");
+        String projectName = ScannerUtility.SCANNER.nextLine();
+        ArrayList<Project> projects = getSpecificProject(projectName);
 
-	public void setLoggedInManager(HDBManager manager) {
-		this.loggedInManager = manager;
-	}
+        if (projects.isEmpty()) {
+            view.displayError("No project found with the given name.");
+            return;
+        }
 
-	private void searchProjects() {
-		System.out.print("Enter search keyword (e.g., project name or neighborhood): ");
-		String keyword = ScannerUtility.SCANNER.nextLine().trim().toLowerCase(); // Normalize input for case-insensitive search
-	
-		ArrayList<Project> allProjects = getAllProjects();
-		ArrayList<Project> filteredProjects = new ArrayList<>();
-	
-		for (Project project : allProjects) {
-			// Check if the keyword matches the project name, neighborhood, or flat types
-			if (project.getProjectName().toLowerCase().contains(keyword) ||
-				project.getNeighborhood().toLowerCase().contains(keyword) ||
-				project.getFlatTypes().stream().anyMatch(ft -> ft.getFlatType().toLowerCase().contains(keyword))) {
-				filteredProjects.add(project);
-			}
-		}
-	
-		if (filteredProjects.isEmpty()) {
-			view.displayError("No projects found matching the keyword.");
-		} else {
-			view.displayProjects(filteredProjects);
-		}
-	}
+        Project project = projects.get(0); // Assuming only one project matches the name
+        System.out.print("Are you sure you want to delete this project? (yes/no): ");
+        String confirmation = ScannerUtility.SCANNER.nextLine();
+
+        if (confirmation.equalsIgnoreCase("yes")) {
+            deleteProject(project);
+            view.displaySuccess("Project deleted successfully.");
+        } else {
+            view.displaySuccess("Project deletion canceled.");
+        }
+    }
+
+    private void searchProjects() {
+        System.out.print("Enter search keyword (e.g., project name or neighborhood): ");
+        String keyword = ScannerUtility.SCANNER.nextLine().trim().toLowerCase();
+
+        ArrayList<Project> allProjects = getAllProjects();
+        ArrayList<Project> filteredProjects = new ArrayList<>();
+
+        for (Project project : allProjects) {
+            if (project.getProjectName().toLowerCase().contains(keyword) ||
+                project.getNeighborhood().toLowerCase().contains(keyword) ||
+                project.getFlatTypes().stream().anyMatch(ft -> ft.getFlatType().toLowerCase().contains(keyword))) {
+                filteredProjects.add(project);
+            }
+        }
+
+        if (filteredProjects.isEmpty()) {
+            view.displayError("No projects found matching the keyword.");
+        } else {
+            view.displayProjects(filteredProjects);
+        }
+    }
+
+    public void setLoggedInManager(HDBManager manager) {
+        this.loggedInManager = manager;
+    }
+
 }

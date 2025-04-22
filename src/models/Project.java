@@ -334,7 +334,7 @@ public class Project {
         return neighborhood;
     }
 
-    public List<FlatType> getFlatTypes() {
+    public ArrayList<FlatType> getFlatTypes() {
         return new ArrayList<>(flatTypes);
     }
 
