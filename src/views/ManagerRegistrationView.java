@@ -1,6 +1,6 @@
 package views;
 
-import controllers.ManagerRegistrationController; // Import the controller
+import controllers.ManagerRegistrationController;
 import databases.OfficerRegistrationDB;
 import models.OfficerRegistration;
 
@@ -10,11 +10,11 @@ import java.util.Scanner;
 public class ManagerRegistrationView {
 
     private Scanner scanner;
-    private ManagerRegistrationController controller; // Add a controller instance
+    private ManagerRegistrationController controller;
 
     public ManagerRegistrationView() {
         this.scanner = new Scanner(System.in);
-        this.controller = new ManagerRegistrationController(); // Initialize the controller
+        this.controller = new ManagerRegistrationController();
     }
 
     public void showRegistrationMenu() {
@@ -28,20 +28,19 @@ public class ManagerRegistrationView {
             System.out.println("0. Exit");
             System.out.println("=========================================");
             System.out.print("Enter your choice: ");
-            int choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+            String input = scanner.nextLine();
 
-            switch (choice) {
-                case 1:
+            switch (input) {
+                case "1":
                     viewAllRegistrations();
                     break;
-                case 2:
+                case "2":
                     viewPendingRegistrations();
                     break;
-                case 3:
-                    updateRegistrationStatus();
+                case "3":
+                    updateRegistrationStatusMenu();
                     break;
-                case 0:
+                case "0":
                     System.out.println("Exiting Registration Manager...");
                     return;
                 default:
@@ -76,52 +75,87 @@ public class ManagerRegistrationView {
         }
     }
 
-    private void updateRegistrationStatus() {
+    private void updateRegistrationStatusMenu() {
         try {
-            System.out.print("Enter Officer NRIC: ");
-            String nric = scanner.nextLine();
-            System.out.print("Enter Project ID: ");
-            int projectId = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
-            System.out.print("Enter New Status (Approved/Rejected): ");
-            String status = scanner.nextLine();
+            ArrayList<OfficerRegistration> allRegistrations = OfficerRegistrationDB.getAllOfficerRegistrations();
 
-            OfficerRegistration registration = findRegistrationByNricAndProject(nric, projectId);
-            if (registration == null) {
-                System.out.println("[ERROR] No matching registration found.");
+            if (allRegistrations.isEmpty()) {
+                System.out.println("No registrations available.");
                 return;
             }
 
-            // Use the controller to update the registration status
-            controller.updateOfficerApplicationStatus(registration, status);
-            System.out.println("[SUCCESS] Registration status updated successfully.");
+            System.out.println("\nSelect a registration to update:");
+            displayRegistrations(allRegistrations);
+
+            System.out.print("Enter the ID of the registration to update (or 0 to cancel): ");
+            int regId = Integer.parseInt(scanner.nextLine());
+
+            if (regId == 0) return;
+
+            OfficerRegistration selected = null;
+            for (OfficerRegistration reg : allRegistrations) {
+                if (reg.getOfficerRegistrationID() == regId) {
+                    selected = reg;
+                    break;
+                }
+            }
+
+            if (selected == null) {
+                System.out.println("[ERROR] No registration with the entered ID.");
+                return;
+            }
+
+            System.out.println("Selected: Officer NRIC: " + selected.getOfficer().getNric()
+                    + ", Project ID: " + selected.getProjectID()
+                    + ", Current Status: " + selected.getRegistrationStatus());
+
+            System.out.println("Choose new status:");
+            System.out.println("1. Successful");
+            System.out.println("2. Unsuccessful");
+            System.out.println("0. Cancel");
+
+            String choice = scanner.nextLine();
+            String newStatus = null;
+
+            switch (choice) {
+                case "1":
+                    newStatus = "Successful";
+                    break;
+                case "2":
+                    newStatus = "Unsuccessful";
+                    break;
+                case "0":
+                    System.out.println("Cancelled.");
+                    return;
+                default:
+                    System.out.println("Invalid option.");
+                    return;
+            }
+
+            System.out.print("Are you sure you want to set status to '" + newStatus + "'? (y/n): ");
+            String confirm = scanner.nextLine();
+
+            if (confirm.equalsIgnoreCase("y")) {
+                controller.updateOfficerApplicationStatus(selected, newStatus);
+            } else {
+                System.out.println("Update cancelled.");
+            }
+
+        } catch (NumberFormatException e) {
+            System.out.println("[ERROR] Invalid number input.");
         } catch (Exception e) {
             System.out.println("[ERROR] Failed to update registration status: " + e.getMessage());
         }
-    }
-
-    private OfficerRegistration findRegistrationByNricAndProject(String nric, int projectId) {
-        try {
-            ArrayList<OfficerRegistration> registrations = OfficerRegistrationDB.getAllOfficerRegistrations();
-            for (OfficerRegistration registration : registrations) {
-                if (registration.getOfficer().getNric().equalsIgnoreCase(nric) &&
-                    registration.getProjectID() == projectId) {
-                    return registration;
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("[ERROR] Failed to find registration: " + e.getMessage());
-        }
-        return null;
     }
 
     private void displayRegistrations(ArrayList<OfficerRegistration> registrations) {
         System.out.println("\n==========================================================================");
         System.out.printf("| %-5s | %-15s | %-10s | %-15s |\n", "ID", "Officer NRIC", "Project ID", "Status");
         System.out.println("==========================================================================");
+        int index = 1;
         for (OfficerRegistration registration : registrations) {
             System.out.printf("| %-5d | %-15s | %-10d | %-15s |\n",
-                    registration.getOfficerRegistrationID(),
+                    index++,
                     registration.getOfficer().getNric(),
                     registration.getProjectID(),
                     registration.getRegistrationStatus());
