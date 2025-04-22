@@ -6,17 +6,16 @@ import databases.ProjectDB;
 import enums.ApplicationStatus;
 import models.Application;
 import models.Project;
+import utilities.ScannerUtility;
 import models.HDBManager; // Ensure Manager is imported from the correct package
 
 import java.io.IOException;
 import java.util.InputMismatchException;
 import java.util.List;
-import java.util.Scanner;
 
-public class ManagerApplicationView implements DisplayResult{
+public class ManagerApplicationView implements IDisplayResult{
 
     private final ManagerApplicationController controller = new ManagerApplicationController();
-    private final Scanner scanner = new Scanner(System.in);
 
     // Add a field for the logged-in manager
     private final HDBManager loggedInManager;
@@ -37,8 +36,8 @@ public class ManagerApplicationView implements DisplayResult{
             System.out.println("0. Exit");
             System.out.print("Enter your choice: ");
             try {
-                choice = scanner.nextInt();
-                scanner.nextLine(); // Consume newline
+                choice = ScannerUtility.SCANNER.nextInt();
+                ScannerUtility.SCANNER.nextLine(); // Consume newline
                 switch (choice) {
                     case 1:
                         updateApplicationStatus();
@@ -47,13 +46,13 @@ public class ManagerApplicationView implements DisplayResult{
                         updateWithdrawalStatus();
                         break;
                     case 0:
-                        System.out.println("Exiting Application Manager...");
                         break;
                     default:
                         System.out.println("[ERROR] Invalid choice. Please try again.");
+                        break;
                 }
             } catch (InputMismatchException e){
-                scanner.nextLine(); // Consume newline
+                ScannerUtility.SCANNER.nextLine(); // Consume newline
                 System.out.println("[ERROR] Invalid choice. Please try again.");
             }
         } while (choice != 0);
@@ -67,11 +66,11 @@ public class ManagerApplicationView implements DisplayResult{
             while (true) {
                 try {
                     System.out.print("\nEnter Application ID: ");
-                    applicationID = scanner.nextInt();
-                    scanner.nextLine();
+                    applicationID = ScannerUtility.SCANNER.nextInt();
+                    ScannerUtility.SCANNER.nextLine();
                     break; 
                 } catch (InputMismatchException e) {
-                    scanner.nextLine();
+                    ScannerUtility.SCANNER.nextLine();
                     System.out.println("[ERROR] Invalid input. Please enter a valid numeric Application ID.");
                 }
             }
@@ -83,13 +82,13 @@ public class ManagerApplicationView implements DisplayResult{
             while (true) {
                 try {
                     System.out.print("\nEnter Status option: ");
-                    applicationID = scanner.nextInt();
-                    scanner.nextLine();
+                    applicationID = ScannerUtility.SCANNER.nextInt();
+                    ScannerUtility.SCANNER.nextLine();
                     if (status == 1 || status == 2){
                         break; 
                     }
                 } catch (InputMismatchException e) {
-                    scanner.nextLine();
+                    ScannerUtility.SCANNER.nextLine();
                     System.out.println("[ERROR] Invalid input. Please enter a valid numeric Application ID.");
                 }
             }
@@ -124,17 +123,17 @@ public class ManagerApplicationView implements DisplayResult{
             while (true) {
                 try {
                     System.out.print("\nEnter Application ID: ");
-                    applicationID = scanner.nextInt();
-                    scanner.nextLine();
+                    applicationID = ScannerUtility.SCANNER.nextInt();
+                    ScannerUtility.SCANNER.nextLine();
                     break; 
                 } catch (InputMismatchException e) {
-                    scanner.nextLine();
+                    ScannerUtility.SCANNER.nextLine();
                     System.out.println("[ERROR] Invalid input. Please enter a valid numeric Application ID.");
                 }
             }
 
             System.out.print("Enter New Withdrawal Status: ");
-            String status = scanner.nextLine();
+            String status = ScannerUtility.SCANNER.nextLine();
     
             // Fetch application
             Application application = fetchApplicationByID(applicationID);

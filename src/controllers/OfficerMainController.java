@@ -11,7 +11,7 @@ public class OfficerMainController {
 		OfficerApplicationController officerApplicationController = new OfficerApplicationController();
 		ApplicantEnquiryController applicantEnquiryController = new ApplicantEnquiryController();
 		OfficerEnquiryController officerEnquiryController = new OfficerEnquiryController();
-		OfficerJoinProjectController officerJoinProjectController = new OfficerJoinProjectController();
+		OfficerRegistrationController officerJoinProjectController = new OfficerRegistrationController();
 		// Load enquiries and projects that the applicant have TODO
 
 		while (true){

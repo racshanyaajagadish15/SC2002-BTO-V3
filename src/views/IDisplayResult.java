@@ -1,6 +1,6 @@
 package views;
 
-public interface DisplayResult {
+public interface IDisplayResult {
 
     default void displayError(String message) {
         System.out.println("[ERROR] " + message);

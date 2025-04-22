@@ -13,11 +13,9 @@ import views.ManagerEnquiryView;
 public class ManagerEnquiryController implements IManagerEnquiryController {
 
     private final ManagerEnquiryView view;
-    private Scanner scanner;
 
     public ManagerEnquiryController() {
         this.view = new ManagerEnquiryView(this);
-        this.scanner = ScannerUtility.SCANNER;
     }
 
     /**
@@ -59,8 +57,8 @@ public class ManagerEnquiryController implements IManagerEnquiryController {
     private void viewProjectEnquiries() {
         try {
             System.out.print("Enter Project ID: ");
-            int projectID = scanner.nextInt();
-            scanner.nextLine();
+            int projectID = ScannerUtility.SCANNER.nextInt();
+            ScannerUtility.SCANNER.nextLine();
 
             Project project = Project.getProjectByIdDB(projectID);
             if (project == null) {

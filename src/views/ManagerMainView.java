@@ -13,15 +13,6 @@ public class ManagerMainView {
     private ManagerEnquiryView enquiryView;
     private HDBManager loggedInManager;
 
-    
-
-    public ManagerMainView() {
-        this.applicationView = new ManagerApplicationView(loggedInManager);
-        this.projectView = new ManagerProjectView();
-        this.enquiryView = new ManagerEnquiryView(loggedInManager);
-        this.registrationView = new ManagerRegistrationView();
-    }
-
     public ManagerMainView(HDBManager manager) {
         this.loggedInManager = manager;
         this.applicationView = new ManagerApplicationView(loggedInManager);
@@ -72,7 +63,7 @@ public class ManagerMainView {
         System.out.println("3. Manage Enquiries");
         System.out.println("4. Manage Officer Registrations");
         System.out.println("5. Generate Applicant Report");
-        System.out.println("0. Exit");
+        System.out.println("0. Logout");
         System.out.println("=========================================");
         System.out.print("Please enter your choice: ");
     }

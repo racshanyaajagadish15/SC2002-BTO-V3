@@ -65,7 +65,7 @@ public class ManagerRegistrationView {
 
     private void viewPendingRegistrations() {
         try {
-            ArrayList<OfficerRegistration> pendingRegistrations = OfficerRegistration.getPendingRegistrations();
+            ArrayList<OfficerRegistration> pendingRegistrations = OfficerRegistration.getPendingRegistrationsDB();
             if (pendingRegistrations.isEmpty()) {
                 System.out.println("No pending registrations found.");
                 return;

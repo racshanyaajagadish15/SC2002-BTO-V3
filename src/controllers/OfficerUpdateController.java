@@ -2,6 +2,7 @@ package controllers;
 
 import models.Application;
 import databases.ApplicationDB;
+import databases.BookingReceiptDB;
 
 public class OfficerUpdateController implements IOfficerUpdateController {
 
@@ -34,6 +35,26 @@ public class OfficerUpdateController implements IOfficerUpdateController {
             System.out.println("[SUCCESS] Project for Application ID " + application.getApplicationID() + " updated successfully.");
         } catch (Exception e) {
             System.out.println("[ERROR] Failed to update project for application: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Generate a booking receipt for the specified application.
+     * 
+     * @param applicationId The ID of the application to generate a receipt for.
+     * @return boolean indicating if receipt generation was successful
+     */
+    public boolean updateBooking(int applicationId) {
+        try {
+            Application application = ApplicationDB.getApplicationById(applicationId);
+            if (application == null) {
+                return false;
+            }
+
+            BookingReceiptDB.generateReceipt(application);
+            return true;
+        } catch (Exception e) {
+            return false;
         }
     }
 }
