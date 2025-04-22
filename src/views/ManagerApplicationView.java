@@ -13,7 +13,7 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
-public class ManagerApplicationView {
+public class ManagerApplicationView implements DisplayResult{
 
     private final ManagerApplicationController controller = new ManagerApplicationController();
     private final Scanner scanner = new Scanner(System.in);

@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import controllers.ApplicantMainController;
+import controllers.ManagerMainController;
+import controllers.OfficerMainController;
 import databases.ApplicantDB;
 import databases.HDBManagerDB;
 import databases.HDBOfficerDB;
@@ -82,6 +85,7 @@ public class User {
 		this.filter = filter;
 	}
 
+
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -93,5 +97,31 @@ public class User {
 	}
 	public void setMaritalStatus(String maritalStatus) {
 		this.maritalStatus = maritalStatus;
+    
+	public boolean validatePassword(String password) {
+		return this.getPassword().equals(password);
+	}
+	
+	public boolean changePassword(String currentPassword, String newPassword) throws IOException {
+		if (!validatePassword(currentPassword)) {
+			return false;
+		}
+		this.setPassword(newPassword);
+		this.saveUserDB();
+		return true;
+	}
+
+	public boolean saveUserDB() throws IOException {
+		if (this.getClass() == Applicant.class) {
+			return ApplicantDB.saveUser((Applicant) this);
+		} 
+		else if (this.getClass() == HDBOfficer.class) {
+			return HDBOfficerDB.saveUser((HDBOfficer) this);
+		} 
+		else if (this.getClass() == HDBManager.class) {
+			return HDBManagerDB.saveUser((HDBManager) this);
+		}
+		return false;
+
 	}
 }

@@ -3,6 +3,7 @@ package databases;
 import models.HDBOfficer;
 import enums.UserFileIndex;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -37,5 +38,31 @@ public class HDBOfficerDB {
         }
     // No results
     return null;
+    }
+
+    public static boolean saveUser(HDBOfficer officer) throws IOException {
+        try (FileInputStream fis = new FileInputStream(MANAGER_FILEPATH);
+             Workbook workbook = new XSSFWorkbook(fis)) {
+            Sheet sheet = workbook.getSheetAt(0);
+            boolean found = false;
+
+            for (Row row : sheet) {
+                if (row.getRowNum() == 0) continue;
+                String fileNric = row.getCell(UserFileIndex.NRIC.getIndex()).getStringCellValue();
+                if (fileNric.equals(officer.getNric())) {
+                    row.getCell(UserFileIndex.PASSWORD.getIndex()).setCellValue(officer.getPassword());
+                    found = true;
+                    break;
+                }
+            }
+
+            if (found) {
+                try (FileOutputStream fos = new FileOutputStream(MANAGER_FILEPATH)) {
+                    workbook.write(fos);
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }

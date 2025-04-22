@@ -16,6 +16,13 @@ import models.Project;
 import utilities.ScannerUtility;
 
 public class ApplicationView {
+    private final ApplicantApplicationController applicationController;
+    private final ApplicantEnquiryView enquiryView;
+
+    public ApplicationView() {
+        this.applicationController = new ApplicantApplicationController();
+        this.enquiryView = new ApplicantEnquiryView();
+    }
 
 	private boolean showApplicableProjects(ArrayList<Project> applicableProjects, Applicant applicant) {
 		if (applicableProjects.size() == 0){
@@ -78,8 +85,7 @@ public class ApplicationView {
 					continue;
 				}
 				if (action == 1) {
-					ApplicantEnquiryView applicantEnquiryView = new ApplicantEnquiryView();
-					applicantEnquiryView.showCreateEnquiry(applicableProjects.get(projectIndex), applicant);
+					enquiryView.showCreateEnquiry(applicableProjects.get(projectIndex), applicant);
 					continue;
 				}
 				FlatType selectedFlatType = null;
@@ -127,9 +133,8 @@ public class ApplicationView {
 
 				// Submit application request
 				if (confirmation == 1){
-					ApplicantApplicationController applicantApplicationController = new ApplicantApplicationController();
 					Project selectedProject = applicableProjects.get(projectIndex);
-					if (applicantApplicationController.submitApplication(selectedProject, applicant, selectedFlatType)){
+					if (applicationController.submitApplication(selectedProject, applicant, selectedFlatType)){
 						System.out.println("Application Successful");
 						return true;
 					}
@@ -379,6 +384,7 @@ public class ApplicationView {
 			System.out.println("1. View all applicable projects");
 			System.out.println("2. Search and filter for projects");
 			System.out.println("0. Exit");
+            System.out.println("=========================================");
 
 			int option;
 			try {
@@ -422,7 +428,6 @@ public class ApplicationView {
 			System.out.println("You do not have an application.");
 			return;
 		}
-		ApplicantApplicationController applicantApplicationController = new ApplicantApplicationController();
 		System.out.println("\n=========================================");
 		System.out.println("           APPLICATION DETAILS           ");
 		System.out.println("=========================================");
@@ -483,7 +488,7 @@ public class ApplicationView {
 				return;
 			}
 			else if (option == 1){
-				if (applicantApplicationController.withdrawApplication(application)){
+				if (applicationController.withdrawApplication(application)){
 					System.out.println("Application withdrawal sent.");
 				}
 				else{

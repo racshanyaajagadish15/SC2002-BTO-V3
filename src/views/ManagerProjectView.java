@@ -4,7 +4,7 @@ import models.Project;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class ManagerProjectView {
+public class ManagerProjectView implements DisplayResult{
 
     public void showProjectMenuHeader() {
         System.out.println("\n=========================================");
@@ -19,14 +19,6 @@ public class ManagerProjectView {
         System.out.println("7. Delete Project");
         System.out.println("0. Exit");
         System.out.print("Enter your choice: ");
-    }
-
-    public void showSuccessMessage(String message) {
-        System.out.println("[SUCCESS] " + message);
-    }
-
-    public void showErrorMessage(String message) {
-        System.out.println("[ERROR] " + message);
     }
 
     public void displayProjects(ArrayList<Project> projects) {

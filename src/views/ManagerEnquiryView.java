@@ -10,7 +10,7 @@ import models.Project;
 import utilities.ScannerUtility;
 import models.HDBManager;
 
-public class ManagerEnquiryView {
+public class ManagerEnquiryView implements DisplayResult {
 
     private ManagerEnquiryController controller;
     private Scanner scanner;
@@ -73,26 +73,22 @@ public class ManagerEnquiryView {
             for (Enquiry enquiry : allEnquiries) {
                 if (enquiry.getEnquiryID() == enquiryID) {
                     controller.replyToEnquiry(enquiry, reply);
-                    System.out.println("Reply sent successfully.");
+                    showReplyResult(true);
                     return;
                 }
             }
-            System.out.println("Enquiry ID not found.");
+            displayError("Enquiry ID not found.");
         } catch (Exception e) {
-            System.out.println("An error occurred: " + e.getMessage());
+            displayError("An error occurred: " + e.getMessage());
         }
     }
 
     private void viewAllEnquiries() {
         try {
             ArrayList<Enquiry> enquiries = controller.getAllProjectEnquiries();
-            if (enquiries.isEmpty()) {
-                System.out.println("No enquiries found.");
-                return;
-            }
             displayEnquiries(enquiries);
         } catch (Exception e) {
-            System.out.println("An error occurred: " + e.getMessage());
+            displayError("An error occurred: " + e.getMessage());
         }
     }
 
@@ -115,17 +111,17 @@ public class ManagerEnquiryView {
                 true                      // Visibility
             );
             ArrayList<Enquiry> enquiries = Enquiry.getProjectEnquiries(project);
-            if (enquiries.isEmpty()) {
-                System.out.println("No enquiries found for the specified project.");
-                return;
-            }
             displayEnquiries(enquiries);
         } catch (Exception e) {
-            System.out.println("An error occurred: " + e.getMessage());
+            displayError("An error occurred: " + e.getMessage());
         }
     }
 
     private void displayEnquiries(ArrayList<Enquiry> enquiries) {
+        if (enquiries.isEmpty()) {
+            displayInfo("No enquiries found.");
+            return;
+        }
         System.out.println("\n---------------------------------------------------------------------------------------------");
         System.out.printf("| %-10s | %-15s | %-10s | %-20s | %-20s |\n", "Enquiry ID", "NRIC", "Project ID", "Enquiry", "Reply");
         System.out.println("---------------------------------------------------------------------------------------------");
@@ -138,5 +134,13 @@ public class ManagerEnquiryView {
                     enquiry.getReply());
         }
         System.out.println("---------------------------------------------------------------------------------------------");
+    }
+
+    public void showReplyResult(boolean success) {
+        if (success) {
+            displaySuccess("Reply sent successfully.");
+        } else {
+            displayError("Failed to send reply.");
+        }
     }
 }

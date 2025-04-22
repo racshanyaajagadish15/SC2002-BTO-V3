@@ -1,6 +1,7 @@
 package databases;
 
 import models.*;
+import utilities.LoggerUtility;
 import enums.ProjectApplicationFileIndex;
 import java.io.*;
 import java.util.*;
@@ -27,6 +28,11 @@ public class ApplicationDB {
             try (FileOutputStream fos = new FileOutputStream(file)) {
                 workbook.write(fos);
             }
+            LoggerUtility.logInfo(String.format("Created application for NRIC: %s, Project: %s", 
+                applicant.getNric(), project.getProjectName()));
+        } catch (IOException e) {
+            LoggerUtility.logError("Failed to create application for NRIC: " + applicant.getNric(), e);
+            throw e;
         }
     }
 
@@ -131,39 +137,44 @@ public class ApplicationDB {
     }
 
     private static Application createApplicationFromRow(Row row) throws IOException {
-        int applicationID = (int) row.getCell(ProjectApplicationFileIndex.ID.getIndex()).getNumericCellValue();
-        String nric = row.getCell(ProjectApplicationFileIndex.NRIC.getIndex()).getStringCellValue();
-        int projectID = (int) row.getCell(ProjectApplicationFileIndex.PROJECT_ID.getIndex()).getNumericCellValue();
-        String applicationStatus = row.getCell(ProjectApplicationFileIndex.STATUS.getIndex()).getStringCellValue();
-        String flatType = row.getCell(ProjectApplicationFileIndex.FLAT_TYPE.getIndex()).getStringCellValue();
+        try {
+            int applicationID = (int) row.getCell(ProjectApplicationFileIndex.ID.getIndex()).getNumericCellValue();
+            String nric = row.getCell(ProjectApplicationFileIndex.NRIC.getIndex()).getStringCellValue();
+            int projectID = (int) row.getCell(ProjectApplicationFileIndex.PROJECT_ID.getIndex()).getNumericCellValue();
+            String applicationStatus = row.getCell(ProjectApplicationFileIndex.STATUS.getIndex()).getStringCellValue();
+            String flatType = row.getCell(ProjectApplicationFileIndex.FLAT_TYPE.getIndex()).getStringCellValue();
 
-        // Fetch the Applicant object
-        Applicant applicant;
-        try {
-            applicant = ApplicantDB.getApplicantByNRIC(nric);
-            if (applicant == null) {
-                applicant = HDBOfficerDB.getOfficerByNRIC(nric);
+            // Fetch the Applicant object
+            Applicant applicant;
+            try {
+                applicant = ApplicantDB.getApplicantByNRIC(nric);
                 if (applicant == null) {
-                    throw new IOException("Applicant with NRIC " + nric + " not found.");
+                    applicant = HDBOfficerDB.getOfficerByNRIC(nric);
+                    if (applicant == null) {
+                        throw new IOException("Applicant with NRIC " + nric + " not found.");
+                    }
                 }
+            } catch (IOException e) {
+                throw new IOException("Failed to fetch applicant by NRIC: " + nric, e);
             }
-        } catch (IOException e) {
-            throw new IOException("Failed to fetch applicant by NRIC: " + nric, e);
-        }
-    
-        // Fetch the Project object
-        Project project;
-        try {
-            project = ProjectDB.getProjectByID(projectID);
-            if (project == null) {
-                throw new IOException("Project with ID " + projectID + " not found.");
+        
+            // Fetch the Project object
+            Project project;
+            try {
+                project = ProjectDB.getProjectByID(projectID);
+                if (project == null) {
+                    throw new IOException("Project with ID " + projectID + " not found.");
+                }
+            } catch (IOException e) {
+                throw new IOException("Failed to fetch project by ID: " + projectID, e);
             }
+        
+            // Create and return the Application object
+            return new Application(applicant, project, applicationStatus, applicationID, flatType);
         } catch (IOException e) {
-            throw new IOException("Failed to fetch project by ID: " + projectID, e);
+            LoggerUtility.logError("Failed to create application from row: " + row.getRowNum(), e);
+            throw e;
         }
-    
-        // Create and return the Application object
-        return new Application(applicant, project, applicationStatus, applicationID, flatType);
     }
 
     private static void populateApplicationRow(Row row, int applicationID,Applicant applicant, Project project, String status, String flatType) {
