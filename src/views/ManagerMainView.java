@@ -1,6 +1,7 @@
 package views;
 
 import utilities.ScannerUtility;
+import controllers.ManagerMainController;
 import controllers.ManagerProjectController;
 import models.HDBManager;
 
@@ -49,6 +50,9 @@ public class ManagerMainView {
                 case 4:
                     handleRegistrations();
                     break;
+                case 5:
+                    handleReportGeneration();
+                    break;
                 case 0:
                     System.out.println("Exiting... Thank you!");
                     break;
@@ -67,6 +71,7 @@ public class ManagerMainView {
         System.out.println("2. Manage Projects");
         System.out.println("3. Manage Enquiries");
         System.out.println("4. Manage Officer Registrations");
+        System.out.println("5. Generate Applicant Report");
         System.out.println("0. Exit");
         System.out.println("=========================================");
         System.out.print("Please enter your choice: ");
@@ -102,5 +107,29 @@ public class ManagerMainView {
     private void handleRegistrations() {
         System.out.println(">> You selected: Manage Officer Registrations");
         registrationView.showRegistrationMenu();
+    }
+
+    private void handleReportGeneration() {
+        System.out.println(">> You selected: Generate Applicant Report");
+
+        // Prompt the user for filters
+        System.out.print("Enter marital status filter (or leave blank for no filter): ");
+        String maritalStatusFilter = ScannerUtility.SCANNER.nextLine().trim();
+        maritalStatusFilter = maritalStatusFilter.isEmpty() ? null : maritalStatusFilter;
+
+        System.out.print("Enter flat type filter (or leave blank for no filter): ");
+        String flatTypeFilter = ScannerUtility.SCANNER.nextLine().trim();
+        flatTypeFilter = flatTypeFilter.isEmpty() ? null : flatTypeFilter;
+
+        System.out.print("Enter project name filter (or leave blank for no filter): ");
+        String projectNameFilter = ScannerUtility.SCANNER.nextLine().trim();
+        projectNameFilter = projectNameFilter.isEmpty() ? null : projectNameFilter;
+
+        System.out.print("Enter output file path (e.g., ApplicantReport.xlsx): ");
+        String outputFilePath = ScannerUtility.SCANNER.nextLine().trim();
+
+        // Call the controller to generate the report
+        ManagerMainController controller = new ManagerMainController();
+        controller.generateApplicantReport(maritalStatusFilter, flatTypeFilter, projectNameFilter, outputFilePath);
     }
 }

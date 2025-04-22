@@ -177,6 +177,26 @@ public class ApplicationDB {
         }
     }
 
+    public static List<Application> getAllApplications() throws IOException {
+        List<Application> applications = new ArrayList<>();
+        try (FileInputStream fis = new FileInputStream(APPLICATION_FILEPATH);
+             Workbook workbook = new XSSFWorkbook(fis)) {
+    
+            Sheet sheet = workbook.getSheetAt(0);
+            for (Row row : sheet) {
+                if (row.getRowNum() == 0) continue; // Skip header row
+    
+                try {
+                    // Create an Application object from the row and add it to the list
+                    applications.add(createApplicationFromRow(row));
+                } catch (Exception e) {
+                    LoggerUtility.logError("Failed to process row: " + row.getRowNum(), e);
+                }
+            }
+        }
+        return applications;
+    }
+
     private static void populateApplicationRow(Row row, int applicationID,Applicant applicant, Project project, String status, String flatType) {
         row.createCell(ProjectApplicationFileIndex.ID.getIndex()).setCellValue(applicationID); // Using row number as ID
         row.createCell(ProjectApplicationFileIndex.NRIC.getIndex()).setCellValue(applicant.getNric());
