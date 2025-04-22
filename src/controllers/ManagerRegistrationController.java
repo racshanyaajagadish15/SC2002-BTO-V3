@@ -16,33 +16,40 @@ public class ManagerRegistrationController implements IManagerRegistrationContro
      * @param status The new status to set (e.g., "Approved", "Rejected").
      */
    @Override
-	public void updateOfficerApplicationStatus(OfficerRegistration officerApplication, String status) {
-		try {
-			// Update the registration status in the database
-			officerApplication.setRegistrationStatus(status);
-			OfficerRegistration.updateOfficerApplicationStatusDB(
-				officerApplication.getOfficerRegistrationID(),
-				status
-			);
+   public void updateOfficerApplicationStatus(OfficerRegistration officerApplication, String status) {
+    try {
+        if (!"Pending".equalsIgnoreCase(officerApplication.getRegistrationStatus())) {
+            System.out.println("[ERROR] Only applications with status 'Pending' can be updated.");
+            return;
+        }
 
-			// If the status is "Approved," update the ManagerList and Excel file
-			if ("Approved".equalsIgnoreCase(status)) {
-				Project project = Project.getProjectByIdDB(officerApplication.getProjectID());
-				if (project != null) {
-					project.addOfficerToManagerList(officerApplication.getOfficer().getName());
-					ProjectDB.addOfficerNRICToExcel(officerApplication.getProjectID(), officerApplication.getOfficer().getNric());
-				} else {
-					System.out.println("[ERROR] Project not found for Project ID: " + officerApplication.getProjectID());
-					return;
-				}
-			}
+        // Update the registration status in the object
+        officerApplication.setRegistrationStatus(status);
 
-			// Single success message
-			System.out.println("[SUCCESS] Officer application status updated to: " + status);
-		} catch (IOException e) {
-			System.out.println("[ERROR] Failed to update officer application status: " + e.getMessage());
-		}
-	}
+        // Update in DB
+        OfficerRegistration.updateOfficerApplicationStatusDB(
+            officerApplication.getOfficerRegistrationID(),
+            status
+        );
+
+        // If status is "Successful", update ManagerList and Excel file
+        if ("Successful".equalsIgnoreCase(status)) {
+            Project project = Project.getProjectByIdDB(officerApplication.getProjectID());
+            if (project != null) {
+                project.addOfficerToManagerList(officerApplication.getOfficer().getName());
+                ProjectDB.addOfficerNRICToExcel(officerApplication.getProjectID(), officerApplication.getOfficer().getNric());
+            } else {
+                System.out.println("[ERROR] Project not found for Project ID: " + officerApplication.getProjectID());
+                return;
+            }
+        }
+
+        System.out.println("[SUCCESS] Officer application status updated to: " + status);
+    } catch (IOException e) {
+        System.out.println("[ERROR] Failed to update officer application status: " + e.getMessage());
+    }
+}
+
     /**
      * Retrieve all pending officer registrations.
      * 
