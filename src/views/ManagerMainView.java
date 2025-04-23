@@ -5,6 +5,8 @@ import controllers.ManagerMainController;
 import controllers.ManagerProjectController;
 import models.HDBManager;
 
+//commit
+
 
 public class ManagerMainView {
     private ManagerApplicationView applicationView;

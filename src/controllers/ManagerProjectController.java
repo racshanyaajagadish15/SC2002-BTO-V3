@@ -11,6 +11,8 @@ import models.Project;
 import utilities.ScannerUtility;
 import models.HDBManager;
 
+//commit
+
 public class ManagerProjectController implements IManagerProjectController {
 
     @Override
@@ -92,11 +94,12 @@ public class ManagerProjectController implements IManagerProjectController {
                     }
                     break;
                 case 7:
-                    ArrayList<Project> ownedProjectsForDeletion = getOwnedProjects();
-                    if (ownedProjectsForDeletion.isEmpty()) {
-                        view.displayInfo("No projects owned to edit visbility.");
-                    }else{
-                        deleteProjectMenu(ownedProjectsForDeletion);
+                    ArrayList<Project> allProjectsToDelete = getAllProjects();
+                    if (allProjectsToDelete.isEmpty()) {
+                        view.displayError("No projects available to delete.");
+                    } else {
+                        // Call the view method to handle the deletion process
+                        view.deleteProjectView(allProjectsToDelete);
                     }
                     break;
                 case 0:
@@ -174,6 +177,7 @@ public class ManagerProjectController implements IManagerProjectController {
             view.displayError("Failed to toggle project visibility: " + e.getMessage());
         }
     }
+
 
     @Override
     public ArrayList<Project> getAllProjects() {
