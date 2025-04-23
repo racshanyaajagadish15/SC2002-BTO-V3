@@ -20,3 +20,31 @@ Stacktrace: 	java.base/java.text.DateFormat.parse(DateFormat.java:399)
 	controllers.AuthenticatorController.authenticate(AuthenticatorController.java:88)
 	Main.main(Main.java:7)
 
+[2025-04-23 23:04:45] ERROR: Invalid choice. Try again. - Error logged without stack trace
+Stacktrace: 	views.ManagerProjectView.displayError(ManagerProjectView.java:600)
+	controllers.ManagerProjectController.handleProjectMenu(ManagerProjectController.java:107)
+	views.ManagerMainView.handleProjects(ManagerMainView.java:90)
+	views.ManagerMainView.showManagerMenu(ManagerMainView.java:38)
+	controllers.ManagerMainController.managerSelectMenu(ManagerMainController.java:25)
+	controllers.AuthenticatorController.authenticate(AuthenticatorController.java:88)
+	Main.main(Main.java:7)
+
+[2025-04-23 23:08:55] ERROR: Invalid choice. Try again. - Error logged without stack trace
+Stacktrace: 	views.ManagerProjectView.displayError(ManagerProjectView.java:600)
+	controllers.ManagerProjectController.handleProjectMenu(ManagerProjectController.java:104)
+	views.ManagerMainView.handleProjects(ManagerMainView.java:90)
+	views.ManagerMainView.showManagerMenu(ManagerMainView.java:38)
+	controllers.ManagerMainController.managerSelectMenu(ManagerMainController.java:25)
+	controllers.AuthenticatorController.authenticate(AuthenticatorController.java:88)
+	Main.main(Main.java:7)
+
+[2025-04-24 02:58:31] ERROR: Invalid selection. Please try again. - Error logged without stack trace
+Stacktrace: 	views.ManagerProjectView.displayError(ManagerProjectView.java:690)
+	controllers.ManagerProjectController.deleteProjectView(ManagerProjectController.java:310)
+	controllers.ManagerProjectController.handleProjectMenu(ManagerProjectController.java:98)
+	views.ManagerMainView.handleProjects(ManagerMainView.java:90)
+	views.ManagerMainView.showManagerMenu(ManagerMainView.java:38)
+	controllers.ManagerMainController.managerSelectMenu(ManagerMainController.java:25)
+	controllers.AuthenticatorController.authenticate(AuthenticatorController.java:88)
+	Main.main(Main.java:7)
+

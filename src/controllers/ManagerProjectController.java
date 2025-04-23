@@ -2,10 +2,12 @@ package controllers;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.InputMismatchException;
 import java.util.List;
 
 import databases.ProjectDB;
+import enums.FilterIndex;
 import views.ManagerProjectView;
 import models.Project;
 import utilities.ScannerUtility;
@@ -97,6 +99,17 @@ public class ManagerProjectController implements IManagerProjectController {
 
                     }
                     break;
+                case 8: // New case for filtering projects
+                    ArrayList<Project> allProjectsToFilter = getAllProjects();
+                    if (allProjectsToFilter.isEmpty()) {
+                        view.displayError("No projects available to filter.");
+                    } else {
+                        boolean filterApplied = view.filterProjectsMenu(allProjectsToFilter);
+                        if (filterApplied) {
+                            view.displaySuccess("Filters applied successfully.");
+                        }
+                    }
+                    break;
                 case 0:
                     view.displaySuccess("Returning to main menu.");
                     break;
@@ -186,7 +199,9 @@ public class ManagerProjectController implements IManagerProjectController {
     @Override
     public ArrayList<Project> getAllProjects() {
         try {
-            return ProjectDB.getAllProjects();
+            ArrayList<Project> allProjects = ProjectDB.getAllProjects();
+            // Remove duplicates by converting to a Set and back to a List
+            return new ArrayList<>(new HashSet<>(allProjects));
         } catch (IOException e) {
             view.displayError("Error loading projects: " + e.getMessage());
             return new ArrayList<>();
@@ -322,6 +337,41 @@ public class ManagerProjectController implements IManagerProjectController {
 
     public void setLoggedInManager(HDBManager manager) {
         this.loggedInManager = manager;
+    }
+
+    public static void filterProject(ArrayList<Project> projects, List<String> filters) {
+        // Filter by Project Name
+        if (!filters.get(FilterIndex.PROJECT_NAME.getIndex()).isEmpty()) {
+            String projectNameFilter = filters.get(FilterIndex.PROJECT_NAME.getIndex()).toLowerCase();
+            projects.removeIf(project -> !project.getProjectName().toLowerCase().contains(projectNameFilter));
+        }
+    
+        // Filter by Neighborhood
+        if (!filters.get(FilterIndex.NEIGHBOURHOOD.getIndex()).isEmpty()) {
+            String neighborhoodFilter = filters.get(FilterIndex.NEIGHBOURHOOD.getIndex()).toLowerCase();
+            projects.removeIf(project -> !project.getNeighborhood().toLowerCase().contains(neighborhoodFilter));
+        }
+    
+        // Filter by Minimum Price
+        if (!filters.get(FilterIndex.PRICE_START.getIndex()).isEmpty()) {
+            double minPrice = Double.parseDouble(filters.get(FilterIndex.PRICE_START.getIndex()));
+            projects.removeIf(project -> project.getFlatTypes().stream()
+                    .noneMatch(flatType -> flatType.getPricePerFlat() >= minPrice));
+        }
+    
+        // Filter by Maximum Price
+        if (!filters.get(FilterIndex.PRICE_END.getIndex()).isEmpty()) {
+            double maxPrice = Double.parseDouble(filters.get(FilterIndex.PRICE_END.getIndex()));
+            projects.removeIf(project -> project.getFlatTypes().stream()
+                    .noneMatch(flatType -> flatType.getPricePerFlat() <= maxPrice));
+        }
+    
+        // Filter by Flat Type
+        if (!filters.get(FilterIndex.FLAT_TYPE.getIndex()).isEmpty()) {
+            String flatTypeFilter = filters.get(FilterIndex.FLAT_TYPE.getIndex()).toLowerCase();
+            projects.removeIf(project -> project.getFlatTypes().stream()
+                    .noneMatch(flatType -> flatType.getFlatType().toLowerCase().contains(flatTypeFilter)));
+        }
     }
 
 }
