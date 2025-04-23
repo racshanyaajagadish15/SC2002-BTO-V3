@@ -1,7 +1,7 @@
 package views;
 
 import controllers.ManagerRegistrationController;
-import databases.OfficerRegistrationDB;
+import models.HDBManager;
 import models.OfficerRegistration;
 
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ public class ManagerRegistrationView {
         this.controller = new ManagerRegistrationController();
     }
 
-    public void showRegistrationMenu() {
+    public void showRegistrationMenu(HDBManager manager) {
         while (true) {
             System.out.println("\n=========================================");
             System.out.println("         MANAGE OFFICER REGISTRATIONS    ");
@@ -32,13 +32,13 @@ public class ManagerRegistrationView {
 
             switch (input) {
                 case "1":
-                    viewAllRegistrations();
+                    viewAllRegistrations(manager);
                     break;
                 case "2":
-                    viewPendingRegistrations();
+                    viewPendingRegistrations(manager);
                     break;
                 case "3":
-                    updateRegistrationStatusMenu();
+                    updateRegistrationStatusMenu(manager);
                     break;
                 case "0":
                     System.out.println("Exiting Registration Manager...");
@@ -49,9 +49,9 @@ public class ManagerRegistrationView {
         }
     }
 
-    private void viewAllRegistrations() {
+    private void viewAllRegistrations(HDBManager manager) {
         try {
-            ArrayList<OfficerRegistration> registrations = OfficerRegistrationDB.getAllOfficerRegistrations();
+            ArrayList<OfficerRegistration> registrations = controller.getAllRegistrations(manager);
             if (registrations.isEmpty()) {
                 System.out.println("No registrations found.");
                 return;
@@ -62,9 +62,9 @@ public class ManagerRegistrationView {
         }
     }
 
-    private void viewPendingRegistrations() {
+    private void viewPendingRegistrations(HDBManager manager) {
         try {
-            ArrayList<OfficerRegistration> pendingRegistrations = OfficerRegistration.getPendingRegistrationsDB();
+            ArrayList<OfficerRegistration> pendingRegistrations = controller.getPendingRegistrations(manager);
             if (pendingRegistrations.isEmpty()) {
                 System.out.println("No pending registrations found.");
                 return;
@@ -75,9 +75,9 @@ public class ManagerRegistrationView {
         }
     }
 
-    private void updateRegistrationStatusMenu() {
+    private void updateRegistrationStatusMenu(HDBManager manager) {
         try {
-            ArrayList<OfficerRegistration> allRegistrations = OfficerRegistrationDB.getAllOfficerRegistrations();
+            ArrayList<OfficerRegistration> allRegistrations = controller.getAllRegistrations(manager);
 
             if (allRegistrations.isEmpty()) {
                 System.out.println("No registrations available.");
@@ -132,15 +132,7 @@ public class ManagerRegistrationView {
                     return;
             }
 
-            System.out.print("Are you sure you want to set status to '" + newStatus + "'? (y/n): ");
-            String confirm = scanner.nextLine();
-
-            if (confirm.equalsIgnoreCase("y")) {
-                controller.updateOfficerApplicationStatus(selected, newStatus);
-            } else {
-                System.out.println("Update cancelled.");
-            }
-
+            controller.updateOfficerApplicationStatus(selected, newStatus);
         } catch (NumberFormatException e) {
             System.out.println("[ERROR] Invalid number input.");
         } catch (Exception e) {

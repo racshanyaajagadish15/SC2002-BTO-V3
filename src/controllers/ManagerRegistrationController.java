@@ -2,10 +2,13 @@ package controllers;
 
 import java.io.IOException;
 import java.util.ArrayList;
+
+import models.HDBManager;
 import models.OfficerRegistration;
 import models.Project;
 import databases.OfficerRegistrationDB;
 import databases.ProjectDB;
+import enums.OfficerRegisterationStatus;
 
 public class ManagerRegistrationController implements IManagerRegistrationController {
 
@@ -18,11 +21,6 @@ public class ManagerRegistrationController implements IManagerRegistrationContro
    @Override
    public void updateOfficerApplicationStatus(OfficerRegistration officerApplication, String status) {
     try {
-        if (!"Pending".equalsIgnoreCase(officerApplication.getRegistrationStatus())) {
-            System.out.println("[ERROR] Only applications with status 'Pending' can be updated.");
-            return;
-        }
-
         // Update the registration status in the object
         officerApplication.setRegistrationStatus(status);
 
@@ -33,7 +31,7 @@ public class ManagerRegistrationController implements IManagerRegistrationContro
         );
 
         // If status is "Successful", update ManagerList and Excel file
-        if ("Successful".equalsIgnoreCase(status)) {
+        if (OfficerRegisterationStatus.SUCESSFUL.getStatus().equalsIgnoreCase(status)) {
             Project project = Project.getProjectByIdDB(officerApplication.getProjectID());
             if (project != null) {
                 project.addOfficerToManagerList(officerApplication.getOfficer().getName());
@@ -55,8 +53,30 @@ public class ManagerRegistrationController implements IManagerRegistrationContro
      * 
      * @return A list of pending officer registrations.
      */
-    @Override
-    public ArrayList<OfficerRegistration> getPendingRegistrations() {
+    public ArrayList<OfficerRegistration> getPendingRegistrations(HDBManager manager) {
+        ArrayList<OfficerRegistration> pendingRegistrations = new ArrayList<>();
+        try {
+            // Retrieve all officer registrations from the database
+            ArrayList<OfficerRegistration> allRegistrations = OfficerRegistrationDB.getAllOfficerRegistrations();
+
+            // Filter for pending registrations
+            for (OfficerRegistration registration : allRegistrations) {
+                if (registration.getRegistrationStatus().equalsIgnoreCase("Pending")) {
+                    pendingRegistrations.add(registration);
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("[ERROR] Failed to retrieve pending registrations: " + e.getMessage());
+        }
+        return pendingRegistrations;
+    }
+
+        /**
+     * Retrieve all pending officer registrations.
+     * 
+     * @return A list of pending officer registrations.
+     */
+    public ArrayList<OfficerRegistration> getAllRegistrations(HDBManager manager) {
         ArrayList<OfficerRegistration> pendingRegistrations = new ArrayList<>();
         try {
             // Retrieve all officer registrations from the database

@@ -8,12 +8,12 @@ public interface IOfficerUpdateController {
 	 * 
 	 * @param application
 	 */
-	void updateApplications(Application application);
+	boolean updateApplications(Application application, String status);
 
 	/**
 	 * 
 	 * @param application
 	 */
-	void updateProject(Application application);
+	boolean updateProject(Application application);
 
 }

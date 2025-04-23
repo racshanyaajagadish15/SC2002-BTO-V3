@@ -79,30 +79,24 @@ public class ManagerMainView {
     }
 
     private void handleApplications() {
-        System.out.println(">> You selected: Manage Applications");
         applicationView.showApplicationMenu();
     }
 
     private void handleProjects() {
-        System.out.println(">> You selected: Manage Projects");
         ManagerProjectController projectController = new ManagerProjectController(); // Create a controller instance
         projectController.setLoggedInManager(loggedInManager); // Pass the logged-in manager
         projectController.handleProjectMenu(); // Delegate to the project menu
     }
 
     private void handleEnquiries() {
-        System.out.println(">> You selected: Manage Enquiries");
         enquiryView.showEnquiryMenu();
     }
 
     private void handleRegistrations() {
-        System.out.println(">> You selected: Manage Officer Registrations");
-        registrationView.showRegistrationMenu();
+        registrationView.showRegistrationMenu(loggedInManager);
     }
 
     private void handleReportGeneration() {
-        System.out.println(">> You selected: Generate Applicant Report");
-
         // Prompt the user for filters
         System.out.print("Enter marital status filter (or leave blank for no filter): ");
         String maritalStatusFilter = ScannerUtility.SCANNER.nextLine().trim();

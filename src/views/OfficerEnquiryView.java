@@ -128,10 +128,10 @@ public class OfficerEnquiryView implements IDisplayResult {
             int maxLines = Math.max(enquiryLines.size(), replyLines.size());
 
             for (int line = 0; line < maxLines; line++) {
-                String no = (line == 0) ? String.valueOf(i + 1) : "";
-                String date = (line == 0) ? String.valueOf(e.getEnquiryDate()) : "";
-                String enquiry = line < enquiryLines.size() ? enquiryLines.get(line) : "";
-                String reply = line < replyLines.size() ? replyLines.get(line) : "";
+                String no = (line == 0) ? String.valueOf(i + 1) : "-";
+                String date = (line == 0) ? String.valueOf(e.getEnquiryDate()) : "-";
+                String enquiry = line < enquiryLines.size() ? enquiryLines.get(line) : "-";
+                String reply = line < replyLines.size() ? replyLines.get(line) : "-";
                 String replyDate = (line == 0 && !e.getReply().isEmpty()) ? String.valueOf(e.getReplyDate()) : (line == 0 ? "-" : "");
 
                 System.out.printf("| %-3s | %-40s | %-30s | %-30s | %-40s |\n",
