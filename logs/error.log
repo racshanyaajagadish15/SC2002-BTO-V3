@@ -164,3 +164,34 @@ Stacktrace: 	java.base/java.text.DateFormat.parse(DateFormat.java:399)
 	controllers.AuthenticatorController.authenticate(AuthenticatorController.java:81)
 	Main.main(Main.java:7)
 
+[2025-04-23 11:25:14] ERROR: Invalid date format entered: Unparseable date: "" - Unparseable date: ""
+Stacktrace: 	java.base/java.text.DateFormat.parse(DateFormat.java:399)
+	views.ManagerProjectView.getDateInput(ManagerProjectView.java:370)
+	views.ManagerProjectView.editProjectMenu(ManagerProjectView.java:163)
+	controllers.ManagerProjectController.handleProjectMenu(ManagerProjectController.java:70)
+	views.ManagerMainView.handleProjects(ManagerMainView.java:90)
+	views.ManagerMainView.showManagerMenu(ManagerMainView.java:36)
+	controllers.ManagerMainController.managerSelectMenu(ManagerMainController.java:23)
+	controllers.AuthenticatorController.authenticate(AuthenticatorController.java:81)
+	Main.main(Main.java:7)
+
+[2025-04-23 11:25:19] ERROR: Invalid date format entered: Unparseable date: "" - Unparseable date: ""
+Stacktrace: 	java.base/java.text.DateFormat.parse(DateFormat.java:399)
+	views.ManagerProjectView.getDateInput(ManagerProjectView.java:370)
+	views.ManagerProjectView.editProjectMenu(ManagerProjectView.java:170)
+	controllers.ManagerProjectController.handleProjectMenu(ManagerProjectController.java:70)
+	views.ManagerMainView.handleProjects(ManagerMainView.java:90)
+	views.ManagerMainView.showManagerMenu(ManagerMainView.java:36)
+	controllers.ManagerMainController.managerSelectMenu(ManagerMainController.java:23)
+	controllers.AuthenticatorController.authenticate(AuthenticatorController.java:81)
+	Main.main(Main.java:7)
+
+[2025-04-23 11:27:42] ERROR: Invalid choice. Please try again. - Error logged without stack trace
+Stacktrace: 	views.ManagerEnquiryView.displayError(ManagerEnquiryView.java:222)
+	views.ManagerEnquiryView.showEnquiryMenu(ManagerEnquiryView.java:57)
+	views.ManagerMainView.handleEnquiries(ManagerMainView.java:95)
+	views.ManagerMainView.showManagerMenu(ManagerMainView.java:39)
+	controllers.ManagerMainController.managerSelectMenu(ManagerMainController.java:23)
+	controllers.AuthenticatorController.authenticate(AuthenticatorController.java:81)
+	Main.main(Main.java:7)
+

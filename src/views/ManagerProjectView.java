@@ -14,8 +14,10 @@ import java.util.Date;
 import java.util.List;
 
 import databases.ProjectDB;
+import controllers.ManagerProjectController;
 
 public class ManagerProjectView implements IDisplayResult {
+    ManagerProjectController controller = new ManagerProjectController();
 
     public void showProjectMenuHeader() {
         System.out.println("\n=========================================");
@@ -238,54 +240,150 @@ public class ManagerProjectView implements IDisplayResult {
     
             switch (choice) {
                 case 1:
-                    System.out.print("Enter Flat Type Name (e.g., 2-Room, 3-Room): ");
-                    String flatTypeName = ScannerUtility.SCANNER.nextLine();
+                    // Adding Flat Type
+                    String flatTypeName;
+                    while (true) {
+                        System.out.println("Select Flat Type:");
+                        System.out.println("1. 2-Room");
+                        System.out.println("2. 3-Room");
+                        System.out.print("Enter your choice: ");
+                        int flatTypeChoice = ScannerUtility.SCANNER.nextInt();
+                        ScannerUtility.SCANNER.nextLine(); // Consume newline
     
-                    System.out.print("Enter Number of Units: ");
-                    int numUnits = ScannerUtility.SCANNER.nextInt();
+                        if (flatTypeChoice == 1) {
+                            flatTypeName = "2-Room";
+                            break; // Valid choice made
+                        } else if (flatTypeChoice == 2) {
+                            flatTypeName = "3-Room";
+                            break; // Valid choice made
+                        } else {
+                            System.out.println("[ERROR] Invalid flat type choice. Please try again.");
+                        }
+                    }
     
-                    System.out.print("Enter Price per Flat: ");
-                    double pricePerFlat = ScannerUtility.SCANNER.nextDouble();
-                    ScannerUtility.SCANNER.nextLine(); // Consume newline
+                    int numUnits;
+                    while (true) {
+                        System.out.print("Enter Number of Units: ");
+                        if (ScannerUtility.SCANNER.hasNextInt()) {
+                            numUnits = ScannerUtility.SCANNER.nextInt();
+                            ScannerUtility.SCANNER.nextLine(); // Consume newline
+                            break; // Valid input
+                        } else {
+                            System.out.println("[ERROR] Please enter a valid number.");
+                            ScannerUtility.SCANNER.nextLine(); // Clear invalid input
+                        }
+                    }
+    
+                    double pricePerFlat;
+                    while (true) {
+                        System.out.print("Enter Price per Flat: ");
+                        if (ScannerUtility.SCANNER.hasNextDouble()) {
+                            pricePerFlat = ScannerUtility.SCANNER.nextDouble();
+                            ScannerUtility.SCANNER.nextLine(); // Consume newline
+                            break; // Valid input
+                        } else {
+                            System.out.println("[ERROR] Please enter a valid price.");
+                            ScannerUtility.SCANNER.nextLine(); // Clear invalid input
+                        }
+                    }
     
                     flatTypes.add(new FlatType(flatTypeName, numUnits, pricePerFlat));
                     LoggerUtility.logInfo("Added Flat Type: " + flatTypeName + " with " + numUnits + " units at $" + pricePerFlat);
                     break;
     
                 case 2:
-                    System.out.print("Enter the index of the Flat Type to edit (1-based): ");
-                    int indexToEdit = ScannerUtility.SCANNER.nextInt() - 1;
-                    ScannerUtility.SCANNER.nextLine(); // Consume newline
-    
-                    if (indexToEdit >= 0 && indexToEdit < flatTypes.size()) {
-                        FlatType flatType = flatTypes.get(indexToEdit);
-    
-                        System.out.print("Enter new Flat Type Name (current: " + flatType.getFlatType() + "): ");
-                        flatType.setFlatType((ScannerUtility.SCANNER.nextLine()));
-    
-                        System.out.print("Enter new Number of Units (current: " + flatType.getNumFlats() + "): ");
-                        flatType.setNumFlats(ScannerUtility.SCANNER.nextInt());
-    
-                        System.out.print("Enter new Price per Flat (current: $" + flatType.getPricePerFlat() + "): ");
-                        flatType.setPricePerFlat(ScannerUtility.SCANNER.nextDouble());
-                        ScannerUtility.SCANNER.nextLine(); // Consume newline
-    
-                        LoggerUtility.logInfo("Updated Flat Type: " + flatType.getFlatType());
-                    } else {
-                        displayError("Invalid index. Please try again.");
+                    // Editing Existing Flat Type
+                    if (flatTypes.isEmpty()) {
+                        System.out.println("[ERROR] No flat types available to edit.");
+                        break;
                     }
+    
+                    // Print existing flat types
+                    System.out.println("Existing Flat Types:");
+                    for (int i = 0; i < flatTypes.size(); i++) {
+                        FlatType ft = flatTypes.get(i);
+                        System.out.println((i + 1) + ". " + ft.getFlatType() + " - Units: " + ft.getNumFlats() + ", Price: $" + ft.getPricePerFlat());
+                    }
+    
+                    int indexToEdit;
+                    while (true) {
+                        System.out.print("Enter the index of the Flat Type to edit (1-based): ");
+                        if (ScannerUtility.SCANNER.hasNextInt()) {
+                            indexToEdit = ScannerUtility.SCANNER.nextInt() - 1;
+                            ScannerUtility.SCANNER.nextLine(); // Consume newline
+                            if (indexToEdit >= 0 && indexToEdit < flatTypes.size()) {
+                                break; // Valid index
+                            } else {
+                                System.out.println("[ERROR] Invalid index. Please try again.");
+                            }
+                        } else {
+                            System.out.println("[ERROR] Please enter a valid index.");
+                            ScannerUtility.SCANNER.nextLine(); // Clear invalid input
+                        }
+                    }
+    
+                    FlatType flatType = flatTypes.get(indexToEdit);
+                    System.out.print("Enter new Flat Type Name (current: " + flatType.getFlatType() + "): ");
+                    flatType.setFlatType(ScannerUtility.SCANNER.nextLine());
+    
+                    while (true) {
+                        System.out.print("Enter new Number of Units (current: " + flatType.getNumFlats() + "): ");
+                        if (ScannerUtility.SCANNER.hasNextInt()) {
+                            flatType.setNumFlats(ScannerUtility.SCANNER.nextInt());
+                            ScannerUtility.SCANNER.nextLine(); // Consume newline
+                            break; // Valid input
+                        } else {
+                            System.out.println("[ERROR] Please enter a valid number.");
+                            ScannerUtility.SCANNER.nextLine(); // Clear invalid input
+                        }
+                    }
+    
+                    while (true) {
+                        System.out.print("Enter new Price per Flat (current: $" + flatType.getPricePerFlat() + "): ");
+                        if (ScannerUtility.SCANNER.hasNextDouble()) {
+                            flatType.setPricePerFlat(ScannerUtility.SCANNER.nextDouble());
+                            ScannerUtility.SCANNER.nextLine(); // Consume newline
+                            break; // Valid input
+                        } else {
+                            System.out.println("[ERROR] Please enter a valid price.");
+                            ScannerUtility.SCANNER.nextLine(); // Clear invalid input
+                        }
+                    }
+    
+                    LoggerUtility.logInfo("Updated Flat Type: " + flatType.getFlatType());
                     break;
     
                 case 3:
-                    System.out.print("Enter the index of the Flat Type to remove (1-based): ");
-                    int indexToRemove = ScannerUtility.SCANNER.nextInt() - 1;
-                    ScannerUtility.SCANNER.nextLine(); // Consume newline
+                    // Removing Flat Type
+                    if (flatTypes.isEmpty()) {
+                        System.out.println("[ERROR] No flat types available to remove.");
+                        break;
+                    }
     
-                    if (indexToRemove >= 0 && indexToRemove < flatTypes.size()) {
-                        FlatType removedFlatType = flatTypes.remove(indexToRemove);
-                        LoggerUtility.logInfo("Removed Flat Type: " + removedFlatType.getFlatType());
-                    } else {
-                        displayError("Invalid index. Please try again.");
+                    // Print existing flat types
+                    System.out.println("Existing Flat Types:");
+                    for (int i = 0; i < flatTypes.size(); i++) {
+                        FlatType ft = flatTypes.get(i);
+                        System.out.println((i + 1) + ". " + ft.getFlatType() + " - Units: " + ft.getNumFlats() + ", Price: $" + ft.getPricePerFlat());
+                    }
+    
+                    int indexToRemove;
+                    while (true) {
+                        System.out.print("Enter the index of the Flat Type to remove (1-based): ");
+                        if (ScannerUtility.SCANNER.hasNextInt()) {
+                            indexToRemove = ScannerUtility.SCANNER.nextInt() - 1;
+                            ScannerUtility.SCANNER.nextLine(); // Consume newline
+                            if (indexToRemove >= 0 && indexToRemove < flatTypes.size()) {
+                                FlatType removedFlatType = flatTypes.remove(indexToRemove);
+                                LoggerUtility.logInfo("Removed Flat Type: " + removedFlatType.getFlatType());
+                                break; // Valid index
+                            } else {
+                                System.out.println("[ERROR] Invalid index. Please try again.");
+                            }
+                        } else {
+                            System.out.println("[ERROR] Please enter a valid index.");
+                            ScannerUtility.SCANNER.nextLine(); // Clear invalid input
+                        }
                     }
                     break;
     
@@ -294,7 +392,7 @@ public class ManagerProjectView implements IDisplayResult {
                     return;
     
                 default:
-                    System.out.println("Invalid choice. Please try again.");
+                    System.out.println("[ERROR] Invalid choice. Please try again.");
             }
         }
     }
@@ -342,6 +440,48 @@ public class ManagerProjectView implements IDisplayResult {
         }
     }
 
+    public void deleteProjectView(ArrayList<Project> projects) {
+        if (projects.isEmpty()) {
+            displayError("No projects found to delete.");
+            return;
+        }
+    
+        // Display the details of the projects found
+        System.out.println("\nProjects found:");
+        displayProjects(projects); // Assuming you have a method to display project details
+    
+        // Prompt for confirmation
+        System.out.print("Enter the index of the project to delete (1-based): ");
+        int indexToDelete = -1;
+    
+        while (true) {
+            if (ScannerUtility.SCANNER.hasNextInt()) {
+                indexToDelete = ScannerUtility.SCANNER.nextInt() - 1; // Convert to 0-based index
+                ScannerUtility.SCANNER.nextLine(); // Consume newline
+    
+                if (indexToDelete >= 0 && indexToDelete < projects.size()) {
+                    break; // Valid index
+                } else {
+                    System.out.println("[ERROR] Invalid index. Please try again.");
+                }
+            } else {
+                System.out.println("[ERROR] Please enter a valid number.");
+                ScannerUtility.SCANNER.nextLine(); // Clear invalid input
+            }
+        }
+    
+        Project projectToDelete = projects.get(indexToDelete);
+        System.out.print("Are you sure you want to delete the project '" + projectToDelete.getProjectName() + "'? (yes/no): ");
+        String confirmation = ScannerUtility.SCANNER.nextLine();
+    
+        if (confirmation.equalsIgnoreCase("yes")) {
+            controller.deleteProject(projectToDelete); // Call the controller method to delete the project
+            displaySuccess("Project '" + projectToDelete.getProjectName() + "' deleted successfully.");
+        } else {
+            displaySuccess("Project deletion canceled.");
+        }
+    }
+
     /**
      * Prompts the user to enter a date in the format yyyy-MM-dd and parses it.
      *
@@ -366,19 +506,47 @@ public class ManagerProjectView implements IDisplayResult {
             return;
         }
     
-        System.out.println("\n---------------------------------------------------------------------------------------------");
-        System.out.printf("| %-5s | %-20s | %-20s | %-10s | %-15s | %-15s | %-15s | %-15s |\n",
-                "ID", "Name", "Neighborhood", "Status", "Opening Date", "Closing Date", "Applications", "Officer Slots");
-        System.out.println("---------------------------------------------------------------------------------------------");
+        // Determine the maximum width for each column
+        int idWidth = "ID".length();
+        int nameWidth = "Name".length();
+        int neighborhoodWidth = "Neighborhood".length();
+        int statusWidth = "Status".length();
+        int openingDateWidth = "Opening Date".length();
+        int closingDateWidth = "Closing Date".length();
+        int applicationsWidth = "Applications".length();
+        int officerSlotsWidth = "Officer Slots".length();
     
         for (Project project : projects) {
+            idWidth = Math.max(idWidth, String.valueOf(project.getProjectID()).length());
+            nameWidth = Math.max(nameWidth, wrapText(project.getProjectName(), nameWidth).stream().map(String::length).max(Integer::compare).orElse(0));
+            neighborhoodWidth = Math.max(neighborhoodWidth, wrapText(project.getNeighborhood(), neighborhoodWidth).stream().map(String::length).max(Integer::compare).orElse(0));
+            statusWidth = Math.max(statusWidth, (project.getProjectVisibility() ? "Visible" : "Hidden").length());
+            openingDateWidth = Math.max(openingDateWidth, project.getApplicationOpeningDate().toString().length());
+            closingDateWidth = Math.max(closingDateWidth, project.getApplicationClosingDate().toString().length());
+            applicationsWidth = Math.max(applicationsWidth, (project.getApplicationClosingDate().after(new Date()) ? "Open" : "Closed").length());
+            officerSlotsWidth = Math.max(officerSlotsWidth, String.valueOf(project.getOfficerSlots()).length());
+        }
+    
+        // Calculate total width for the table
+        int totalWidth = idWidth + nameWidth + neighborhoodWidth + statusWidth + openingDateWidth + closingDateWidth + applicationsWidth + officerSlotsWidth + 8; // 8 for padding and borders
+    
+        // Print the header
+        String headerFormat = "| %-"+idWidth+"s | %-"+nameWidth+"s | %-"+neighborhoodWidth+"s | %-"+statusWidth+"s | %-"+openingDateWidth+"s | %-"+closingDateWidth+"s | %-"+applicationsWidth+"s | %-"+officerSlotsWidth+"s |";
+        String separator = "-".repeat(totalWidth);
+        
+        System.out.println("\n" + separator);
+        System.out.printf(headerFormat, "ID", "Name", "Neighborhood", "Status", "Opening Date", "Closing Date", "Applications", "Officer Slots");
+        System.out.println("\n" + separator);
+    
+        // Print the project data
+        for (Project project : projects) {
             // Wrap text for project name and neighborhood
-            List<String> nameLines = wrapText(project.getProjectName(), 20);
-            List<String> neighborhoodLines = wrapText(project.getNeighborhood(), 20);
+            List<String> nameLines = wrapText(project.getProjectName(), nameWidth);
+            List<String> neighborhoodLines = wrapText(project.getNeighborhood(), neighborhoodWidth);
             int maxLines = Math.max(nameLines.size(), neighborhoodLines.size());
     
             for (int i = 0; i < maxLines; i++) {
-                System.out.printf("| %-5s | %-20s | %-20s | %-10s | %-15s | %-15s | %-15s | %-15s |\n",
+                System.out.printf(headerFormat,
                         (i == 0 ? project.getProjectID() : ""), // Only show Project ID on the first line
                         (i < nameLines.size() ? nameLines.get(i) : ""), // Project Name
                         (i < neighborhoodLines.size() ? neighborhoodLines.get(i) : ""), // Neighborhood
@@ -388,7 +556,7 @@ public class ManagerProjectView implements IDisplayResult {
                         (i == 0 ? (project.getApplicationClosingDate().after(new Date()) ? "Open" : "Closed") : ""), // Applications
                         (i == 0 ? project.getOfficerSlots() : "")); // Officer Slots
             }
-            System.out.println("---------------------------------------------------------------------------------------------");
+            System.out.println(separator);
         }
     }
 

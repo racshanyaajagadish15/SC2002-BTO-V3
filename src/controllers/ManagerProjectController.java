@@ -87,7 +87,13 @@ public class ManagerProjectController implements IManagerProjectController {
                     view.toggleProjectVisibilityMenu(allProjectsForVisibility);
                     break;
                 case 7:
-                    deleteProjectMenu();
+                    ArrayList<Project> allProjectsToDelete = getAllProjects();
+                    if (allProjectsToDelete.isEmpty()) {
+                        view.displayError("No projects available to delete.");
+                    } else {
+                        // Call the view method to handle the deletion process
+                        view.deleteProjectView(allProjectsToDelete);
+                    }
                     break;
                 case 0:
                     view.displaySuccess("Returning to main menu.");
@@ -175,6 +181,7 @@ public class ManagerProjectController implements IManagerProjectController {
         }
     }
 
+
     @Override
     public ArrayList<Project> getAllProjects() {
         try {
@@ -221,28 +228,6 @@ public class ManagerProjectController implements IManagerProjectController {
             ProjectDB.deleteProject(project.getProjectName());
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    private void deleteProjectMenu() {
-        System.out.print("Enter the name of the project to delete: ");
-        String projectName = ScannerUtility.SCANNER.nextLine();
-        ArrayList<Project> projects = getSpecificProject(projectName);
-
-        if (projects.isEmpty()) {
-            view.displayError("No project found with the given name.");
-            return;
-        }
-
-        Project project = projects.get(0); // Assuming only one project matches the name
-        System.out.print("Are you sure you want to delete this project? (yes/no): ");
-        String confirmation = ScannerUtility.SCANNER.nextLine();
-
-        if (confirmation.equalsIgnoreCase("yes")) {
-            deleteProject(project);
-            view.displaySuccess("Project deleted successfully.");
-        } else {
-            view.displaySuccess("Project deletion canceled.");
         }
     }
 

@@ -33,3 +33,20 @@
 [2025-04-22 23:39:39] INFO: Project visibility toggled to Hidden.
 [2025-04-22 23:41:46] INFO: Project visibility toggled to Hidden.
 [2025-04-22 23:41:56] INFO: Project visibility toggled to Visible.
+[2025-04-23 11:17:47] INFO: Added Flat Type: 2-Room with 10 units at $100000.0
+[2025-04-23 11:21:40] INFO: Added Flat Type: 2-Room with 10 units at $100000.0
+[2025-04-23 11:22:07] INFO: Added Flat Type: 3-Room with 10 units at $200000.0
+[2025-04-23 11:23:30] INFO: Updated Flat Type: 3-ROOM
+[2025-04-23 11:23:51] INFO: New project created: Carissa Park
+[2025-04-23 11:23:52] INFO: Created new project: Carissa Park
+[2025-04-23 11:23:52] INFO: Project created successfully!
+[2025-04-23 11:25:13] INFO: Neighborhood updated to: Flora Dr
+[2025-04-23 11:25:23] INFO: Project updated successfully!
+[2025-04-23 11:25:23] INFO: Project updated successfully and saved to storage.
+[2025-04-23 11:26:20] INFO: Project visibility toggled to Hidden.
+[2025-04-23 11:26:43] INFO: Deleted project: Carissa Park
+[2025-04-23 11:26:43] INFO: Project deleted successfully.
+[2025-04-23 11:27:00] INFO: Returning to main menu.
+[2025-04-23 11:27:07] INFO: Viewed all enquiries.
+[2025-04-23 11:27:31] INFO: Viewed enquiries for Project ID: 1
+[2025-04-23 11:27:49] INFO: Manager exited the enquiry menu.
