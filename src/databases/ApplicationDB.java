@@ -2,7 +2,6 @@ package databases;
 
 import models.*;
 import utilities.LoggerUtility;
-import enums.EnquiryFileIndex;
 import enums.ProjectApplicationFileIndex;
 import java.io.*;
 import java.util.*;
@@ -136,7 +135,6 @@ public class ApplicationDB {
                 Cell nricCell = row.getCell(ProjectApplicationFileIndex.NRIC.getIndex());
                 if (nricCell == null || nricCell.getCellType() == CellType.BLANK) continue;
 
-                if (nricCell == null) continue;
                 if (nricCell.getCellType() == CellType.STRING && nricCell.getStringCellValue().equals(nric)) {
                     return createApplicationFromRow(row);
                 }
