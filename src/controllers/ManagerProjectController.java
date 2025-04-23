@@ -97,8 +97,8 @@ public class ManagerProjectController implements IManagerProjectController {
                     if (allProjectsToDelete.isEmpty()) {
                         view.displayError("No projects available to delete.");
                     } else {
-                        // Call the view method to handle the deletion process
-                        view.deleteProjectView(allProjectsToDelete);
+                        // Pass 'this' as the controller parameter
+                        view.deleteProjectView(allProjectsToDelete, this);
                     }
                     break;
                 case 0:

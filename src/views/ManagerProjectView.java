@@ -22,7 +22,6 @@ import controllers.ManagerProjectController;
 import enums.FlatTypeName;
 
 public class ManagerProjectView implements IDisplayResult {
-    ManagerProjectController controller = new ManagerProjectController();
 
     public int showProjectMenuHeader() {
         while (true){
@@ -526,7 +525,7 @@ public class ManagerProjectView implements IDisplayResult {
         }
     }
 
-    public void deleteProjectView(ArrayList<Project> projects) {
+    public void deleteProjectView(ArrayList<Project> projects, ManagerProjectController controller) {
         if (projects.isEmpty()) {
             displayError("No projects found to delete.");
             return;
