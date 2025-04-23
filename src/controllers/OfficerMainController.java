@@ -12,6 +12,7 @@ public class OfficerMainController {
 		ApplicantEnquiryController applicantEnquiryController = new ApplicantEnquiryController();
 		OfficerEnquiryController officerEnquiryController = new OfficerEnquiryController();
 		OfficerRegistrationController officerJoinProjectController = new OfficerRegistrationController();
+		OfficerUpdateController officerUpdateController = new OfficerUpdateController();
 		// Load enquiries and projects that the applicant have TODO
 
 		while (true){
@@ -36,9 +37,12 @@ public class OfficerMainController {
 					officerEnquiryController.enquiryActionMenu(officer);
 					break;
 				case 7:
-					//Change password
+					officerUpdateController.selectApplicationToBook(officer);
 					break;
 				case 8:
+					//TODO login
+					break;
+				case 9:
 					// return back to login
 					return;
 				default:

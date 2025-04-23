@@ -37,7 +37,7 @@ public class ApplicantMainController {
                     // Return back to login
                     return;
                 default:
-                    System.out.println("Invalid selection. Please try again.");
+                    mainView.displayError("Invalid selection. Please try again.");
                     break;
             }
         }

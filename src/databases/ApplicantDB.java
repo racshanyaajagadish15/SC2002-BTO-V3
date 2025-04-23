@@ -22,6 +22,10 @@ public class ApplicantDB {
                 if (row.getRowNum() == 0) continue;
 
                 // Read the user details from the row
+                if (row.getCell(UserFileIndex.NRIC.getIndex()) == null || 
+                    row.getCell(UserFileIndex.NRIC.getIndex()).getCellType() != org.apache.poi.ss.usermodel.CellType.STRING) {
+                    continue;
+                }
                 String fileNric = row.getCell(UserFileIndex.NRIC.getIndex()).getStringCellValue();
 
                 // Check if NRIC match

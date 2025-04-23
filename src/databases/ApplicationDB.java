@@ -2,6 +2,7 @@ package databases;
 
 import models.*;
 import utilities.LoggerUtility;
+import enums.EnquiryFileIndex;
 import enums.ProjectApplicationFileIndex;
 import java.io.*;
 import java.util.*;
@@ -48,8 +49,9 @@ public class ApplicationDB {
             
         for (Row row : sheet) {
             if (row.getRowNum() == 0) continue; // Skip header row
-            
+            if (row.getCell(ProjectApplicationFileIndex.ID.getIndex()) == null || row.getCell(ProjectApplicationFileIndex.ID.getIndex()).getCellType() == CellType.BLANK) continue;
             int applicationID = (int) row.getCell(ProjectApplicationFileIndex.ID.getIndex()).getNumericCellValue();
+            
             if (applicationID == application.getApplicationID()) {
                 populateApplicationRow(
                     row, 
@@ -76,8 +78,9 @@ public class ApplicationDB {
             Sheet sheet = workbook.getSheetAt(0);
             for (Row row : sheet) {
                 if (row.getRowNum() == 0) continue; // Skip header
-                
                 Cell projectIDCell = row.getCell(ProjectApplicationFileIndex.PROJECT_ID.getIndex());
+                if (projectIDCell == null || projectIDCell.getCellType() == CellType.BLANK) continue;
+
                 if (projectIDCell != null && projectIDCell.getCellType() == CellType.NUMERIC) {
                     int currentProjectID = (int) projectIDCell.getNumericCellValue();
                     if (currentProjectID == projectID) {
@@ -98,8 +101,9 @@ public class ApplicationDB {
             Sheet sheet = workbook.getSheetAt(0);
             for (Row row : sheet) {
                 if (row.getRowNum() == 0) continue;
-    
+                
                 Cell projectIDCell = row.getCell(ProjectApplicationFileIndex.PROJECT_ID.getIndex());
+                if (projectIDCell == null || projectIDCell.getCellType() == CellType.BLANK) continue;
                 int currentProjectID;
     
                 // Check the cell type and retrieve the value accordingly
@@ -125,8 +129,9 @@ public class ApplicationDB {
             Sheet sheet = workbook.getSheetAt(0);
             for (Row row : sheet) {
                 if (row.getRowNum() == 0) continue;
-
                 Cell nricCell = row.getCell(ProjectApplicationFileIndex.NRIC.getIndex());
+                if (nricCell == null || nricCell.getCellType() == CellType.BLANK) continue;
+
                 if (nricCell == null) continue;
                 if (nricCell.getCellType() == CellType.STRING && nricCell.getStringCellValue().equals(nric)) {
                     return createApplicationFromRow(row);
@@ -138,24 +143,50 @@ public class ApplicationDB {
 
     private static Application createApplicationFromRow(Row row) throws IOException {
         try {
-            int applicationID = (int) row.getCell(ProjectApplicationFileIndex.ID.getIndex()).getNumericCellValue();
-            String nric = row.getCell(ProjectApplicationFileIndex.NRIC.getIndex()).getStringCellValue();
-            int projectID = (int) row.getCell(ProjectApplicationFileIndex.PROJECT_ID.getIndex()).getNumericCellValue();
-            String applicationStatus = row.getCell(ProjectApplicationFileIndex.STATUS.getIndex()).getStringCellValue();
-            String flatType = row.getCell(ProjectApplicationFileIndex.FLAT_TYPE.getIndex()).getStringCellValue();
+            Cell idCell = row.getCell(ProjectApplicationFileIndex.ID.getIndex());
+            int applicationID = (idCell != null && idCell.getCellType() == CellType.NUMERIC) 
+                ? (int) idCell.getNumericCellValue() 
+                : 0;
+
+            Cell nricCell = row.getCell(ProjectApplicationFileIndex.NRIC.getIndex());
+            String nric = (nricCell != null && nricCell.getCellType() == CellType.STRING) 
+                ? nricCell.getStringCellValue() 
+                : "";
+
+            Cell projectIDCell = row.getCell(ProjectApplicationFileIndex.PROJECT_ID.getIndex());
+            int projectID = (projectIDCell != null && projectIDCell.getCellType() == CellType.NUMERIC) 
+                ? (int) projectIDCell.getNumericCellValue() 
+                : 0;
+
+            Cell statusCell = row.getCell(ProjectApplicationFileIndex.STATUS.getIndex());
+            String applicationStatus = (statusCell != null && statusCell.getCellType() == CellType.STRING) 
+                ? statusCell.getStringCellValue() 
+                : "";
+
+            Cell flatTypeCell = row.getCell(ProjectApplicationFileIndex.FLAT_TYPE.getIndex());
+            String flatType = (flatTypeCell != null && flatTypeCell.getCellType() == CellType.STRING) 
+                ? flatTypeCell.getStringCellValue() 
+                : "";
 
             // Fetch the Applicant object
             Applicant applicant;
             try {
+                // Check for null or empty NRIC
+                if (nric == null || nric.trim().isEmpty()) {
+                    throw new IOException("Applicant NRIC is missing in application row.");
+                }
                 applicant = ApplicantDB.getApplicantByNRIC(nric);
                 if (applicant == null) {
-                    applicant = HDBOfficerDB.getOfficerByNRIC(nric);
-                    if (applicant == null) {
+                    Object officer = HDBOfficerDB.getOfficerByNRIC(nric);
+                    if (officer instanceof Applicant) {
+                        applicant = (Applicant) officer;
+                    } else {
                         throw new IOException("Applicant with NRIC " + nric + " not found.");
                     }
                 }
             } catch (IOException e) {
-                throw new IOException("Failed to fetch applicant by NRIC: " + nric, e);
+                LoggerUtility.logError("Failed to fetch applicant by NRIC: " + nric, e);
+                throw e;
             }
         
             // Fetch the Project object

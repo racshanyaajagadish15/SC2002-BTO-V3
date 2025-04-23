@@ -5,146 +5,92 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Map;
 
-import controllers.ApplicantEnquiryController;
-import models.Applicant;
 import models.Enquiry;
 import models.Project;
 import utilities.ScannerUtility;
 
 public class ApplicantEnquiryView implements IDisplayResult {
 
-    public void showEnquiriesMenu(Map<Project, ArrayList<Enquiry>> projectEnquiriesMap) {
+    // Displays the main menu and returns the selected project index (or -1 for exit)
+    public int showEnquiriesMenu(Map<Project, ArrayList<Enquiry>> projectEnquiriesMap, List<Project> projectList) {
         if (projectEnquiriesMap.size() == 0) {
             displayInfo("You have not made any enquiries!");
-            return;
+            return -1;
         }
-        List<Project> projectList = new ArrayList<>(projectEnquiriesMap.keySet());
-        Project.sortProjectByName(projectList);
-        ArrayList<Enquiry> enquiries;
-        while (true) {
-            try {
-                System.out.println("\n=========================================");
-                System.out.println("         VIEW & MANAGE ENQUIRIES         ");
-                System.out.println("=========================================");
+        System.out.println("\n=========================================");
+        System.out.println("         VIEW & MANAGE ENQUIRIES         ");
+        System.out.println("=========================================");
 
-                for (int i = 0; i < projectList.size(); i++) {
-                    System.out.println((i + 1) + ". " + projectList.get(i).getProjectName());
-                }
-                System.out.println("0. Exit");
-                System.out.print("\nSelect a project to view enquiries: ");
-
-                int projectIndex = ScannerUtility.SCANNER.nextInt() - 1;
-                ScannerUtility.SCANNER.nextLine(); 
-
-                if (projectIndex == -1) {
-                    return;
-                }
-
-                if (projectIndex < 0 || projectIndex >= projectList.size()) {
-                    displayError("Invalid selection. Please try again.");
-                    continue;
-                }
-
-                Project selectedProject = projectList.get(projectIndex);
-                enquiries = projectEnquiriesMap.get(selectedProject);
-
-                if (enquiries.isEmpty()) {
-                    displayInfo("No enquiries found for the selected project.");
-                    continue;
-                }
-            }
-            catch(InputMismatchException e){
-                displayError("Invalid selection. Please try again.");
-                ScannerUtility.SCANNER.nextLine();
-                continue;
-            }
-            Enquiry selectedEnquiry;
-            int enquiryIndex = -1;
-            while (true) {
-                try{
-                    displayEnquiries(enquiries);
-                    System.out.println("\nNote: Enquiries with replies can not be modified!");
-                    System.out.print("Enter an enquiry number to modify (0 to go back): ");
-                    enquiryIndex = ScannerUtility.SCANNER.nextInt() - 1;
-                    ScannerUtility.SCANNER.nextLine();
-
-                    if (enquiryIndex == -1) break;
-
-                    if (enquiryIndex < 0 || enquiryIndex >= enquiries.size()) {
-                        displayError("Invalid selection. Please try again.");
-                        continue;
-                    }
-
-                    selectedEnquiry = enquiries.get(enquiryIndex);
-
-                    if (!selectedEnquiry.getReply().isEmpty()) {
-                        displayInfo("This enquiry has already been replied to and cannot be modified.");
-                        continue;
-                    }
-                }
-                catch(InputMismatchException e){
-                    displayError("Invalid selection. Please try again.");
-                    ScannerUtility.SCANNER.nextLine();
-                    continue;
-                }
-
-                while (true) {
-                    try{
-                        System.out.println("\nEnquiry options:");
-                        System.out.println("1. Edit Enquiry");
-                        System.out.println("2. Delete Enquiry");
-                        System.out.println("0. Back");
-                        System.out.print("Select an option: ");
-                        int option = ScannerUtility.SCANNER.nextInt();
-                        ScannerUtility.SCANNER.nextLine(); 
-
-                        ApplicantEnquiryController controller = new ApplicantEnquiryController();
-
-                        if (option == 1) {
-                            System.out.print("Enter your new enquiry: ");
-                            String newText = ScannerUtility.SCANNER.nextLine();
-                            controller.editEnquiry(selectedEnquiry, newText);
-                            break;
-                        } else if (option == 2) {
-                            controller.deleteEnquiry(selectedEnquiry.getEnquiryID());
-                            enquiries.remove(enquiryIndex);
-                            displaySuccess("Enquiry deleted successfully.");
-                            break;
-                        } else if (option == 0) {
-                            break;
-                        } else {
-                            displayError("Invalid option. Please try again.");
-                        }
-                    }
-                    catch(InputMismatchException e){
-                        displayError("Invalid selection. Please try again.");
-                        ScannerUtility.SCANNER.nextLine();
-                        continue;
-                    }
-                }
-            }
+        for (int i = 0; i < projectList.size(); i++) {
+            System.out.println((i + 1) + ". " + projectList.get(i).getProjectName());
         }
+        System.out.println("0. Exit");
+        System.out.print("\nSelect a project to view enquiries: ");
+
+        int projectIndex;
+        try {
+            projectIndex = ScannerUtility.SCANNER.nextInt() - 1;
+            ScannerUtility.SCANNER.nextLine();
+        } catch (InputMismatchException e) {
+            ScannerUtility.SCANNER.nextLine();
+            return -2;
+        }
+        return projectIndex;
     }
 
-    public void showCreateEnquiry(Project project, Applicant applicant) {
-        ApplicantEnquiryController applicantEnquiryController = new ApplicantEnquiryController();
+    // Displays the list of enquiries and returns the selected enquiry index (or -1 for back)
+    public int showEnquiriesList(ArrayList<Enquiry> enquiries) {
+        displayEnquiries(enquiries);
+        System.out.println("\nNote: Enquiries with replies can not be modified!");
+        System.out.print("Enter an enquiry number to modify (0 to go back): ");
+        int enquiryIndex;
+        try {
+            enquiryIndex = ScannerUtility.SCANNER.nextInt() - 1;
+            ScannerUtility.SCANNER.nextLine();
+        } catch (InputMismatchException e) {
+            ScannerUtility.SCANNER.nextLine();
+            return -2;
+        }
+        return enquiryIndex;
+    }
+
+    // Displays options for a selected enquiry and returns the selected option
+    public int showEnquiryOptions() {
+        System.out.println("\nEnquiry options:");
+        System.out.println("1. Edit Enquiry");
+        System.out.println("2. Delete Enquiry");
+        System.out.println("0. Back");
+        System.out.print("Select an option: ");
+        int option;
+        try {
+            option = ScannerUtility.SCANNER.nextInt();
+            ScannerUtility.SCANNER.nextLine();
+        } catch (InputMismatchException e) {
+            ScannerUtility.SCANNER.nextLine();
+            return -1;
+        }
+        return option;
+    }
+
+    // Prompts for new enquiry text
+    public String promptNewEnquiryText() {
+        System.out.print("Enter your new enquiry (Blank to return): ");
+        return ScannerUtility.SCANNER.nextLine();
+    }
+
+    // Prompts for new enquiry creation
+    public String showCreateEnquiry(Project project) {
         System.out.println("\n=========================================");
         System.out.println("            CREATE NEW ENQUIRY           ");
         System.out.println("=========================================");
         System.out.println("Project name: " + project.getProjectName());
         System.out.print("\nEnter your enquiry (Blank to return): ");
         String enquiryText = ScannerUtility.SCANNER.nextLine();
-
-        if (enquiryText.trim().isEmpty()) {
-            return;
-        }
-
-        Enquiry newEnquiry = new Enquiry(enquiryText, applicant.getNric(), project);
-        boolean success = applicantEnquiryController.submitEnquiry(newEnquiry);
-        showCreateEnquiryResult(success);
+        return enquiryText;
     }
 
-    private void displayEnquiries(ArrayList<Enquiry> enquiries) {
+    // Displays the list of enquiries in a table
+    public void displayEnquiries(ArrayList<Enquiry> enquiries) {
         System.out.println("\n---------------------------------------------------------------------------------------------------------------------------------------------------------------");
         System.out.printf("| %-3s | %-40s | %-30s | %-30s | %-40s |\n", 
             "No", "Enquiry Date", "Enquiry", "Reply", "Reply Date");
@@ -171,8 +117,7 @@ public class ApplicantEnquiryView implements IDisplayResult {
             System.out.println("---------------------------------------------------------------------------------------------------------------------------------------------------------------");
         }
     }
-    
-    
+
     // Table helper method
     private List<String> wrapText(String text, int width) {
         List<String> lines = new ArrayList<>();
@@ -187,13 +132,5 @@ public class ApplicantEnquiryView implements IDisplayResult {
         }
         if (!text.isEmpty()) lines.add(text);
         return lines;
-    }
-
-    public void showCreateEnquiryResult(boolean success) {
-        if (success) {
-            displaySuccess("Enquiry created successfully.");
-        } else {
-            displayError("Failed to create enquiry.");
-        }
     }
 }

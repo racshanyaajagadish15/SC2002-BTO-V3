@@ -12,21 +12,24 @@ import models.Application;
 import models.FlatType;
 import models.Project;
 import views.ApplicationView;
-import views.ApplicantEnquiryView;
 
 public abstract class AbstractApplicationController implements IApplicationController {
+
+    protected ApplicationView view;
+
+    public AbstractApplicationController() {
+        this.view = new ApplicationView();
+    }
 
     public abstract ArrayList<Project> getApplicableProjects(Applicant applicant);
 
     public void projectAction(Applicant applicant) {
-        ApplicationView applicationView = new ApplicationView();
         ArrayList<Project> applicableProjects = getApplicableProjects(applicant);
-        showApplicationMenu(applicableProjects, applicant, applicationView);
+        showApplicationMenu(applicableProjects, applicant);
     }
 
     public void applicationAction(Applicant applicant) {
-        ApplicationView applicationView = new ApplicationView();
-        showApplicationDetails(applicant, applicationView);
+        showApplicationDetails(applicant);
     }
 
     public boolean submitApplication(Project project, Applicant applicant, FlatType flatType) {
@@ -52,141 +55,139 @@ public abstract class AbstractApplicationController implements IApplicationContr
 
     // --- Controller logic for menu and flows ---
 
-    public void showApplicationMenu(ArrayList<Project> applicableProjects, Applicant applicant, ApplicationView applicationView) {
+    public void showApplicationMenu(ArrayList<Project> applicableProjects, Applicant applicant) {
         try {
             applicant.setApplication(Application.getApplicationByNricDB(applicant.getNric()));
         } catch (IOException e) {
-            applicationView.displayError("Application system currently unavailable, please contact admin if error persist!");
+            view.displayError("Application system currently unavailable, please contact admin if error persist!");
             return;
         }
         if (applicant.getApplication() != null) {
-            applicationView.displayInfo("You have an application. Unable to view projects.");
+            view.displayInfo("You have an application. Unable to view projects.");
             return;
         } else if (applicableProjects == null || applicableProjects.size() == 0) {
-            applicationView.displayInfo("You are uneligible to apply for any projects!");
+            view.displayInfo("You are uneligible to apply for any projects!");
             return;
         }
         while (true) {
-            int option = applicationView.showApplicationMenuPrompt();
+            int option = view.showApplicationMenuPrompt();
             switch (option) {
                 case 0:
                     return;
                 case 1:
-                    if (showApplicableProjects(applicableProjects, applicant, applicationView)) {
+                    if (showApplicableProjects(applicableProjects, applicant)) {
                         return;
                     }
                     break;
                 case 2:
-                    if (showApplicableFilteredProjects(applicableProjects, applicant, applicationView)) {
+                    if (showApplicableFilteredProjects(applicableProjects, applicant)) {
                         return;
                     }
                     break;
                 default:
-                    applicationView.displayError("Invalid selection. Please try again.");
+                    view.displayError("Invalid selection. Please try again.");
                     break;
             }
         }
     }
 
-    public boolean showApplicableProjects(ArrayList<Project> applicableProjects, Applicant applicant, ApplicationView applicationView) {
+    public boolean showApplicableProjects(ArrayList<Project> applicableProjects, Applicant applicant) {
         if (applicableProjects == null || applicableProjects.size() == 0) {
-            applicationView.displayInfo("You are uneligible to apply for any projects!");
+            view.displayInfo("You are uneligible to apply for any projects!");
             return false;
         }
-        ApplicantEnquiryView enquiryView = new ApplicantEnquiryView();
+        ApplicantEnquiryController enquiryController = new ApplicantEnquiryController();
         while (true) {
-            int projectIndex = applicationView.promptProjectSelection(applicableProjects);
+            int projectIndex = view.promptProjectSelection(applicableProjects);
             if (projectIndex == -1) {
                 return false;
             }
             if (projectIndex < 0 || projectIndex >= applicableProjects.size()) {
-                applicationView.displayError("Invalid selection. Please try again.");
+                view.displayError("Invalid selection. Please try again.");
                 continue;
             }
-            int action = applicationView.promptProjectAction();
+            int action = view.promptProjectAction();
             if (action == 0) {
                 continue;
             }
             if (action == 1) {
-                enquiryView.showCreateEnquiry(applicableProjects.get(projectIndex), applicant);
+                enquiryController.createEnquiryFlow(applicableProjects.get(projectIndex), applicant);
                 continue;
             }
             // Application flow
             List<FlatType> flatTypes = applicableProjects.get(projectIndex).getFlatTypes();
             int flatTypeIndex;
             while (true) {
-                flatTypeIndex = applicationView.promptFlatTypeSelection(flatTypes);
+                flatTypeIndex = view.promptFlatTypeSelection(flatTypes);
                 if (flatTypeIndex == -1) break;
                 if (flatTypeIndex >= 0 && flatTypeIndex < flatTypes.size()) break;
-                applicationView.displayError("Invalid selection. Please try again.");
+                view.displayError("Invalid selection. Please try again.");
             }
             if (flatTypeIndex == -1) continue;
-            boolean confirm = applicationView.promptApplicationConfirmation();
+            boolean confirm = view.promptApplicationConfirmation();
             if (confirm) {
                 Project selectedProject = applicableProjects.get(projectIndex);
                 FlatType selectedFlatType = flatTypes.get(flatTypeIndex);
                 if (submitApplication(selectedProject, applicant, selectedFlatType)) {
-                    applicationView.displaySuccess("Application have been submitted!");
+                    view.displaySuccess("Application have been submitted!");
                     return true;
                 } else {
-                    applicationView.displayError("Application unsuccessful, contact admin if error persist.");
+                    view.displayError("Application unsuccessful, contact admin if error persist.");
                 }
             }
         }
     }
 
-    public boolean showApplicableFilteredProjects(ArrayList<Project> applicableProjects, Applicant applicant, ApplicationView applicationView) {
+    public boolean showApplicableFilteredProjects(ArrayList<Project> applicableProjects, Applicant applicant) {
         List<String> filters = applicant.getFilter();
         while (true) {
-            int option = applicationView.showFilterMenu(filters);
+            int option = view.showFilterMenu(filters);
             ArrayList<Project> projectsToFilter = new ArrayList<>(applicableProjects);
             switch (option) {
                 case 0:
                     return false;
                 case 1:
-                    filters.set(FilterIndex.PROJECT_NAME.getIndex(), applicationView.promptProjectNameFilter());
+                    filters.set(FilterIndex.PROJECT_NAME.getIndex(), view.promptProjectNameFilter());
                     break;
                 case 2:
-                    filters.set(FilterIndex.NEIGHBOURHOOD.getIndex(), applicationView.promptNeighbourhoodFilter());
+                    filters.set(FilterIndex.NEIGHBOURHOOD.getIndex(), view.promptNeighbourhoodFilter());
                     break;
                 case 3: {
-                    Double price = applicationView.promptMinPriceFilter();
-                    if (price == null) break;
+                    Double price = view.promptMinPriceFilter();
                     if (price == 0) {
                         filters.set(FilterIndex.PRICE_START.getIndex(), "");
                         break;
                     } else if (price < 0) {
-                        applicationView.displayError("Number cannot be negative. Setting failed.");
+                        view.displayError("Number cannot be negative. Setting failed.");
                         break;
                     }
                     String priceEnd = filters.get(FilterIndex.PRICE_END.getIndex());
                     if (!priceEnd.isEmpty() && Double.parseDouble(priceEnd) < price) {
-                        applicationView.displayError("Maximum price is smaller then minimum price. Setting failed.");
+                        view.displayError("Maximum price is smaller then minimum price. Setting failed.");
                         break;
                     }
                     filters.set(FilterIndex.PRICE_START.getIndex(), String.format("%.2f", price));
                     break;
                 }
                 case 4: {
-                    Double price = applicationView.promptMaxPriceFilter();
-                    if (price == null) break;
+                    Double price = view.promptMaxPriceFilter();
                     if (price == 0) {
                         filters.set(FilterIndex.PRICE_END.getIndex(), "");
                         break;
                     } else if (price < 0) {
-                        applicationView.displayError("Number cannot be negative. Setting failed.");
+                        view.displayError("Number cannot be negative. Setting failed.");
                         break;
                     }
                     String priceStart = filters.get(FilterIndex.PRICE_START.getIndex());
                     if (!priceStart.isEmpty() && Double.parseDouble(priceStart) > price) {
-                        applicationView.displayError("Minimum price is bigger then maximum price. Setting failed.");
+                        view.displayError("Minimum price is bigger then maximum price. Setting failed.");
                         break;
                     }
                     filters.set(FilterIndex.PRICE_END.getIndex(), String.format("%.2f", price));
                     break;
                 }
                 case 5: {
-                    int selectedFlat = applicationView.promptFlatTypeFilter();
+                    int selectedFlat = view.promptFlatTypeFilter();
                     if (selectedFlat == 1) {
                         filters.set(FilterIndex.FLAT_TYPE.getIndex(), FlatTypeName.TWO_ROOM.getflatTypeName());
                     } else if (selectedFlat == 2) {
@@ -199,14 +200,15 @@ public abstract class AbstractApplicationController implements IApplicationContr
                 case 6:
                     filters.clear();
                     filters.addAll(List.of("", "", "", "", ""));
+                    view.displayInfo("Filters cleared.");
                     break;
                 case 7:
                     Project.filterProject(projectsToFilter, filters);
                     if (projectsToFilter.size() == 0) {
-                        applicationView.displayInfo("No result from search");
+                        view.displayInfo("No result from search");
                     } else {
                         Project.sortProjectByName(projectsToFilter);
-                        if (showApplicableProjects(projectsToFilter, applicant, applicationView)) {
+                        if (showApplicableProjects(projectsToFilter, applicant)) {
                             return true;
                         }
                     }
@@ -214,10 +216,10 @@ public abstract class AbstractApplicationController implements IApplicationContr
                 case 8:
                     Project.filterProject(projectsToFilter, filters);
                     if (projectsToFilter.size() == 0) {
-                        applicationView.displayInfo("No result from search");
+                        view.displayInfo("No result from search");
                     } else {
                         Project.sortProjectByNeighbourhood(projectsToFilter);
-                        if (showApplicableProjects(projectsToFilter, applicant, applicationView)) {
+                        if (showApplicableProjects(projectsToFilter, applicant)) {
                             return true;
                         }
                     }
@@ -225,43 +227,43 @@ public abstract class AbstractApplicationController implements IApplicationContr
                 case 9:
                     Project.filterProject(projectsToFilter, filters);
                     if (projectsToFilter.size() == 0) {
-                        applicationView.displayInfo("No result from search");
+                        view.displayInfo("No result from search");
                     } else {
-                        int order = applicationView.promptSortOrder();
+                        int order = view.promptSortOrder();
                         if (order == 1) {
                             Project.sortProjectByPrice(projectsToFilter, true);
                         } else if (order == 2) {
                             Project.sortProjectByPrice(projectsToFilter, false);
                         } else {
-                            applicationView.displayError("Invalid selection. Please try again.");
+                            view.displayError("Invalid selection. Please try again.");
                             break;
                         }
-                        if (showApplicableProjects(projectsToFilter, applicant, applicationView)) {
+                        if (showApplicableProjects(projectsToFilter, applicant)) {
                             return true;
                         }
                     }
                     break;
                 default:
-                    applicationView.displayError("Invalid selection. Please try again.");
+                    view.displayError("Invalid selection. Please try again.");
                     break;
             }
         }
     }
 
-    public void showApplicationDetails(Applicant applicant, ApplicationView applicationView) {
+    public void showApplicationDetails(Applicant applicant) {
         try {
             applicant.setApplication(Application.getApplicationByNricDB(applicant.getNric()));
         } catch (IOException e) {
-            applicationView.displayError("Application system currently unavailable, please contact admin if error persist!");
+            view.displayError("Application system currently unavailable, please contact admin if error persist!");
             return;
         }
         Application application = applicant.getApplication();
         if (application == null) {
-            applicationView.displayInfo("You do not have an application. Please apply for one and try again.");
+            view.displayInfo("You do not have an application. Please apply for one and try again.");
             return;
         }
         while (true) {
-            int option = applicationView.showApplicationDetails(application);
+            int option = view.showApplicationDetails(application);
             if (application.getApplicationStatus().equals(ApplicationStatus.WITHDRAWAL_PENDING.getStatus()) ||
                 application.getApplicationStatus().equals(ApplicationStatus.WITHDRAWAL_SUCCESSFUL.getStatus()) ||
                 application.getApplicationStatus().equals(ApplicationStatus.WITHDRAWAL_UNSUCCESSFUL.getStatus())) {
@@ -270,11 +272,11 @@ public abstract class AbstractApplicationController implements IApplicationContr
                 if (option == 0) return;
                 if (option == 1) {
                     if (withdrawApplication(application)) {
-                        applicationView.displaySuccess("Application withdrawal submitted.");
+                        view.displaySuccess("Application withdrawal submitted.");
                         // Refresh details after withdrawal
-                        showApplicationDetails(applicant, applicationView);
+                        showApplicationDetails(applicant);
                     } else {
-                        applicationView.displayError("Application withdrawal not sent due to error. If error persist, contact admin!");
+                        view.displayError("Application withdrawal not sent due to error. If error persist, contact admin!");
                     }
                     return;
                 }
