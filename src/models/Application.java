@@ -1,6 +1,7 @@
 package models;
 
 import java.io.IOException;
+import java.util.List;
 
 import databases.ApplicationDB;
 
@@ -46,6 +47,9 @@ public class Application {
 		return ApplicationDB.getApplicationByNric(nric);
 	}
 
+	public static List<Application> getAllApplicationDB() throws IOException {
+		return ApplicationDB.getAllApplications();
+	}
 	public Applicant getApplicant() {
 		return this.applicant;
 	}

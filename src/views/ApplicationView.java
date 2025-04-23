@@ -36,7 +36,6 @@ public class ApplicationView implements IDisplayResult {
             return projectIndex;
         } catch (InputMismatchException e) {
             ScannerUtility.SCANNER.nextLine();
-            displayError("Invalid selection. Please try again.");
             return -2; // Indicate invalid input
         }
     }
@@ -79,7 +78,6 @@ public class ApplicationView implements IDisplayResult {
             return flatTypeIndex;
         } catch (InputMismatchException e) {
             ScannerUtility.SCANNER.nextLine();
-            displayError("Invalid selection. Please try again.");
             return -2;
         }
     }
@@ -87,7 +85,7 @@ public class ApplicationView implements IDisplayResult {
     // Confirm application
     public boolean promptApplicationConfirmation() {
         while (true) {
-            System.out.println("\nNote: Only 1 application can be made.");
+            System.out.println("\nNote: Only 1 application can be made and it cannot be modified. ");
             System.out.println("Confirm the application?");
             System.out.println("1. Yes");
             System.out.println("2. No");
@@ -135,7 +133,6 @@ public class ApplicationView implements IDisplayResult {
             return option;
         } catch (InputMismatchException e) {
             ScannerUtility.SCANNER.nextLine();
-            displayError("Invalid selection. Please try again.");
             return -1;
         }
     }
@@ -150,33 +147,35 @@ public class ApplicationView implements IDisplayResult {
         return ScannerUtility.SCANNER.nextLine();
     }
     public Double promptMinPriceFilter() {
+        while (true){
         System.out.print("\nEnter minimum price (0 to clear filter): ");
-        try {
-            double price = ScannerUtility.SCANNER.nextDouble();
-            ScannerUtility.SCANNER.nextLine();
-            return price;
-        } catch (InputMismatchException e) {
-            ScannerUtility.SCANNER.nextLine();
-            displayError("Invalid price. Setting failed.");
-            return null;
+            try {
+                double price = ScannerUtility.SCANNER.nextDouble();
+                ScannerUtility.SCANNER.nextLine();
+                return price;
+            } catch (InputMismatchException e) {
+                ScannerUtility.SCANNER.nextLine();
+                displayError("Invalid Price. Please try again.");
+            }
         }
     }
     public Double promptMaxPriceFilter() {
-        System.out.print("\nEnter maximum price (0 to clear filter): ");
-        try {
-            double price = ScannerUtility.SCANNER.nextDouble();
-            ScannerUtility.SCANNER.nextLine();
-            return price;
-        } catch (InputMismatchException e) {
-            ScannerUtility.SCANNER.nextLine();
-            displayError("Invalid price. Setting failed.");
-            return null;
+        while (true){
+            System.out.print("\nEnter maximum price (0 to clear filter): ");
+            try {
+                double price = ScannerUtility.SCANNER.nextDouble();
+                ScannerUtility.SCANNER.nextLine();
+                return price;
+            } catch (InputMismatchException e) {
+                ScannerUtility.SCANNER.nextLine();
+                displayError("Invalid Price. Please try again.");
+            }
         }
     }
     public int promptFlatTypeFilter() {
         while (true) {
             try {
-                System.out.println("Flat Types:");
+                System.out.println("\nApplicable Flat Types:");
                 System.out.println("1. 2~ROOM");
                 System.out.println("2. 3~ROOM");
                 System.out.println("3. Clear Filter");
@@ -210,7 +209,7 @@ public class ApplicationView implements IDisplayResult {
                 displayError("Invalid selection. Please try again.");
             } catch (InputMismatchException e) {
                 ScannerUtility.SCANNER.nextLine();
-                displayError("Invalid selection. Please try again.");
+                displayError("Invalid . Please try again.");
             }
         }
     }
@@ -231,32 +230,31 @@ public class ApplicationView implements IDisplayResult {
             return option;
         } catch (InputMismatchException e) {
             ScannerUtility.SCANNER.nextLine();
-            displayError("Invalid selection. Please try again.");
             return -1;
         }
     }
 
     // Show application details and return action
     public int showApplicationDetails(Application application) {
-        System.out.println("\n=========================================");
-        System.out.println("           APPLICATION DETAILS           ");
-        System.out.println("=========================================");
-        System.out.println("Project Name: " + application.getProject().getProjectName());
-        System.out.println("Project Neighbourhood: " + application.getProject().getNeighborhood());
-        String flatTypeName = application.getFlatType();
-        double flatTypePrice = application.getProject().getFlatTypes().stream()
-                .filter(flatType -> flatType.getFlatType().equals(flatTypeName))
-                .map(flatType -> flatType.getPricePerFlat())
-                .findFirst()
-                .orElse(0.0);
-        System.out.println("Application Flat Type: " + flatTypeName + " ($" + flatTypePrice + ")");
-        System.out.println("Application Status: " + application.getApplicationStatus());
-        System.out.println("=========================================");
-        int option = -1;
-        if (application.getApplicationStatus().equals(ApplicationStatus.WITHDRAWAL_PENDING.getStatus()) ||
-            application.getApplicationStatus().equals(ApplicationStatus.WITHDRAWAL_SUCCESSFUL.getStatus()) ||
-            application.getApplicationStatus().equals(ApplicationStatus.WITHDRAWAL_UNSUCCESSFUL.getStatus())) {
-            while (true) {
+        while (true){
+            System.out.println("\n=========================================");
+            System.out.println("           APPLICATION DETAILS           ");
+            System.out.println("=========================================");
+            System.out.println("Project Name: " + application.getProject().getProjectName());
+            System.out.println("Project Neighbourhood: " + application.getProject().getNeighborhood());
+            String flatTypeName = application.getFlatType();
+            double flatTypePrice = application.getProject().getFlatTypes().stream()
+                    .filter(flatType -> flatType.getFlatType().equals(flatTypeName))
+                    .map(flatType -> flatType.getPricePerFlat())
+                    .findFirst()
+                    .orElse(0.0);
+            System.out.println("Application Flat Type: " + flatTypeName + " ($" + flatTypePrice + ")");
+            System.out.println("Application Status: " + application.getApplicationStatus());
+            System.out.println("=========================================");
+            int option = -1;
+            if (application.getApplicationStatus().equals(ApplicationStatus.WITHDRAWAL_PENDING.getStatus()) ||
+                application.getApplicationStatus().equals(ApplicationStatus.WITHDRAWAL_SUCCESSFUL.getStatus()) ||
+                application.getApplicationStatus().equals(ApplicationStatus.WITHDRAWAL_UNSUCCESSFUL.getStatus())) {
                 try {
                     System.out.println("Actions:");
                     System.out.println("0. Back");
@@ -269,11 +267,9 @@ public class ApplicationView implements IDisplayResult {
                     displayError("Invalid option. Please try again");
                 } catch (InputMismatchException e) {
                     ScannerUtility.SCANNER.nextLine();
-                    displayError("Invalid option. Please try again");
                 }
-            }
-        } else {
-            while (true) {
+
+            } else {
                 try {
                     System.out.println("Actions:");
                     System.out.println("1. Withdraw Application");
@@ -287,7 +283,6 @@ public class ApplicationView implements IDisplayResult {
                     displayError("Invalid option. Please try again");
                 } catch (InputMismatchException e) {
                     ScannerUtility.SCANNER.nextLine();
-                    displayError("Invalid option. Please try again");
                 }
             }
         }

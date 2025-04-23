@@ -160,6 +160,7 @@ public class EnquiryDB {
             Sheet sheet = workbook.getSheetAt(0);
             for (Row row : sheet) {
                 if (row.getRowNum() == 0) continue; // Skip header
+                if (row.getCell(EnquiryFileIndex.ID.getIndex()) == null || row.getCell(EnquiryFileIndex.ID.getIndex()).getCellType() != CellType.STRING) continue;
                 if (row.getCell(EnquiryFileIndex.NRIC.getIndex()).getStringCellValue().equals(nric)){
                     enquiries.add(createEnquiryFromRow(row));
                 }
@@ -177,6 +178,7 @@ public class EnquiryDB {
 
             for (Row row : sheet) {
                 if (row.getRowNum() == 0) continue;
+                if (row.getCell(EnquiryFileIndex.ID.getIndex()) == null || row.getCell(EnquiryFileIndex.ID.getIndex()).getCellType() != CellType.NUMERIC) continue;
                 if ((int) row.getCell(EnquiryFileIndex.ID.getIndex()).getNumericCellValue() == enquiry.getEnquiryID()){
                     rowToUpdate = row.getRowNum();
                     break;
@@ -206,6 +208,7 @@ public class EnquiryDB {
 
             for (Row row : sheet) {
                 if (row.getRowNum() == 0) continue; // Skip header
+                if (row.getCell(EnquiryFileIndex.ID.getIndex()) == null || row.getCell(EnquiryFileIndex.ID.getIndex()).getCellType() != CellType.NUMERIC) continue;
                 if ((int) row.getCell(EnquiryFileIndex.ID.getIndex()).getNumericCellValue() == ID){
                     rowToDelete = row.getRowNum();
                     break;

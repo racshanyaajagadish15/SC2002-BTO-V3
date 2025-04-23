@@ -1,10 +1,26 @@
 package controllers;
 
 import models.Application;
-import databases.ApplicationDB;
-import databases.BookingReceiptDB;
+import models.FlatType;
+import models.HDBOfficer;
+import models.OfficerRegistration;
+import models.Project;
+import utilities.LoggerUtility;
+import views.OfficerUpdateView;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import enums.ApplicationStatus;
+import enums.OfficerRegisterationStatus;
 
 public class OfficerUpdateController implements IOfficerUpdateController {
+
+    private OfficerUpdateView view;
+    public OfficerUpdateController() {
+        this.view = new OfficerUpdateView();
+    }
 
     /**
      * Update the details of an application in the database.
@@ -12,13 +28,15 @@ public class OfficerUpdateController implements IOfficerUpdateController {
      * @param application The application to update.
      */
     @Override
-    public void updateApplications(Application application) {
+    public boolean updateApplications(Application application, String status) {
         try {
             // Update the application in the database
-            ApplicationDB.updateApplication(application);
-            System.out.println("[SUCCESS] Application ID " + application.getApplicationID() + " updated successfully.");
+            application.setApplicationStatus(status);
+            Application.updateApplicationDB(application);
+            return true;
         } catch (Exception e) {
-            System.out.println("[ERROR] Failed to update application: " + e.getMessage());
+            LoggerUtility.logError("Failed to update application when booking", e);
+            return false;
         }
     }
 
@@ -28,13 +46,20 @@ public class OfficerUpdateController implements IOfficerUpdateController {
      * @param application The application whose project is to be updated.
      */
     @Override
-    public void updateProject(Application application) {
+    public boolean updateProject(Application application) {
         try {
             // Update the project details in the database
-            ApplicationDB.updateApplication(application);
-            System.out.println("[SUCCESS] Project for Application ID " + application.getApplicationID() + " updated successfully.");
+            for (FlatType flatType : application.getProject().getFlatTypes()){
+                if (application.getFlatType() == flatType.getFlatType()){
+                    flatType.setNumFlats(flatType.getNumFlats()-1);
+                    Project.updateProjectDB(application.getProject());
+                    return true;
+                }
+            }
+            return false;
         } catch (Exception e) {
-            System.out.println("[ERROR] Failed to update project for application: " + e.getMessage());
+            LoggerUtility.logError("Failed to update project when booking", e);
+            return false;
         }
     }
 
@@ -44,17 +69,52 @@ public class OfficerUpdateController implements IOfficerUpdateController {
      * @param applicationId The ID of the application to generate a receipt for.
      * @return boolean indicating if receipt generation was successful
      */
-    public boolean updateBooking(int applicationId) {
-        try {
-            Application application = ApplicationDB.getApplicationById(applicationId);
-            if (application == null) {
+    private boolean updateBooking(Application application) {
+        if (updateApplications(application, ApplicationStatus.BOOKED.getStatus())){
+            if (updateProject(application)){
+                // Revert
+                updateApplications(application, ApplicationStatus.BOOKED.getStatus());
                 return false;
             }
-
-            BookingReceiptDB.generateReceipt(application);
-            return true;
-        } catch (Exception e) {
-            return false;
         }
+        
+        return true;
+    }
+
+    public void selectApplicationToBook(HDBOfficer officer){
+        List<Application> allApplications;
+        ArrayList<OfficerRegistration> registrations;
+        try {
+            allApplications = Application.getAllApplicationDB();
+            registrations = OfficerRegistration.getOfficerRegistrationsByOfficerDB(officer);
+            ArrayList<Application> officerProjectApplications = new ArrayList<Application>();
+            for (Application application : allApplications){
+                for (OfficerRegistration registration : registrations){
+                    if ((registration.getProjectID() == application.getProject().getProjectID()) && 
+                    application.getApplicationStatus() == ApplicationStatus.SUCESSFUL.getStatus() && 
+                    (registration.getRegistrationStatus() == OfficerRegisterationStatus.SUCESSFUL.getStatus())){
+                        officerProjectApplications.add(application);
+                        break;
+                    }
+                }
+            }
+            
+            int option = view.showApplicationsToUpdate(officerProjectApplications);
+            if (option == -1){
+                return;
+            }
+            Application selectedApplication = officerProjectApplications.get(option);
+            if (updateBooking(selectedApplication)){
+                view.displaySuccess("Successfully booked flat!");
+            }
+            else{
+                view.displayError("Failed to book flat. Contact admin if error persist.");
+            }
+        }
+        catch (IOException e){
+            LoggerUtility.logError("Failed to get all projects when booking", e);
+            view.displayError("Cannot display applications. Contact admin if error persist.");
+        }
+
     }
 }
