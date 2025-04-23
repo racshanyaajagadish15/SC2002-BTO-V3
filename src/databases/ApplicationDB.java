@@ -220,7 +220,6 @@ public class ApplicationDB {
             Sheet sheet = workbook.getSheetAt(0);
             for (Row row : sheet) {
                 if (row.getRowNum() == 0) continue; // Skip header row
-    
                 try {
                     // Create an Application object from the row and add it to the list
                     applications.add(createApplicationFromRow(row));
