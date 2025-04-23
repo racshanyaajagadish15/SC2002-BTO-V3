@@ -2,6 +2,7 @@ package controllers;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
 
 import databases.ProjectDB;
@@ -9,8 +10,6 @@ import views.ManagerProjectView;
 import models.Project;
 import utilities.ScannerUtility;
 import models.HDBManager;
-
-//commit
 
 public class ManagerProjectController implements IManagerProjectController {
 
@@ -44,8 +43,9 @@ public class ManagerProjectController implements IManagerProjectController {
         int choice;
 
         do {
-            
-            choice = view.showProjectMenuHeader();
+            view.showProjectMenuHeader();
+            choice = getValidChoice(0, 7);
+
             switch (choice) {
                 case 1:
                     createProject();
@@ -63,34 +63,29 @@ public class ManagerProjectController implements IManagerProjectController {
                     break;
                 case 5:
                     // Display the list of projects and allow the user to select and edit one
-                    ArrayList<Project> ownedProjectsToEdit = getOwnedProjects();
-                    if (ownedProjectsToEdit.isEmpty()) {
-                        view.displayInfo("No projects owned to edit.");
+                    ArrayList<Project> allProjectsToEdit = getAllProjects();
+                    if (allProjectsToEdit.isEmpty()) {
+                        view.displayError("No projects available to edit.");
                     } else {
                         // Let the view handle the selection and editing process
-                        Project selectedProject = view.editProjectMenu(ownedProjectsToEdit); // Returns the edited project
+                        Project selectedProject = view.editProjectMenu(allProjectsToEdit); // Returns the edited project
                         if (selectedProject != null) {
                             try {
                                 // Update the project in the database
-                                if (!ProjectDB.updateProject(selectedProject)) {
-                                    view.displayError("Failed to update project. If error persist, contact admin");
-                                }
-                                else{
-                                    view.displaySuccess("Project updated!");
+                                if (ProjectDB.updateProject(selectedProject)) {
+                                    view.displaySuccess("Project updated successfully and saved to storage.");
+                                } else {
+                                    view.displayError("Failed to update project in storage.");
                                 }
                             } catch (IOException e) {
-                                view.displayError("Failed to update project. If error persist, contact admin");
+                                view.displayError("Error saving project: " + e.getMessage());
                             }
                         }
                     }
                     break;
                 case 6:
-                    ArrayList<Project> ownedProjectsForVisibility = getOwnedProjects();
-                    if (ownedProjectsForVisibility.isEmpty()) {
-                        view.displayInfo("No projects owned to edit visbility.");
-                    }else{
-                    view.toggleProjectVisibilityMenu(ownedProjectsForVisibility);
-                    }
+                    ArrayList<Project> allProjectsForVisibility = getAllProjects();
+                    view.toggleProjectVisibilityMenu(allProjectsForVisibility);
                     break;
                 case 7:
                     ArrayList<Project> allProjectsToDelete = getAllProjects();
@@ -98,7 +93,7 @@ public class ManagerProjectController implements IManagerProjectController {
                         view.displayError("No projects available to delete.");
                     } else {
                         // Call the view method to handle the deletion process
-                        view.deleteProjectView(allProjectsToDelete);
+                       deleteProjectView(allProjectsToDelete);
                     }
                     break;
                 case 0:
@@ -110,12 +105,22 @@ public class ManagerProjectController implements IManagerProjectController {
         } while (choice != 0);
     }
 
+    private int getValidChoice(int min, int max) {
+        while (!ScannerUtility.SCANNER.hasNextInt()) {
+            System.out.print("Invalid input. Please enter a number: ");
+            ScannerUtility.SCANNER.next();
+        }
+        int choice = ScannerUtility.SCANNER.nextInt();
+        ScannerUtility.SCANNER.nextLine(); // Clear newline
+        return choice;
+    }
+
     @Override
     public void createProject() {
         try {
             Project project = view.createNewProjectMenu();
             if (project == null) {
-                view.displayInfo("Project creation canceled.");
+                view.displayError("Project creation canceled.");
                 return;
             }
 
@@ -177,7 +182,6 @@ public class ManagerProjectController implements IManagerProjectController {
         }
     }
 
-
     @Override
     public ArrayList<Project> getAllProjects() {
         try {
@@ -227,71 +231,71 @@ public class ManagerProjectController implements IManagerProjectController {
         }
     }
 
-    // private void deleteProjectMenu(ArrayList<Project> projects) {
-    //     // Display the list of projects
-    //     System.out.println("\n=========================================");
-    //     System.out.println("           AVAILABLE PROJECTS            ");
-    //     System.out.println("=========================================");
-    //     for (int i = 0; i < projects.size(); i++) {
-    //         Project project = projects.get(i);
-    //         System.out.printf("%d. %s (Neighborhood: %s)\n",
-    //                 i + 1,
-    //                 project.getProjectName(),
-    //                 project.getNeighborhood(),
-    //                 project.getApplicationOpeningDate());
-    //     }
-    //     System.out.println("0. Back");
-    //     System.out.println("=========================================");
-    //     int choice;
-    //     while (true){
-    //         // Prompt the user to select a project
-    //         try{
-    //             System.out.print("\nEnter the project number to delete: ");
-    //             choice = ScannerUtility.SCANNER.nextInt();
-    //             ScannerUtility.SCANNER.nextLine(); // Consume newline
-    //             if (choice == 0) {
-    //                 view.displayInfo("Delete canceled.");
-    //                 return;
-    //             }
+    public void deleteProjectView(ArrayList<Project> projects) {
+        // Display the list of projects
+        System.out.println("\n=========================================");
+        System.out.println("           AVAILABLE PROJECTS            ");
+        System.out.println("=========================================");
+        for (int i = 0; i < projects.size(); i++) {
+            Project project = projects.get(i);
+            System.out.printf("%d. %s (Neighborhood: %s)\n",
+                    i + 1,
+                    project.getProjectName(),
+                    project.getNeighborhood(),
+                    project.getApplicationOpeningDate());
+        }
+        System.out.println("0. Back");
+        System.out.println("=========================================");
+        int choice;
+        while (true){
+            // Prompt the user to select a project
+            try{
+                System.out.print("\nEnter the project number to delete: ");
+                choice = ScannerUtility.SCANNER.nextInt();
+                ScannerUtility.SCANNER.nextLine(); 
+                if (choice == 0) {
+                    view.displayInfo("Delete canceled.");
+                    return;
+                }
         
-    //             if (choice < 1 || choice > projects.size()) {
-    //                 view.displayError("Invalid selection. Please try again.");
-    //                 continue;
-    //             }
-    //             break;
-    //         }
-    //         catch (InputMismatchException e){
-    //             ScannerUtility.SCANNER.nextLine(); // Consume newline
-    //             view.displayError("Invalid selection. Please try again.");
-    //         }
-    //     }
-    //     while (true){
-    //         // Prompt the user to confirm
-    //         int confirm;
-    //         try{
-    //             System.out.println("\nConfirm the deletion of " + projects.get(choice - 1).getProjectName() + "?");
-    //             System.out.println("1. Yes");
-    //             System.out.println("2. No");
-    //             confirm = ScannerUtility.SCANNER.nextInt();
-    //             ScannerUtility.SCANNER.nextLine(); // Consume newline
-    //             if (confirm == 1) {
-    //                 deleteProject(projects.get(choice - 1));
-    //                 view.displaySuccess("Project deleted successfully.");
-    //                 break;
-    //             }
+                if (choice < 1 || choice > projects.size()) {
+                    view.displayError("Invalid selection. Please try again.");
+                    continue;
+                }
+                break;
+            }
+            catch (InputMismatchException e){
+                ScannerUtility.SCANNER.nextLine(); 
+                view.displayError("Invalid selection. Please try again.");
+            }
+        }
+        while (true){
+            // Prompt the user to confirm
+            int confirm;
+            try{
+                System.out.println("\nConfirm the deletion of " + projects.get(choice - 1).getProjectName() + "?");
+                System.out.println("1. Yes");
+                System.out.println("2. No");
+                confirm = ScannerUtility.SCANNER.nextInt();
+                ScannerUtility.SCANNER.nextLine(); 
+                if (confirm == 1) {
+                    deleteProject(projects.get(choice - 1));
+                    view.displaySuccess("Project deleted successfully.");
+                    break;
+                }
         
-    //             if (confirm == 2) {
-    //                 view.displayInfo("Delete canceled.");
-    //                 return;
-    //             }
-    //             view.displayError("Invalid selection. Please try again.");
-    //         }
-    //         catch (InputMismatchException e){
-    //             ScannerUtility.SCANNER.nextLine(); // Consume newline
-    //             view.displayError("Invalid selection. Please try again.");
-    //         }
-    //     }
-    // }
+                if (confirm == 2) {
+                    view.displayInfo("Delete canceled.");
+                    return;
+                }
+                view.displayError("Invalid selection. Please try again.");
+            }
+            catch (InputMismatchException e){
+                ScannerUtility.SCANNER.nextLine(); // Consume newline
+                view.displayError("Invalid selection. Please try again.");
+            }
+        }
+    }
 
     private void searchProjects() {
         System.out.print("Enter search keyword (e.g., project name or neighborhood): ");
