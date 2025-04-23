@@ -12,7 +12,7 @@ import models.Project;
 import utilities.LoggerUtility;
 import utilities.ScannerUtility;
 import models.HDBManager;
-
+//commit
 public class ManagerEnquiryView implements IDisplayResult {
 
     private ManagerEnquiryController controller;

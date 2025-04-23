@@ -16,6 +16,8 @@ import java.util.List;
 import databases.ProjectDB;
 import controllers.ManagerProjectController;
 
+//commit
+
 public class ManagerProjectView implements IDisplayResult {
     ManagerProjectController controller = new ManagerProjectController();
 

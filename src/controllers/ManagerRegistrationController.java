@@ -7,6 +7,8 @@ import models.Project;
 import databases.OfficerRegistrationDB;
 import databases.ProjectDB;
 
+//commit
+
 public class ManagerRegistrationController implements IManagerRegistrationController {
 
     /**
