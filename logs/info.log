@@ -49,3 +49,7 @@
 [2025-04-23 05:31:37] INFO: Manager exited the enquiry menu.
 [2025-04-23 07:33:47] INFO: Created new enquiry ID: 2
 [2025-04-23 07:33:53] INFO: Created application for NRIC: S1234567A, Project: Melville Park
+[2025-04-23 12:41:35] INFO: Created application for NRIC: T2345678D, Project: Melville Park
+[2025-04-23 12:47:28] INFO: Created new enquiry ID: 3
+[2025-04-23 12:47:35] INFO: Created application for NRIC: S1234567A, Project: Melville Park
+[2025-04-23 12:56:04] INFO: Created application for NRIC: T2345678D, Project: Melville Park
