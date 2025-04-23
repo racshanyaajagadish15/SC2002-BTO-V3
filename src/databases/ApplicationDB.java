@@ -18,15 +18,11 @@ public class ApplicationDB {
         try (FileInputStream fis = new FileInputStream(file);
              Workbook workbook = new XSSFWorkbook(fis)) {
             Sheet sheet = workbook.getSheetAt(0);
+            Row row = sheet.createRow(sheet.getLastRowNum() + 1);
             Row lastRow = sheet.getRow(sheet.getLastRowNum());
-            int applicationID;
-            if (lastRow == null || lastRow.getCell(ProjectApplicationFileIndex.ID.getIndex()) == null) {
-                applicationID = 1; // Start with ID 1 if no valid last row exists
-            } else {
-                applicationID  = (int) lastRow.getCell(ProjectApplicationFileIndex.ID.getIndex()).getNumericCellValue() + 1;
-            }
-            int newRowNum = sheet.getLastRowNum() + 1;
-            Row row = sheet.createRow(newRowNum);
+            int applicationID = (lastRow != null && lastRow.getCell(ProjectApplicationFileIndex.ID.getIndex()) != null) 
+                ? (int) lastRow.getCell(ProjectApplicationFileIndex.ID.getIndex()).getNumericCellValue() 
+                : 1; // Default to 1 if no rows exist
             populateApplicationRow(row, applicationID, applicant, project, status, flatType.getFlatType());
 
             // Save the changes to the file

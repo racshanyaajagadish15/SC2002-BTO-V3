@@ -27,6 +27,7 @@ public class OfficerUpdateView implements IDisplayResult {
 
     public int showApplicationsToUpdate(List<Application> applications) {
         if (applications.size() == 0){
+            displayInfo("No applications need booking");
             return -1;
         }
         while (true) {
@@ -37,8 +38,8 @@ public class OfficerUpdateView implements IDisplayResult {
             for (int i = 0; i < applications.size(); i++) {
                 Application app = applications.get(i);
 
-                List<String> applicantLines = wrapText(app.getApplicant().getName(), 20);
-                List<String> projectLines = wrapText(app.getProject().getProjectName(), 20);
+                List<String> applicantLines = wrapText(app.getApplicant().toString(), 20);
+                List<String> projectLines = wrapText(app.getProject().toString(), 20);
                 List<String> flatTypeLines = wrapText(app.getFlatType().toString(), 15);
                 List<String> statusLines = wrapText(app.getApplicationStatus(), 15);
 
@@ -49,10 +50,10 @@ public class OfficerUpdateView implements IDisplayResult {
 
                 for (int line = 0; line < maxLines; line++) {
                     String no = (line == 0) ? String.valueOf(i + 1) : "-";
-                    String applicant = line < applicantLines.size() ? applicantLines.get(line) : "";
-                    String project = line < projectLines.size() ? projectLines.get(line) : "";
-                    String flatType = line < flatTypeLines.size() ? flatTypeLines.get(line) : "";
-                    String status = line < statusLines.size() ? statusLines.get(line) : "";
+                    String applicant = line < applicantLines.size() ? applicantLines.get(line) : "-";
+                    String project = line < projectLines.size() ? projectLines.get(line) : "-";
+                    String flatType = line < flatTypeLines.size() ? flatTypeLines.get(line) : "-";
+                    String status = line < statusLines.size() ? statusLines.get(line) : "-";
 
                     System.out.printf("| %-3s | %-20s | %-20s | %-15s | %-15s |\n",
                         no, applicant, project, flatType, status);

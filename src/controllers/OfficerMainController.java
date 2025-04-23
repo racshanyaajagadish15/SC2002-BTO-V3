@@ -13,7 +13,6 @@ public class OfficerMainController {
 		OfficerEnquiryController officerEnquiryController = new OfficerEnquiryController();
 		OfficerRegistrationController officerJoinProjectController = new OfficerRegistrationController();
 		OfficerUpdateController officerUpdateController = new OfficerUpdateController();
-		AuthenticatorController authenticatorController = new AuthenticatorController();
 		// Load enquiries and projects that the applicant have TODO
 
 		while (true){
@@ -41,12 +40,10 @@ public class OfficerMainController {
 					officerUpdateController.selectApplicationToBook(officer);
 					break;
 				case 8:
-					officerUpdateController.viewGenerateReceipt(officer);
+					//TODO login
 					break;
 				case 9:
-					authenticatorController.handlePasswordChange(officer);
-					break;
-				case 10:
+					// return back to login
 					return;
 				default:
 					System.out.println("Invalid selection. Please try again.");

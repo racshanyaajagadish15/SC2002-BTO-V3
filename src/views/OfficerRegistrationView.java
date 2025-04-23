@@ -30,7 +30,6 @@ public class OfficerRegistrationView implements IDisplayResult {
                 }
                 System.out.println("Project Name: " + project.getProjectName());
                 System.out.println("Registration Status: " + registration.getRegistrationStatus());
-				System.out.println("Applications Period: " + registration.getProject().getApplicationOpeningDate() + " -> " + registration.getProject().getApplicationClosingDate());
                 System.out.println("-----------------------------------------");
             }
             int option = -1;

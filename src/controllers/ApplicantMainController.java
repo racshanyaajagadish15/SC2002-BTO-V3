@@ -34,6 +34,7 @@ public class ApplicantMainController {
                     authenticatorController.handlePasswordChange(applicant);
                     break;
                 case 5:
+                    // Return back to login
                     return;
                 default:
                     mainView.displayError("Invalid selection. Please try again.");
