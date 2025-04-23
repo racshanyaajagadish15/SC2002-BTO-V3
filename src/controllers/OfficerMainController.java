@@ -14,7 +14,6 @@ public class OfficerMainController {
 		OfficerRegistrationController officerJoinProjectController = new OfficerRegistrationController();
 		OfficerUpdateController officerUpdateController = new OfficerUpdateController();
 		AuthenticatorController authenticatorController = new AuthenticatorController();
-		// Load enquiries and projects that the applicant have TODO
 
 		while (true){
 			option = officerMainView.showOfficerMenu();

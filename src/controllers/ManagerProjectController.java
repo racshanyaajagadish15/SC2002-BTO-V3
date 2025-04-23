@@ -2,7 +2,6 @@ package controllers;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.InputMismatchException;
 import java.util.List;
 
 import databases.ProjectDB;
@@ -228,71 +227,71 @@ public class ManagerProjectController implements IManagerProjectController {
         }
     }
 
-    private void deleteProjectMenu(ArrayList<Project> projects) {
-        // Display the list of projects
-        System.out.println("\n=========================================");
-        System.out.println("           AVAILABLE PROJECTS            ");
-        System.out.println("=========================================");
-        for (int i = 0; i < projects.size(); i++) {
-            Project project = projects.get(i);
-            System.out.printf("%d. %s (Neighborhood: %s)\n",
-                    i + 1,
-                    project.getProjectName(),
-                    project.getNeighborhood(),
-                    project.getApplicationOpeningDate());
-        }
-        System.out.println("0. Back");
-        System.out.println("=========================================");
-        int choice;
-        while (true){
-            // Prompt the user to select a project
-            try{
-                System.out.print("\nEnter the project number to delete: ");
-                choice = ScannerUtility.SCANNER.nextInt();
-                ScannerUtility.SCANNER.nextLine(); // Consume newline
-                if (choice == 0) {
-                    view.displayInfo("Delete canceled.");
-                    return;
-                }
+    // private void deleteProjectMenu(ArrayList<Project> projects) {
+    //     // Display the list of projects
+    //     System.out.println("\n=========================================");
+    //     System.out.println("           AVAILABLE PROJECTS            ");
+    //     System.out.println("=========================================");
+    //     for (int i = 0; i < projects.size(); i++) {
+    //         Project project = projects.get(i);
+    //         System.out.printf("%d. %s (Neighborhood: %s)\n",
+    //                 i + 1,
+    //                 project.getProjectName(),
+    //                 project.getNeighborhood(),
+    //                 project.getApplicationOpeningDate());
+    //     }
+    //     System.out.println("0. Back");
+    //     System.out.println("=========================================");
+    //     int choice;
+    //     while (true){
+    //         // Prompt the user to select a project
+    //         try{
+    //             System.out.print("\nEnter the project number to delete: ");
+    //             choice = ScannerUtility.SCANNER.nextInt();
+    //             ScannerUtility.SCANNER.nextLine(); // Consume newline
+    //             if (choice == 0) {
+    //                 view.displayInfo("Delete canceled.");
+    //                 return;
+    //             }
         
-                if (choice < 1 || choice > projects.size()) {
-                    view.displayError("Invalid selection. Please try again.");
-                    continue;
-                }
-                break;
-            }
-            catch (InputMismatchException e){
-                ScannerUtility.SCANNER.nextLine(); // Consume newline
-                view.displayError("Invalid selection. Please try again.");
-            }
-        }
-        while (true){
-            // Prompt the user to confirm
-            int confirm;
-            try{
-                System.out.println("\nConfirm the deletion of " + projects.get(choice - 1).getProjectName() + "?");
-                System.out.println("1. Yes");
-                System.out.println("2. No");
-                confirm = ScannerUtility.SCANNER.nextInt();
-                ScannerUtility.SCANNER.nextLine(); // Consume newline
-                if (confirm == 1) {
-                    deleteProject(projects.get(choice - 1));
-                    view.displaySuccess("Project deleted successfully.");
-                    break;
-                }
+    //             if (choice < 1 || choice > projects.size()) {
+    //                 view.displayError("Invalid selection. Please try again.");
+    //                 continue;
+    //             }
+    //             break;
+    //         }
+    //         catch (InputMismatchException e){
+    //             ScannerUtility.SCANNER.nextLine(); // Consume newline
+    //             view.displayError("Invalid selection. Please try again.");
+    //         }
+    //     }
+    //     while (true){
+    //         // Prompt the user to confirm
+    //         int confirm;
+    //         try{
+    //             System.out.println("\nConfirm the deletion of " + projects.get(choice - 1).getProjectName() + "?");
+    //             System.out.println("1. Yes");
+    //             System.out.println("2. No");
+    //             confirm = ScannerUtility.SCANNER.nextInt();
+    //             ScannerUtility.SCANNER.nextLine(); // Consume newline
+    //             if (confirm == 1) {
+    //                 deleteProject(projects.get(choice - 1));
+    //                 view.displaySuccess("Project deleted successfully.");
+    //                 break;
+    //             }
         
-                if (confirm == 2) {
-                    view.displayInfo("Delete canceled.");
-                    return;
-                }
-                view.displayError("Invalid selection. Please try again.");
-            }
-            catch (InputMismatchException e){
-                ScannerUtility.SCANNER.nextLine(); // Consume newline
-                view.displayError("Invalid selection. Please try again.");
-            }
-        }
-    }
+    //             if (confirm == 2) {
+    //                 view.displayInfo("Delete canceled.");
+    //                 return;
+    //             }
+    //             view.displayError("Invalid selection. Please try again.");
+    //         }
+    //         catch (InputMismatchException e){
+    //             ScannerUtility.SCANNER.nextLine(); // Consume newline
+    //             view.displayError("Invalid selection. Please try again.");
+    //         }
+    //     }
+    // }
 
     private void searchProjects() {
         System.out.print("Enter search keyword (e.g., project name or neighborhood): ");
