@@ -11,8 +11,14 @@ import java.text.SimpleDateFormat;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.InputMismatchException;
+import java.util.List;
+import java.util.Set;
 
 import databases.ProjectDB;
+import enums.FilterIndex;
+import enums.FlatTypeName;
 
 public class ManagerProjectView implements IDisplayResult {
 
@@ -27,6 +33,7 @@ public class ManagerProjectView implements IDisplayResult {
         System.out.println("5. Edit Project");
         System.out.println("6. Toggle Project Visibility");
         System.out.println("7. Delete Project");
+        System.out.println("8. View Filtered Projects");
         System.out.println("0. Exit");
         System.out.println("=========================================");
         System.out.print("Enter your choice: ");
@@ -385,6 +392,291 @@ public class ManagerProjectView implements IDisplayResult {
     
             // Print a separator line between projects
             System.out.println("-----------------------------------------");
+        }
+    }
+
+    /**
+     * Displays a menu for filtering projects and allows users to define and store filtering preferences.
+     *
+     * @param allProjects The list of all projects to filter.
+     * @return true if the user successfully filters and views projects, false otherwise.
+     */
+    public boolean filterProjectsMenu(ArrayList<Project> allProjects) {
+        List<String> filters = new ArrayList<>(List.of("", "", "", "", "")); // Initialize empty filters
+        while (true) {
+            System.out.println("\n=========================================");
+            System.out.println("              FILTER PROJECTS            ");
+            System.out.println("=========================================");
+            System.out.println("1. Filter by Project Name");
+            System.out.println("2. Filter by Neighborhood");
+            System.out.println("3. Filter by Minimum Price");
+            System.out.println("4. Filter by Maximum Price");
+            System.out.println("5. Filter by Flat Type");
+            System.out.println("6. View Current Filters");
+            System.out.println("7. Clear All Filters");
+            System.out.println("8. Apply Filters and Sort by Name");
+            System.out.println("9. Apply Filters and Sort by Neighborhood");
+            System.out.println("10. Apply Filters and Sort by Price");
+            System.out.println("0. Exit");
+            System.out.println("=========================================");
+            System.out.print("\nSelect an option: ");
+    
+            int option = -1;
+            try {
+                option = ScannerUtility.SCANNER.nextInt();
+                ScannerUtility.SCANNER.nextLine(); // Consume newline
+            } catch (InputMismatchException e) {
+                ScannerUtility.SCANNER.nextLine();
+                displayError("Invalid selection. Please try again.");
+                continue;
+            }
+    
+            ArrayList<Project> projectsToFilter = new ArrayList<>(allProjects);
+            switch (option) {
+                case 0:
+                    return false;
+                case 1:
+                    filters.set(FilterIndex.PROJECT_NAME.getIndex(), promptProjectNameFilter(allProjects));
+                    break;
+                    case 2:
+                    filters.set(FilterIndex.NEIGHBOURHOOD.getIndex(), promptNeighbourhoodFilter(allProjects));
+                    break;
+                case 3: {
+                    Double price = promptMinPriceFilter();
+                    if (price == 0) {
+                        filters.set(FilterIndex.PRICE_START.getIndex(), "");
+                    } else if (price > 0) {
+                        filters.set(FilterIndex.PRICE_START.getIndex(), String.format("%.2f", price));
+                    }
+                    break;
+                }
+                case 4: {
+                    Double price = promptMaxPriceFilter();
+                    if (price == 0) {
+                        filters.set(FilterIndex.PRICE_END.getIndex(), "");
+                    } else if (price > 0) {
+                        filters.set(FilterIndex.PRICE_END.getIndex(), String.format("%.2f", price));
+                    }
+                    break;
+                }
+                case 5: {
+                    int selectedFlat = promptFlatTypeFilter();
+                    if (selectedFlat == 1) {
+                        filters.set(FilterIndex.FLAT_TYPE.getIndex(), FlatTypeName.TWO_ROOM.getflatTypeName());
+                    } else if (selectedFlat == 2) {
+                        filters.set(FilterIndex.FLAT_TYPE.getIndex(), FlatTypeName.THREE_ROOM.getflatTypeName());
+                    } else if (selectedFlat == 3) {
+                        filters.set(FilterIndex.FLAT_TYPE.getIndex(), "");
+                    }
+                    break;
+                }
+                case 6: // View Current Filters
+                    displayCurrentFilters(filters);
+                    break;
+                case 7:
+                    filters.clear();
+                    filters.addAll(List.of("", "", "", "", ""));
+                    displayInfo("Filters cleared.");
+                    break;
+                case 8:
+                    Project.filterProject(projectsToFilter, filters);
+                    if (projectsToFilter.isEmpty()) {
+                        displayInfo("No results found.");
+                    } else {
+                        Project.sortProjectByName(projectsToFilter);
+                        displayProjects(projectsToFilter);
+                    }
+                    break;
+                case 9:
+                    Project.filterProject(projectsToFilter, filters);
+                    if (projectsToFilter.isEmpty()) {
+                        displayInfo("No results found.");
+                    } else {
+                        Project.sortProjectByNeighbourhood(projectsToFilter);
+                        displayProjects(projectsToFilter);
+                    }
+                    break;
+                case 10:
+                    Project.filterProject(projectsToFilter, filters);
+                    if (projectsToFilter.isEmpty()) {
+                        displayInfo("No results found.");
+                    } else {
+                        int order = promptSortOrder();
+                        if (order == 1) {
+                            Project.sortProjectByPrice(projectsToFilter, true);
+                        } else if (order == 2) {
+                            Project.sortProjectByPrice(projectsToFilter, false);
+                        } else {
+                            displayError("Invalid selection. Please try again.");
+                            break;
+                        }
+                        displayProjects(projectsToFilter);
+                    }
+                    break;
+                default:
+                    displayError("Invalid selection. Please try again.");
+                    break;
+            }
+        }
+    }
+    
+    private void displayCurrentFilters(List<String> filters) {
+        System.out.println("\n=========================================");
+        System.out.println("           CURRENT FILTERS               ");
+        System.out.println("=========================================");
+        System.out.println("1. Project Name: " + (filters.get(FilterIndex.PROJECT_NAME.getIndex()).isEmpty() ? "Not Set" : filters.get(FilterIndex.PROJECT_NAME.getIndex())));
+        System.out.println("2. Neighborhood: " + (filters.get(FilterIndex.NEIGHBOURHOOD.getIndex()).isEmpty() ? "Not Set" : filters.get(FilterIndex.NEIGHBOURHOOD.getIndex())));
+        System.out.println("3. Minimum Price: " + (filters.get(FilterIndex.PRICE_START.getIndex()).isEmpty() ? "Not Set" : filters.get(FilterIndex.PRICE_START.getIndex())));
+        System.out.println("4. Maximum Price: " + (filters.get(FilterIndex.PRICE_END.getIndex()).isEmpty() ? "Not Set" : filters.get(FilterIndex.PRICE_END.getIndex())));
+        System.out.println("5. Flat Type: " + (filters.get(FilterIndex.FLAT_TYPE.getIndex()).isEmpty() ? "Not Set" : filters.get(FilterIndex.FLAT_TYPE.getIndex())));
+        System.out.println("=========================================");
+    }
+
+    public String promptProjectNameFilter() {
+        System.out.print("\nEnter project name (Nothing to clear filter): ");
+        return ScannerUtility.SCANNER.nextLine();
+    }
+    public String promptNeighbourhoodFilter() {
+        System.out.print("\nEnter neighbourhood name (Nothing to clear filter): ");
+        return ScannerUtility.SCANNER.nextLine();
+    }
+    public Double promptMinPriceFilter() {
+        while (true){
+        System.out.print("\nEnter minimum price (0 to clear filter): ");
+            try {
+                double price = ScannerUtility.SCANNER.nextDouble();
+                ScannerUtility.SCANNER.nextLine();
+                return price;
+            } catch (InputMismatchException e) {
+                ScannerUtility.SCANNER.nextLine();
+                displayError("Invalid Price. Please try again.");
+            }
+        }
+    }
+
+    public String promptProjectNameFilter(ArrayList<Project> allProjects) {
+        System.out.println("\n=========================================");
+        System.out.println("           AVAILABLE PROJECT NAMES       ");
+        System.out.println("=========================================");
+        for (int i = 0; i < allProjects.size(); i++) {
+            System.out.printf("%d. %s\n", i + 1, allProjects.get(i).getProjectName());
+        }
+        System.out.println("0. Clear Filter");
+        System.out.println("=========================================");
+    
+        while (true) {
+            System.out.print("\nEnter the number corresponding to the project name (0 to clear filter): ");
+            try {
+                int choice = ScannerUtility.SCANNER.nextInt();
+                ScannerUtility.SCANNER.nextLine(); // Consume newline
+    
+                if (choice == 0) {
+                    return ""; // Clear filter
+                }
+    
+                if (choice >= 1 && choice <= allProjects.size()) {
+                    return allProjects.get(choice - 1).getProjectName();
+                } else {
+                    displayError("Invalid selection. Please try again.");
+                }
+            } catch (InputMismatchException e) {
+                ScannerUtility.SCANNER.nextLine(); // Consume invalid input
+                displayError("Invalid input. Please enter a valid number.");
+            }
+        }
+    }
+    public String promptNeighbourhoodFilter(ArrayList<Project> allProjects) {
+        // Extract unique neighborhoods from the list of projects
+        Set<String> neighborhoods = new HashSet<>();
+        for (Project project : allProjects) {
+            neighborhoods.add(project.getNeighborhood());
+        }
+
+        // Display the list of neighborhoods
+        System.out.println("\n=========================================");
+        System.out.println("           AVAILABLE NEIGHBORHOODS       ");
+        System.out.println("=========================================");
+        List<String> neighborhoodList = new ArrayList<>(neighborhoods);
+        for (int i = 0; i < neighborhoodList.size(); i++) {
+            System.out.printf("%d. %s\n", i + 1, neighborhoodList.get(i));
+        }
+        System.out.println("0. Clear Filter");
+        System.out.println("=========================================");
+
+        // Prompt the user to select a neighborhood
+        while (true) {
+            System.out.print("\nEnter the number corresponding to the neighborhood (0 to clear filter): ");
+            try {
+                int choice = ScannerUtility.SCANNER.nextInt();
+                ScannerUtility.SCANNER.nextLine(); // Consume newline
+
+                if (choice == 0) {
+                    return ""; // Clear filter
+                }
+
+                if (choice >= 1 && choice <= neighborhoodList.size()) {
+                    return neighborhoodList.get(choice - 1);
+                } else {
+                    displayError("Invalid selection. Please try again.");
+                }
+            } catch (InputMismatchException e) {
+                ScannerUtility.SCANNER.nextLine(); // Consume invalid input
+                displayError("Invalid input. Please enter a valid number.");
+            }
+        }
+    }
+    public Double promptMaxPriceFilter() {
+        while (true){
+            System.out.print("\nEnter maximum price (0 to clear filter): ");
+            try {
+                double price = ScannerUtility.SCANNER.nextDouble();
+                ScannerUtility.SCANNER.nextLine();
+                return price;
+            } catch (InputMismatchException e) {
+                ScannerUtility.SCANNER.nextLine();
+                displayError("Invalid Price. Please try again.");
+            }
+        }
+    }
+    public int promptFlatTypeFilter() {
+        while (true) {
+            try {
+                System.out.println("\nApplicable Flat Types:");
+                System.out.println("1. 2~ROOM");
+                System.out.println("2. 3~ROOM");
+                System.out.println("3. Clear Filter");
+                System.out.print("\nEnter Option: ");
+                int selectedFlat = ScannerUtility.SCANNER.nextInt();
+                ScannerUtility.SCANNER.nextLine();
+                if (selectedFlat >= 1 && selectedFlat <= 3) {
+                    return selectedFlat;
+                }
+                displayInfo("Invalid option.");
+            } catch (InputMismatchException e) {
+                ScannerUtility.SCANNER.nextLine();
+                displayInfo("Invalid option.");
+            }
+        }
+    }
+
+    // Prompt user for sort order (ascending/descending) for price sorting
+    public int promptSortOrder() {
+        while (true) {
+            try {
+                System.out.println("\nHow would you like it sorted?");
+                System.out.println("1. Ascending");
+                System.out.println("2. Descending");
+                System.out.print("\nEnter Option: ");
+                int order = ScannerUtility.SCANNER.nextInt();
+                ScannerUtility.SCANNER.nextLine();
+                if (order == 1 || order == 2) {
+                    return order;
+                }
+                displayError("Invalid selection. Please try again.");
+            } catch (InputMismatchException e) {
+                ScannerUtility.SCANNER.nextLine();
+                displayError("Invalid . Please try again.");
+            }
         }
     }
 
