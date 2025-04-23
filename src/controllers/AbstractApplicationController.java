@@ -15,7 +15,7 @@ import views.ApplicationView;
 
 public abstract class AbstractApplicationController implements IApplicationController {
 
-    protected ApplicationView view;
+    protected final ApplicationView view;
 
     public AbstractApplicationController() {
         this.view = new ApplicationView();

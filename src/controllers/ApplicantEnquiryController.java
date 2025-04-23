@@ -96,13 +96,11 @@ public class ApplicantEnquiryController implements IApplicantEnquiryController {
         Map<Project, ArrayList<Enquiry>> projectEnquiriesMap = new HashMap<>();
         for (Enquiry enquiry : enquiries) {
             Project project = enquiry.getProject();
-            projectEnquiriesMap.computeIfAbsent(
-            projectEnquiriesMap.keySet().stream()
+            Project existingProject = projectEnquiriesMap.keySet().stream()
                 .filter(p -> p.getProjectID() == project.getProjectID())
                 .findFirst()
-                .orElse(project),
-            _ -> new ArrayList<>()
-            ).add(enquiry);
+                .orElse(project);
+            projectEnquiriesMap.computeIfAbsent(existingProject, _ -> new ArrayList<>()).add(enquiry);
         }
         return projectEnquiriesMap;
     }
