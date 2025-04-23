@@ -15,8 +15,9 @@ public class OfficerMainView implements IDisplayResult {
         System.out.println("5. Register for Project");
         System.out.println("6. Reply Project Enquiries");
         System.out.println("7. Manage Project Bookings");
-        System.out.println("8. Change Password");
-        System.out.println("9. Logout");
+        System.out.println("8. Generate Application Bookings");
+        System.out.println("9. Change Password");
+        System.out.println("10. Logout");
         System.out.print("\nEnter option: ");
 
         try {
