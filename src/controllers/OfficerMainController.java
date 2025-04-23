@@ -24,7 +24,7 @@ public class OfficerMainController {
 	}
 	public void officerSelectMenu(HDBOfficer officer) {
 		int option=0;
-		
+	
 		while (true){
 			option = mainView.showOfficerMenu();
 			switch (option) {
