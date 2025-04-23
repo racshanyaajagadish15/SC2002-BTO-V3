@@ -232,16 +232,56 @@ public class ProjectDB {
         try (FileInputStream fileStreamIn = new FileInputStream(PROJECT_FILEPATH);
              Workbook workbook = new XSSFWorkbook(fileStreamIn)) {
             Sheet sheet = workbook.getSheetAt(0);
-
+    
             for (Row row : sheet) {
                 if (row.getRowNum() == 0) continue;
                 if (row.getCell(ProjectListFileIndex.NAME.getIndex()).getStringCellValue().equalsIgnoreCase(projectName)) {
                     int rowToDelete = row.getRowNum();
+                    int projectID = (int) row.getCell(ProjectListFileIndex.PROJECT_ID.getIndex()).getNumericCellValue();
+    
+                    // Remove related enquiries
+                    EnquiryDB.getAllEnquiries().stream()
+                        .filter(enquiry -> enquiry.getProject().getProjectID() == projectID)
+                        .forEach(enquiry -> {
+                            try {
+                                EnquiryDB.deleteEnquiryByID(enquiry.getEnquiryID());
+                            } catch (IOException e) {
+                                LoggerUtility.logError("Failed to delete enquiry linked to project: " + projectName, e);
+                            }
+                        });
+    
+                    // Remove related applications
+                    ApplicationDB.getApplicationsForProject(projectID).forEach(application -> {
+                        try {
+                            ApplicationDB.updateApplication(new Application(
+                                application.getApplicant(),
+                                application.getProject(),
+                                "Deleted", 
+                                application.getApplicationID(),
+                                application.getFlatType()
+                            ));
+                        } catch (IOException e) {
+                            LoggerUtility.logError("Failed to update application linked to project: " + projectName, e);
+                        }
+                    });
+    
+                    // Remove related officer registrations
+                    OfficerRegistrationDB.getAllOfficerRegistrations().stream()
+                        .filter(registration -> registration.getProject().getProjectID() == projectID)
+                        .forEach(registration -> {
+                            try {
+                                OfficerRegistrationDB.updateOfficerRegistration(registration.getOfficerRegistrationID(), "Deleted");
+                            } catch (IOException e) {
+                                LoggerUtility.logError("Failed to update officer registration linked to project: " + projectName, e);
+                            }
+                        });
+    
+                    // Remove the project row
                     sheet.removeRow(row);
                     if (rowToDelete < sheet.getLastRowNum()) {
                         sheet.shiftRows(rowToDelete + 1, sheet.getLastRowNum(), -1);
                     }
-
+    
                     try (FileOutputStream fileOut = new FileOutputStream(PROJECT_FILEPATH)) {
                         workbook.write(fileOut);
                     }
@@ -277,18 +317,18 @@ public class ProjectDB {
     }
 
     // Get Project by ID
-    public static Project getProjectByID(int projectID) throws IOException {
+    public static Project getProjectByIdDB(int projectID) throws IOException {
         try (FileInputStream fileStreamIn = new FileInputStream(PROJECT_FILEPATH);
-            Workbook workbook = new XSSFWorkbook(fileStreamIn)) {
+             Workbook workbook = new XSSFWorkbook(fileStreamIn)) {
             Sheet sheet = workbook.getSheetAt(0);
             for (Row row : sheet) {
-                if (row.getRowNum() == 0) continue; // Skip header
-                if (row.getRowNum() == projectID) { // Match row number with project ID
-                    Project project = createProjectFromRow(row);
-                    if (project == null) {
-                        LoggerUtility.logInfo("Project not found with ID: " + projectID);
+                if (row.getRowNum() == 0) continue; // Skip header row
+                Cell idCell = row.getCell(ProjectListFileIndex.PROJECT_ID.getIndex());
+                if (idCell != null && idCell.getCellType() == CellType.NUMERIC) {
+                    int id = (int) idCell.getNumericCellValue();
+                    if (id == projectID) {
+                        return createProjectFromRow(row);
                     }
-                    return project;
                 }
             }
         } catch (IOException e) {

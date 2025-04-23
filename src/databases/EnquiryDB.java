@@ -49,7 +49,7 @@ public class EnquiryDB {
     }
 
     // Helper function to create Enquiry object from excel row
-    private static Enquiry createEnquiryFromRow(Row row) throws NumberFormatException, IOException {
+    private static Enquiry createEnquiryFromRow(Row row) throws IOException {
         if (row == null) {
             throw new IllegalArgumentException("Row is null");
         }
@@ -57,7 +57,13 @@ public class EnquiryDB {
         int enquiryID = (int) getNumericCellValue(row.getCell(EnquiryFileIndex.ID.getIndex()));
         String nric = getStringCellValue(row.getCell(EnquiryFileIndex.NRIC.getIndex()));
         int projectID = (int) getNumericCellValue(row.getCell(EnquiryFileIndex.PROJECT_ID.getIndex()));
-        Project project = Project.getProjectByIdDB(projectID); // Get Project object
+        Project project = ProjectDB.getProjectByIdDB(projectID); // Use ProjectDB to fetch the project
+    
+        if (project == null) {
+            LoggerUtility.logInfo("Project with ID " + projectID + " not found for enquiry ID: " + enquiryID);
+            return null; // Skip creating the Enquiry object if the Project is null
+        }
+    
         String enquiry = getStringCellValue(row.getCell(EnquiryFileIndex.ENQUIRY.getIndex()));
         String reply = getStringCellValue(row.getCell(EnquiryFileIndex.REPLY.getIndex()));
         Date enquiryDate = getDateCellValue(row.getCell(EnquiryFileIndex.ENQUIRY_DATE.getIndex()));
@@ -127,7 +133,7 @@ public class EnquiryDB {
     }
 
     // Get all enquiries
-    public static ArrayList<Enquiry> getAllEnquiries() throws IOException, NumberFormatException {
+    public static ArrayList<Enquiry> getAllEnquiries() throws IOException {
         ArrayList<Enquiry> enquiries = new ArrayList<>();
     
         try (FileInputStream fileStreamIn = new FileInputStream(ENQUIRY_FILEPATH);
@@ -138,9 +144,12 @@ public class EnquiryDB {
                 if (row.getRowNum() == 0) continue; // Skip header row
                 if (row.getCell(EnquiryFileIndex.ID.getIndex()) == null) continue; // Skip empty rows
                 try {
-                    enquiries.add(createEnquiryFromRow(row));
+                    Enquiry enquiry = createEnquiryFromRow(row);
+                    if (enquiry != null) { // Only add valid enquiries
+                        enquiries.add(enquiry);
+                    }
                 } catch (IllegalArgumentException e) {
-                    System.out.println("Skipping invalid row: " + row.getRowNum() + " - " + e.getMessage());
+                    LoggerUtility.logInfo("Skipping invalid row: " + row.getRowNum() + " - " + e.getMessage());
                 }
             }
             return enquiries;
