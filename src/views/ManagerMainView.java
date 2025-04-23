@@ -18,7 +18,8 @@ public class ManagerMainView {
     public ManagerMainView(HDBManager manager) {
         this.loggedInManager = manager;
         this.applicationView = new ManagerApplicationView(loggedInManager);
-        this.projectView = new ManagerProjectView();
+        ManagerProjectController controller = new ManagerProjectController(); // Create the controller
+        this.projectView = new ManagerProjectView(controller); // Pass the controller to the view
         this.enquiryView = new ManagerEnquiryView(loggedInManager);
         this.registrationView = new ManagerRegistrationView();
     }
