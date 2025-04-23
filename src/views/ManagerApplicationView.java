@@ -96,10 +96,41 @@ public class ManagerApplicationView implements IDisplayResult {
         try {
             displayAllApplications();
             int applicationID = promptForApplicationID();
-
-            System.out.print("Enter New Withdrawal Status: ");
-            String status = ScannerUtility.SCANNER.nextLine();
-
+    
+            String status = "";
+            boolean validChoice = false;
+    
+            // Loop until a valid choice is made
+            while (!validChoice) {
+                // Display menu options for withdrawal status
+                System.out.println("Select Withdrawal Status:");
+                System.out.println("1. Withdrawal Pending");
+                System.out.println("2. Withdrawal Processed");
+                System.out.println("3. Withdrawal Declined");
+                System.out.print("Enter your choice (1-3): ");
+                
+                int choice = ScannerUtility.SCANNER.nextInt();
+                ScannerUtility.SCANNER.nextLine(); // Consume the newline character
+    
+                switch (choice) {
+                    case 1:
+                        status = "Withdrawal Pending";
+                        validChoice = true; // Valid choice made
+                        break;
+                    case 2:
+                        status = "Withdrawal Processed";
+                        validChoice = true; // Valid choice made
+                        break;
+                    case 3:
+                        status = "Withdrawal Declined";
+                        validChoice = true; // Valid choice made
+                        break;
+                    default:
+                        System.out.println("[ERROR] Invalid choice. Please select a valid option.");
+                        // No need to change validChoice, loop will continue
+                }
+            }
+    
             Application application = fetchApplicationByID(applicationID);
             if (application != null) {
                 controller.updateBTOApplicationWithdrawalStatus(application, status);
@@ -136,9 +167,9 @@ public class ManagerApplicationView implements IDisplayResult {
                 return;
             }
 
-            System.out.println("\n+================================================================================+");
+            System.out.println("\n================================================================================");
             System.out.printf("| %-5s | %-15s | %-10s | %-25s |\n", "ID", "Applicant NRIC", "Project ID", "Status");
-            System.out.println("+--------------------------------------------------------------------------------+");
+            System.out.println("--------------------------------------------------------------------------------");
 
             boolean applicationsFound = false;
             for (Project project : managedProjects) {
@@ -157,7 +188,7 @@ public class ManagerApplicationView implements IDisplayResult {
                 System.out.println("| No applications found for your managed projects.                              |");
             }
 
-            System.out.println("+================================================================================+");
+            System.out.println("================================================================================");
 
         } catch (IOException e) {
             System.out.println("[ERROR] Failed to retrieve applications: " + e.getMessage());

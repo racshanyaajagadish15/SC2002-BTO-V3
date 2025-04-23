@@ -155,3 +155,5 @@ public class ManagerRegistrationView {
         System.out.println("==========================================================================");
     }
 }
+
+//commit
