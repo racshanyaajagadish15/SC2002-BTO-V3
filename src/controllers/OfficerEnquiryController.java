@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
 import enums.OfficerRegisterationStatus;
 import models.Enquiry;
@@ -30,6 +31,10 @@ public class OfficerEnquiryController implements IOfficerEnquiryController {
     public void replyEnquiry(Enquiry enquiry, String message) {
         try {
             enquiry.setReply(message);
+            if (message.isBlank()){
+                view.displayInfo("Enquiry reply canceled");
+                return;
+            }
             enquiry.setReplyDate(new Date()); // Set the current date as the reply date
             boolean success = Enquiry.updateEnquiryDB(enquiry);
             if (success) {
@@ -48,7 +53,6 @@ public class OfficerEnquiryController implements IOfficerEnquiryController {
      * @param project The project for which to retrieve enquiries.
      * @return A list of enquiries for the specified project.
      */
-
     public ArrayList<Enquiry> getProjectEnquiries(Project project) {
         ArrayList<Enquiry> projectEnquiries = new ArrayList<>();
         try {
@@ -64,6 +68,7 @@ public class OfficerEnquiryController implements IOfficerEnquiryController {
         return projectEnquiries;		
     }
 
+    // New method: main entry point for officer to handle enquiries (all logic here)
     public void enquiryActionMenu(HDBOfficer officer) {
         try {
             ArrayList<OfficerRegistration> officerRegistrations= OfficerRegistration.getOfficerRegistrationsByOfficerDB(officer);
@@ -80,10 +85,45 @@ public class OfficerEnquiryController implements IOfficerEnquiryController {
                 projectEnquiriesMap.put(project, projectEnquiries);
             }
 
-            view.showProjectEnquiries(projectEnquiriesMap);
+            if (projectEnquiriesMap.size() == 0) {
+                view.displayInfo("You are not handling any projects.");
+                return;
+            }
+
+            // Main interaction loop (was in view, now in controller)
+            List<Project> projectList = new ArrayList<>(projectEnquiriesMap.keySet());
+            Project.sortProjectByName(projectList);
+            ArrayList<Enquiry> enquiries;
+            while (true) {
+                int projectIndex = view.promptProjectSelection(projectList);
+                if (projectIndex == -1) {
+                    return;
+                }
+                if (projectIndex < 0 || projectIndex >= projectList.size()) {
+                    view.displayError("Invalid selection. Please try again.");
+                    continue;
+                }
+                Project selectedProject = projectList.get(projectIndex);
+                enquiries = projectEnquiriesMap.get(selectedProject);
+                if (enquiries.isEmpty()) {
+                    view.displayInfo("No enquiries made for the selected project.");
+                    continue;
+                }
+                while (true) {
+                    view.displayEnquiries(enquiries);
+                    int enquiryIndex = view.promptEnquirySelection(enquiries.size());
+                    if (enquiryIndex == -1) break;
+                    if (enquiryIndex < 0 || enquiryIndex >= enquiries.size()) {
+                        view.displayError("Invalid selection. Please try again.");
+                        continue;
+                    }
+                    Enquiry selectedEnquiry = enquiries.get(enquiryIndex);
+                    String newText = view.promptReplyText();
+                    replyEnquiry(selectedEnquiry, newText);
+                }
+            }
         } catch (IOException e) {
-            System.out.println("An error occurred while retrieving project enquiries, contact admin if error persist");
+            view.displayError("An error occurred while retrieving project enquiries, contact admin if error persist");
         }
     }
-
 }

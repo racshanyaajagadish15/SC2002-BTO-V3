@@ -19,6 +19,9 @@ public class AuthenticatorController {
     public boolean handlePasswordChange(User user) {
         authenticatorView.showPasswordChangePrompt();
         String currentPassword = authenticatorView.getCurrentPassword();
+        if (currentPassword.isBlank()){
+            return false;
+        }
         if (!currentPassword.equals(user.getPassword())){
             authenticatorView.displayError("Current password is incorrect! Please try again.");
             return false;

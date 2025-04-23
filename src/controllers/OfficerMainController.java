@@ -4,19 +4,29 @@ import models.HDBOfficer;
 import views.OfficerMainView;
 
 public class OfficerMainController {
+	private final OfficerMainView mainView;
+	private final OfficerApplicationController officerApplicationController;
+	private final ApplicantEnquiryController applicantEnquiryController;
+	private final OfficerEnquiryController officerEnquiryController;
+	private final OfficerRegistrationController officerJoinProjectController;
+	private final OfficerBookingController officerBookingController;
+	private final AuthenticatorController authenticatorController;
 
+
+	public OfficerMainController() {
+		this.mainView = new OfficerMainView();
+		this.officerApplicationController = new OfficerApplicationController();
+		this.applicantEnquiryController = new ApplicantEnquiryController();
+		this.officerEnquiryController = new OfficerEnquiryController();
+		this.officerJoinProjectController = new OfficerRegistrationController();
+		this.officerBookingController = new OfficerBookingController();
+		this.authenticatorController = new AuthenticatorController();
+	}
 	public void officerSelectMenu(HDBOfficer officer) {
 		int option=0;
-		OfficerMainView officerMainView = new OfficerMainView();
-		OfficerApplicationController officerApplicationController = new OfficerApplicationController();
-		ApplicantEnquiryController applicantEnquiryController = new ApplicantEnquiryController();
-		OfficerEnquiryController officerEnquiryController = new OfficerEnquiryController();
-		OfficerRegistrationController officerJoinProjectController = new OfficerRegistrationController();
-		OfficerUpdateController officerUpdateController = new OfficerUpdateController();
-		AuthenticatorController authenticatorController = new AuthenticatorController();
-
+	
 		while (true){
-			option = officerMainView.showOfficerMenu();
+			option = mainView.showOfficerMenu();
 			switch (option) {
 				case 1:
 					officerApplicationController.applicationAction(officer);
@@ -37,10 +47,10 @@ public class OfficerMainController {
 					officerEnquiryController.enquiryActionMenu(officer);
 					break;
 				case 7:
-					officerUpdateController.selectApplicationToBook(officer);
+					officerBookingController.selectApplicationToBook(officer);
 					break;
 				case 8:
-					officerUpdateController.viewGenerateReceipt(officer);
+					officerBookingController.viewGenerateReceipt(officer);
 					break;
 				case 9:
 					authenticatorController.handlePasswordChange(officer);
@@ -48,7 +58,6 @@ public class OfficerMainController {
 				case 10:
 					return;
 				default:
-					System.out.println("Invalid selection. Please try again.");
 					break;
 			
 			}
