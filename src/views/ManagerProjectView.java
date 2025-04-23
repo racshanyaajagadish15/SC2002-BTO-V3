@@ -341,6 +341,49 @@ public class ManagerProjectView implements IDisplayResult {
         }
     }
 
+    public void deleteProjectView(ArrayList<Project> projects, ManagerProjectController controller) {
+        if (projects.isEmpty()) {
+            displayError("No projects found to delete.");
+            return;
+        }
+    
+        // Display the details of the projects found
+        System.out.println("\nProjects found:");
+        displayProjects(projects); // Assuming you have a method to display project details
+    
+        // Prompt for confirmation
+        System.out.print("Enter the index of the project to delete (1-based): ");
+        int indexToDelete = -1;
+    
+        while (true) {
+            if (ScannerUtility.SCANNER.hasNextInt()) {
+                indexToDelete = ScannerUtility.SCANNER.nextInt() - 1; // Convert to 0-based index
+                ScannerUtility.SCANNER.nextLine(); // Consume newline
+    
+                if (indexToDelete >= 0 && indexToDelete < projects.size()) {
+                    break; // Valid index
+                } else {
+                    System.out.println("[ERROR] Invalid index. Please try again.");
+                }
+            } else {
+                System.out.println("[ERROR] Please enter a valid number.");
+                ScannerUtility.SCANNER.nextLine(); // Clear invalid input
+            }
+        }
+    
+        Project projectToDelete = projects.get(indexToDelete);
+        System.out.print("Are you sure you want to delete the project '" + projectToDelete.getProjectName() + "'? (yes/no): ");
+        String confirmation = ScannerUtility.SCANNER.nextLine();
+    
+        if (confirmation.equalsIgnoreCase("yes")) {
+            controller.deleteProject(projectToDelete); // Call the controller method to delete the project
+            displaySuccess("Project '" + projectToDelete.getProjectName() + "' deleted successfully.");
+        } else {
+            displaySuccess("Project deletion canceled.");
+        }
+    }
+
+
     /**
      * Prompts the user to enter a date in the format yyyy-MM-dd and parses it.
      *
