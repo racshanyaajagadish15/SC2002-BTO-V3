@@ -25,15 +25,11 @@ public class OfficerRegistrationDB {
         try (FileInputStream fileStreamIn = new FileInputStream(REGISTRATION_FILEPATH);
              Workbook workbook = new XSSFWorkbook(fileStreamIn)) {
             Sheet sheet = workbook.getSheetAt(0);
+            Row row = sheet.createRow(sheet.getLastRowNum() + 1);
             Row lastRow = sheet.getRow(sheet.getLastRowNum());
-            int registrationID;
-            if (lastRow == null || lastRow.getCell(OfficerRegistrationFileIndex.ID.getIndex()) == null) {
-                registrationID = 1; // Start with ID 1 if no valid last row exists
-            } else {
-                registrationID  = (int) lastRow.getCell(OfficerRegistrationFileIndex.ID.getIndex()).getNumericCellValue() + 1;
-            }
-            int newRowNum = sheet.getLastRowNum() + 1;
-            Row row = sheet.createRow(newRowNum);
+            int registrationID = (lastRow != null && lastRow.getCell(OfficerRegistrationFileIndex.ID.getIndex()) != null) 
+                ? (int) lastRow.getCell(OfficerRegistrationFileIndex.ID.getIndex()).getNumericCellValue() 
+                : 1; // Default to 1 if no rows exist
             populateRegistrationRow(row, registrationID, officer, project, registrationStatus);
             // Save the changes to the file
             try (FileOutputStream fos = new FileOutputStream(REGISTRATION_FILEPATH)) {

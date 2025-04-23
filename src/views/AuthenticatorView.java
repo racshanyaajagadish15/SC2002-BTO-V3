@@ -40,7 +40,7 @@ public class AuthenticatorView implements IDisplayResult {
     }
 
     public String getCurrentPassword() {
-        System.out.print("Enter Current Password (Blank to back): ");
+        System.out.print("Enter Current Password: ");
         return ScannerUtility.SCANNER.nextLine();
     }
 }

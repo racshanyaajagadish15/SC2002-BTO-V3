@@ -27,7 +27,7 @@ public class HDBManagerDB {
 
                 // Check if NRIC match
                 if (fileNric.equals(nric)) {
-                    String name = row.getCell(UserFileIndex.NAME.getIndex()).getStringCellValue();
+                    String name = row.getCell(UserFileIndex.NRIC.getIndex()).getStringCellValue();
                     String maritalStatus = row.getCell(UserFileIndex.MARITAL_STATUS.getIndex()).getStringCellValue();
                     String filePassword = row.getCell(UserFileIndex.PASSWORD.getIndex()).getStringCellValue();
                     // !! Propogate any NumberFormatException to calling method

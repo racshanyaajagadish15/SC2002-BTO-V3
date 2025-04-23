@@ -123,20 +123,14 @@ public class ProjectDB {
                     return false; // Project already exists
                 }
             }
-            Row lastRow = sheet.getRow(sheet.getLastRowNum());
-            int projectID;
-            if (lastRow == null || lastRow.getCell(ProjectListFileIndex.PROJECT_ID.getIndex()) == null) {
-                projectID = 1; // Start with ID 1 if no valid last row exists
-            } else {
-                projectID  = (int) lastRow.getCell(ProjectListFileIndex.PROJECT_ID.getIndex()).getNumericCellValue() + 1;
-            }
-            int newRowNum = sheet.getLastRowNum() + 1;
-            Row row = sheet.createRow(newRowNum);
+
             // Assign PROJECT_ID as the next available row number
+            int projectID = sheet.getLastRowNum() + 1;
             project.setProjectID(projectID);
 
             // Create a new row and populate it
-            populateProjectRow(row, project);
+            Row newRow = sheet.createRow(projectID);
+            populateProjectRow(newRow, project);
 
             try (FileOutputStream fileOut = new FileOutputStream(PROJECT_FILEPATH)) {
                 workbook.write(fileOut);

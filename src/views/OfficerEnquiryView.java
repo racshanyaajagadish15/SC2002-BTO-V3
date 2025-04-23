@@ -3,15 +3,23 @@ package views;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
+import java.util.Map;
 
+import controllers.OfficerEnquiryController;
 import models.Enquiry;
 import models.Project;
 import utilities.ScannerUtility;
 
 public class OfficerEnquiryView implements IDisplayResult {
 
-    // Only displays the project list and returns user selection
-    public int promptProjectSelection(List<Project> projectList) {
+    public void showProjectEnquiries(Map<Project, ArrayList<Enquiry>> projectEnquiriesMap) {
+        if (projectEnquiriesMap.size() == 0) {
+            displayInfo("You are not handling any projects.");
+            return;
+        }
+        List<Project> projectList = new ArrayList<>(projectEnquiriesMap.keySet());
+        Project.sortProjectByName(projectList);
+        ArrayList<Enquiry> enquiries;
         while (true) {
             try {
                 System.out.println("\n=========================================");
@@ -28,41 +36,84 @@ public class OfficerEnquiryView implements IDisplayResult {
                 ScannerUtility.SCANNER.nextLine(); 
 
                 if (projectIndex == -1) {
-                    return -1;
+                    return;
                 }
-                return projectIndex;
+
+                if (projectIndex < 0 || projectIndex >= projectList.size()) {
+                    displayError("Invalid selection. Please try again.");
+                    continue;
+                }
+
+                Project selectedProject = projectList.get(projectIndex);
+                enquiries = projectEnquiriesMap.get(selectedProject);
+
+                if (enquiries.isEmpty()) {
+                    displayInfo("No enquiries made for the selected project.");
+                    continue;
+                }
             }
             catch(InputMismatchException e){
+                displayError("Invalid selection. Please try again.");
                 ScannerUtility.SCANNER.nextLine();
-                return -2;
+                continue;
+            }
+			Enquiry selectedEnquiry;
+            int enquiryIndex = -1;
+            while (true) {
+                try{
+                    displayEnquiries(enquiries);
+                    System.out.print("\nEnter an enquiry number to modify (0 to go back): ");
+                    enquiryIndex = ScannerUtility.SCANNER.nextInt() - 1;
+                    ScannerUtility.SCANNER.nextLine();
+
+                    if (enquiryIndex == -1) break;
+
+                    if (enquiryIndex < 0 || enquiryIndex >= enquiries.size()) {
+                        displayError("Invalid selection. Please try again.");
+                        continue;
+                    }
+
+                    selectedEnquiry = enquiries.get(enquiryIndex);
+                }
+                catch(InputMismatchException e){
+                    displayError("Invalid selection. Please try again.");
+                    ScannerUtility.SCANNER.nextLine();
+                    continue;
+                }
+				while (true) {
+                    try{
+                        System.out.println("\nEnquiry options:");
+                        System.out.println("1. Reply Enquiry");
+                        System.out.println("0. Back");
+                        System.out.print("Select an option: ");
+                        int option = ScannerUtility.SCANNER.nextInt();
+                        ScannerUtility.SCANNER.nextLine(); 
+
+                        OfficerEnquiryController officerEnquiryController = new OfficerEnquiryController();
+
+                        if (option == 1) {
+                            System.out.print("Enter your reply enquiry: ");
+                            String newText = ScannerUtility.SCANNER.nextLine();
+                            officerEnquiryController.replyEnquiry(selectedEnquiry, newText);
+                            break;
+                        } else if (option == 0) {
+                            break;
+                        } else {
+                            displayError("Invalid option. Please try again.");
+                        }
+                    }
+                    catch(InputMismatchException e){
+                        displayError("Invalid selection. Please try again.");
+                        ScannerUtility.SCANNER.nextLine();
+                        continue;
+                    }
+                }
             }
         }
     }
 
-    // Only displays the list of enquiries and returns user selection
-    public int promptEnquirySelection(int enquiryCount) {
-        try {
-            System.out.print("\nEnter an enquiry number to modify (0 to go back): ");
-            int enquiryIndex = ScannerUtility.SCANNER.nextInt() - 1;
-            ScannerUtility.SCANNER.nextLine();
-            if (enquiryIndex == -1) return -1;
-            return enquiryIndex;
-        }
-        catch(InputMismatchException e){
-            ScannerUtility.SCANNER.nextLine();
-            return -2;
-        }
-        
-    }
-
-    // Prompt for reply text
-    public String promptReplyText() {
-        System.out.print("Enter your reply enquiry (Blank to back): ");
-        return ScannerUtility.SCANNER.nextLine();
-    }
-
-    // Display list of enquiries (table)
-    public void displayEnquiries(ArrayList<Enquiry> enquiries) {
+		
+    private void displayEnquiries(ArrayList<Enquiry> enquiries) {
         System.out.println("\n---------------------------------------------------------------------------------------------------------------------------------------------------------------");
         System.out.printf("| %-3s | %-40s | %-30s | %-30s | %-40s |\n", 
             "No", "Enquiry Date", "Enquiry", "Reply", "Reply Date");
@@ -89,7 +140,8 @@ public class OfficerEnquiryView implements IDisplayResult {
             System.out.println("---------------------------------------------------------------------------------------------------------------------------------------------------------------");
         }
     }
-
+    
+    
     // Table helper method
     private List<String> wrapText(String text, int width) {
         List<String> lines = new ArrayList<>();

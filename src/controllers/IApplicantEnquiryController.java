@@ -2,7 +2,6 @@ package controllers;
 
 import models.Applicant;
 import models.Enquiry;
-import models.Project;
 
 public interface IApplicantEnquiryController {
 
@@ -31,12 +30,5 @@ public interface IApplicantEnquiryController {
 	 * @return 
 	 */
 	boolean deleteEnquiry(int id);
-
-	/**
-	 * 
-	 * @param project
-	 * @param applicant
-	 */
-	void createEnquiryFlow(Project project, Applicant applicant);
 
 }

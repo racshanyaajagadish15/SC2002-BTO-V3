@@ -6,7 +6,7 @@ import models.HDBOfficer;
 import models.OfficerRegistration;
 import models.Project;
 import utilities.LoggerUtility;
-import views.OfficerBookingView;
+import views.OfficerUpdateView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,11 +22,11 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 
-public class OfficerBookingController implements IOfficerBookingController {
+public class OfficerUpdateController implements IOfficerUpdateController {
 
-    private OfficerBookingView view;
-    public OfficerBookingController() {
-        this.view = new OfficerBookingView();
+    private OfficerUpdateView view;
+    public OfficerUpdateController() {
+        this.view = new OfficerUpdateView();
     }
 
     /**
@@ -109,8 +109,9 @@ public class OfficerBookingController implements IOfficerBookingController {
                 view.displayInfo("No applications need booking");
                 return;
             }
-            int option = view.promptApplicationSelection(officerProjectApplications, "Enter application to book (0 to back): ");
+            int option = view.showApplicationsToUpdate(officerProjectApplications);
             if (option == -1){
+                
                 return;
             }
             Application selectedApplication = officerProjectApplications.get(option);
@@ -149,7 +150,8 @@ public class OfficerBookingController implements IOfficerBookingController {
                 view.displayInfo("No booked applications");
                 return;
             }
-            int option = view.promptApplicationSelection(officerProjectApplications, "Enter application to generate receipt (0 to back): ");
+            int option = view.showApplicationsToUpdate(officerProjectApplications);
+
             if (option == -1){
                 return;
             }
@@ -257,7 +259,7 @@ public class OfficerBookingController implements IOfficerBookingController {
 
                 contentStream.beginText();
                 contentStream.newLineAtOffset(margin, yPosition);
-                contentStream.showText(String.format("Flat Type Booked: %s ($%.2f)", application.getFlatType().toString(), flatPrice));
+                contentStream.showText("Flat Type Booked: " + application.getFlatType().toString() + " ($" + flatPrice + ")");
                 contentStream.endText();
 
                 yPosition -= leading;
