@@ -3,6 +3,7 @@ package views;
 import models.Project;
 import models.FlatType;
 import utilities.ScannerUtility;
+import utilities.LoggerUtility;
 
 import java.io.IOException;
 import java.text.DateFormat;
