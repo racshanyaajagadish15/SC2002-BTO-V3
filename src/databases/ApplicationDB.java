@@ -194,7 +194,7 @@ public class ApplicationDB {
             // Fetch the Project object
             Project project;
             try {
-                project = ProjectDB.getProjectByID(projectID);
+                project = ProjectDB.getProjectByIdDB(projectID);
                 if (project == null) {
                     throw new IOException("Project with ID " + projectID + " not found.");
                 }

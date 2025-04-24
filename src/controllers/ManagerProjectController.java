@@ -1,14 +1,23 @@
 package controllers;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.InputMismatchException;
 import java.util.List;
+import java.util.Set;
 
 import databases.ProjectDB;
+import enums.FilterIndex;
+import enums.FlatTypeName;
 import views.ManagerProjectView;
 import models.Project;
+import utilities.LoggerUtility;
 import utilities.ScannerUtility;
+import models.FlatType;
 import models.HDBManager;
 
 public class ManagerProjectController implements IManagerProjectController {
@@ -68,7 +77,7 @@ public class ManagerProjectController implements IManagerProjectController {
                         view.displayError("No projects available to edit.");
                     } else {
                         // Let the view handle the selection and editing process
-                        Project selectedProject = view.editProjectMenu(allProjectsToEdit); // Returns the edited project
+                        Project selectedProject = editProjectMenu(allProjectsToEdit); // Returns the edited project
                         if (selectedProject != null) {
                             try {
                                 // Update the project in the database
@@ -85,7 +94,7 @@ public class ManagerProjectController implements IManagerProjectController {
                     break;
                 case 6:
                     ArrayList<Project> allProjectsForVisibility = getAllProjects();
-                    view.toggleProjectVisibilityMenu(allProjectsForVisibility);
+                    toggleProjectVisibilityMenu(allProjectsForVisibility);
                     break;
                 case 7:
                     ArrayList<Project> allProjectsToDelete = getAllProjects();
@@ -93,8 +102,19 @@ public class ManagerProjectController implements IManagerProjectController {
                         view.displayError("No projects available to delete.");
                     } else {
                         // Pass 'this' as the controller parameter
-                        view.deleteProjectView(allProjectsToDelete, this);
+                        deleteProjectView(allProjectsToDelete, this);
 
+                    }
+                    break;
+                case 8: // New case for filtering projects
+                    ArrayList<Project> allProjectsToFilter = getAllProjects();
+                    if (allProjectsToFilter.isEmpty()) {
+                        view.displayError("No projects available to filter.");
+                    } else {
+                        boolean filterApplied = filterProjectsMenu(allProjectsToFilter);
+                        if (filterApplied) {
+                            view.displaySuccess("Filters applied successfully.");
+                        }
                     }
                     break;
                 case 0:
@@ -119,7 +139,7 @@ public class ManagerProjectController implements IManagerProjectController {
     @Override
     public void createProject() {
         try {
-            Project project = view.createNewProjectMenu();
+            Project project = createNewProjectMenu();
             if (project == null) {
                 view.displayError("Project creation canceled.");
                 return;
@@ -137,7 +157,7 @@ public class ManagerProjectController implements IManagerProjectController {
             project.setProjectID(projectID);
 
             if (ProjectDB.createProject(project)) {
-                view.displaySuccess("Project created successfully!");
+                view.displaySuccess("Saving project to storage...");
             } else {
                 view.displayError("Failed to create project.");
             }
@@ -153,7 +173,7 @@ public class ManagerProjectController implements IManagerProjectController {
         try {
             ArrayList<Project> projectList = new ArrayList<>();
             projectList.add(project);
-            view.editProjectMenu(projectList);
+            editProjectMenu(projectList);
 
             if (ProjectDB.updateProject(project)) {
                 view.displaySuccess("Project updated successfully.");
@@ -186,7 +206,12 @@ public class ManagerProjectController implements IManagerProjectController {
     @Override
     public ArrayList<Project> getAllProjects() {
         try {
-            return ProjectDB.getAllProjects();
+            ArrayList<Project> allProjects = ProjectDB.getAllProjects();
+            // Remove duplicates by converting to a Set and back to a List
+            ArrayList<Project> uniqueProjects = new ArrayList<>(new HashSet<>(allProjects));
+            // Sort projects by ID
+            uniqueProjects.sort((p1, p2) -> Integer.compare(p1.getProjectID(), p2.getProjectID()));
+            return uniqueProjects;
         } catch (IOException e) {
             view.displayError("Error loading projects: " + e.getMessage());
             return new ArrayList<>();
@@ -199,7 +224,7 @@ public class ManagerProjectController implements IManagerProjectController {
             if (loggedInManager == null) {
                 return new ArrayList<>();
             }
-            return ProjectDB.getProjectsByManager(loggedInManager.getNric());
+            return ProjectDB.getProjectsByManager(loggedInManager.getName());
         } catch (IOException e) {
             view.displayError("Error loading projects: " + e.getMessage());
             return new ArrayList<>();
@@ -322,6 +347,675 @@ public class ManagerProjectController implements IManagerProjectController {
 
     public void setLoggedInManager(HDBManager manager) {
         this.loggedInManager = manager;
+    }
+
+    public static void filterProject(ArrayList<Project> projects, List<String> filters) {
+        // Filter by Project Name
+        if (!filters.get(FilterIndex.PROJECT_NAME.getIndex()).isEmpty()) {
+            String projectNameFilter = filters.get(FilterIndex.PROJECT_NAME.getIndex()).toLowerCase();
+            projects.removeIf(project -> !project.getProjectName().toLowerCase().contains(projectNameFilter));
+        }
+    
+        // Filter by Neighborhood
+        if (!filters.get(FilterIndex.NEIGHBOURHOOD.getIndex()).isEmpty()) {
+            String neighborhoodFilter = filters.get(FilterIndex.NEIGHBOURHOOD.getIndex()).toLowerCase();
+            projects.removeIf(project -> !project.getNeighborhood().toLowerCase().contains(neighborhoodFilter));
+        }
+    
+        // Filter by Minimum Price
+        if (!filters.get(FilterIndex.PRICE_START.getIndex()).isEmpty()) {
+            double minPrice = Double.parseDouble(filters.get(FilterIndex.PRICE_START.getIndex()));
+            projects.removeIf(project -> project.getFlatTypes().stream()
+                    .noneMatch(flatType -> flatType.getPricePerFlat() >= minPrice));
+        }
+    
+        // Filter by Maximum Price
+        if (!filters.get(FilterIndex.PRICE_END.getIndex()).isEmpty()) {
+            double maxPrice = Double.parseDouble(filters.get(FilterIndex.PRICE_END.getIndex()));
+            projects.removeIf(project -> project.getFlatTypes().stream()
+                    .noneMatch(flatType -> flatType.getPricePerFlat() <= maxPrice));
+        }
+    
+        // Filter by Flat Type
+        if (!filters.get(FilterIndex.FLAT_TYPE.getIndex()).isEmpty()) {
+            String flatTypeFilter = filters.get(FilterIndex.FLAT_TYPE.getIndex()).toLowerCase();
+            projects.removeIf(project -> project.getFlatTypes().stream()
+                    .noneMatch(flatType -> flatType.getFlatType().toLowerCase().contains(flatTypeFilter)));
+        }
+    }
+
+    public Project createNewProjectMenu() {
+        System.out.println("\n=========================================");
+        System.out.println("           CREATE NEW PROJECT            ");
+        System.out.println("=========================================");
+    
+        // Step 1: Enter Project Name
+        System.out.print("Enter Project Name: ");
+        String projectName = ScannerUtility.SCANNER.nextLine();
+    
+        // Step 2: Enter Neighborhood
+        System.out.print("Enter Neighborhood: ");
+        String neighborhood = ScannerUtility.SCANNER.nextLine();
+    
+        // Step 3: Enter Opening Date
+        System.out.print("Enter Opening Date (yyyy-MM-dd): ");
+        Date openingDate = getDateInput();
+        if (openingDate == null) {
+            view.displayError("Invalid date format. Please try again.");
+            return null;
+        }
+    
+        // Step 4: Enter Application Closing Date
+        System.out.print("Enter Application Closing Date (yyyy-MM-dd): ");
+        Date closingDate = getDateInput();
+        if (closingDate == null || closingDate.before(openingDate)) {
+            view.displayError("Invalid date format or closing date is before opening date. Please try again.");
+            return null;
+        }
+    
+        // Step 5: Enter Officer Slots
+        System.out.print("Enter Officer Slots: ");
+        int officerSlots = ScannerUtility.SCANNER.nextInt();
+        ScannerUtility.SCANNER.nextLine(); // Consume newline
+    
+        // Step 6: Add Flat Types
+        ArrayList<FlatType> flatTypes = new ArrayList<>();
+        editFlatTypes(flatTypes);
+    
+        // Step 7: Confirm Project Creation
+        System.out.println("\n=========================================");
+        System.out.println("           PROJECT SUMMARY               ");
+        System.out.println("=========================================");
+        System.out.println("Project Name: " + projectName);
+        System.out.println("Neighborhood: " + neighborhood);
+        System.out.println("Opening Date: " + openingDate);
+        System.out.println("Application Closing Date: " + closingDate);
+        System.out.println("Officer Slots: " + officerSlots);
+        System.out.println("Flat Types:");
+        for (FlatType flatType : flatTypes) {
+            System.out.println("- " + flatType.getFlatType() + ": " + flatType.getNumFlats() + " units at $" + flatType.getPricePerFlat());
+        }
+        System.out.print("Confirm project creation? (yes/no): ");
+        String confirm = ScannerUtility.SCANNER.nextLine().trim().toLowerCase();
+    
+        if (!confirm.equals("yes")) {
+            view.displayInfo("Project creation aborted.");
+            return null;
+        }
+    
+        // Step 8: Create and Return Project
+        System.out.println("=========================================");
+        System.out.println("Project created successfully!");
+        LoggerUtility.logInfo("New project created: " + projectName);
+    
+        return new Project(0, projectName, null, neighborhood, flatTypes, openingDate, closingDate, officerSlots, true);
+    }
+
+
+    public Project editProjectMenu(ArrayList<Project> projects) {
+        if (projects.isEmpty()) {
+            view.displayError("No projects available to edit.");
+            return null;
+        }
+    
+        // Display the list of projects
+        System.out.println("\n=========================================");
+        System.out.println("           AVAILABLE PROJECTS            ");
+        System.out.println("=========================================");
+        for (int i = 0; i < projects.size(); i++) {
+            Project project = projects.get(i);
+            System.out.printf("%d. %s (Neighborhood: %s)\n",
+                    i + 1,
+                    project.getProjectName(),
+                    project.getNeighborhood());
+        }
+        System.out.println("0. Cancel");
+        System.out.println("=========================================");
+    
+        // Prompt the user to select a project
+        System.out.print("Enter the number of the project to edit: ");
+        int choice = ScannerUtility.SCANNER.nextInt();
+        ScannerUtility.SCANNER.nextLine(); // Consume newline
+    
+        if (choice == 0) {
+            view.displayInfo("Edit operation canceled.");
+            return null;
+        }
+    
+        if (choice < 1 || choice > projects.size()) {
+            view.displayError("Invalid selection. Please try again.");
+            return null;
+        }
+    
+        // Get the selected project
+        Project selectedProject = projects.get(choice - 1);
+    
+        // Edit the selected project
+        System.out.println("\n=========================================");
+        System.out.println("           EDIT PROJECT DETAILS          ");
+        System.out.println("=========================================");
+    
+        System.out.print("Enter new Project Name (current: " + selectedProject.getProjectName() + "): ");
+        String newName = ScannerUtility.SCANNER.nextLine();
+        if (!newName.isBlank()) {
+            selectedProject.setProjectName(newName);
+            LoggerUtility.logInfo("Project name updated to: " + newName);
+        }
+    
+        System.out.print("Enter new Neighborhood (current: " + selectedProject.getNeighborhood() + "): ");
+        String newNeighborhood = ScannerUtility.SCANNER.nextLine();
+        if (!newNeighborhood.isBlank()) {
+            selectedProject.setNeighborhood(newNeighborhood);
+            LoggerUtility.logInfo("Neighborhood updated to: " + newNeighborhood);
+        }
+    
+        System.out.print("Enter new Opening Date (yyyy-MM-dd) (current: " + selectedProject.getApplicationOpeningDate() + "): ");
+        Date newOpeningDate = getDateInput();
+        if (newOpeningDate != null) {
+            selectedProject.setApplicationOpeningDate(newOpeningDate);
+            LoggerUtility.logInfo("Opening date updated to: " + newOpeningDate);
+        }
+    
+        System.out.print("Enter new Application Closing Date (yyyy-MM-dd) (current: " + selectedProject.getApplicationClosingDate() + "): ");
+        Date newClosingDate = getDateInput();
+        if (newClosingDate != null && newClosingDate.after(selectedProject.getApplicationOpeningDate())) {
+            selectedProject.setApplicationClosingDate(newClosingDate);
+            LoggerUtility.logInfo("Closing date updated to: " + newClosingDate);
+        } else if (newClosingDate != null) {
+            view.displayError("Closing date must be after the opening date. Update failed.");
+        }
+    
+        System.out.print("Enter new Officer Slots (current: " + selectedProject.getOfficerSlots() + "): ");
+        String officerSlotsInput = ScannerUtility.SCANNER.nextLine();
+        if (!officerSlotsInput.isBlank()) {
+            try {
+                int newOfficerSlots = Integer.parseInt(officerSlotsInput);
+                selectedProject.setOfficerSlots(newOfficerSlots);
+                LoggerUtility.logInfo("Officer slots updated to: " + newOfficerSlots);
+            } catch (NumberFormatException e) {
+                view.displayError("Invalid number format. Update failed.");
+            }
+        }
+    
+        // Keep the manager name static
+        selectedProject.setProjectManager(loggedInManager);
+        System.out.println("\nEditing Flat Types...");
+        editFlatTypes(selectedProject.getFlatTypes());
+    
+        // Confirm changes
+        System.out.println("\n=========================================");
+        System.out.println("           UPDATED PROJECT DETAILS       ");
+        System.out.println("=========================================");
+        System.out.println("Project Name: " + selectedProject.getProjectName());
+        System.out.println("Neighborhood: " + selectedProject.getNeighborhood());
+        System.out.println("Opening Date: " + selectedProject.getApplicationOpeningDate());
+        System.out.println("Application Closing Date: " + selectedProject.getApplicationClosingDate());
+        System.out.println("Officer Slots: " + selectedProject.getOfficerSlots());
+        System.out.println("Flat Types:");
+        for (FlatType flatType : selectedProject.getFlatTypes()) {
+            System.out.println("- " + flatType.getFlatType() + ": " + flatType.getNumFlats() + " units at $" + flatType.getPricePerFlat());
+        }
+        System.out.println("Manager Name: " + selectedProject.getProjectManager().getName());
+        System.out.print("Confirm changes? (yes/no): ");
+        String confirm = ScannerUtility.SCANNER.nextLine().trim().toLowerCase();
+    
+        if (!confirm.equals("yes")) {
+            view.displayInfo("Changes discarded.");
+            return null;
+        } else {
+            try {
+                if (ProjectDB.updateProject(selectedProject)) {
+                    view.displaySuccess("Project updated successfully!");
+                    return selectedProject;
+                } else {
+                    view.displayError("Failed to update project. Please try again.");
+                    return null;
+                }
+            } catch (IOException e) {
+                view.displayError("An error occurred while updating the project: " + e.getMessage());
+                LoggerUtility.logError("Failed to update project: " + selectedProject.getProjectName(), e);
+                return null;
+            }
+        }
+    }
+
+    private void editFlatTypes(ArrayList<FlatType> flatTypes) {
+        while (true) {
+            System.out.println("\n=========================================");
+            System.out.println("           EDIT FLAT TYPES               ");
+            System.out.println("=========================================");
+            System.out.println("1. Add Flat Type");
+            System.out.println("2. Edit Existing Flat Type");
+            System.out.println("3. Remove Flat Type");
+            System.out.println("0. Exit");
+            System.out.println("=========================================");
+            System.out.print("Enter your choice: ");
+    
+            int choice;
+            try {
+                choice = ScannerUtility.SCANNER.nextInt();
+                ScannerUtility.SCANNER.nextLine(); // Consume newline
+            } catch (InputMismatchException e) {
+                ScannerUtility.SCANNER.nextLine(); // Clear invalid input
+                System.out.println("[ERROR] Invalid input. Please enter a valid number.");
+                continue;
+            }
+    
+            switch (choice) {
+                case 1: // Add Flat Type
+                    FlatType FT1 = new FlatType();
+                    FT1.addFlatType(flatTypes);
+                    break;
+    
+                case 2: // Edit Existing Flat Type
+                    FlatType FT2 = new FlatType();
+                    FT2.editExistingFlatType(flatTypes);
+                    break;
+    
+                case 3: // Remove Flat Type
+                    FlatType FT3 = new FlatType();
+                    FT3.removeFlatType(flatTypes);
+                    break;
+    
+                case 0: // Exit
+                    System.out.println("Exiting Flat Types Editor...");
+                    return;
+    
+                default:
+                    System.out.println("[ERROR] Invalid choice. Please try again.");
+            }
+        }
+    }
+
+    
+
+    public void toggleProjectVisibilityMenu(ArrayList<Project> projects) {
+        if (projects.isEmpty()) {
+            view.displayError("No projects available to toggle visibility.");
+            return;
+        }
+
+        // Display the list of projects
+        view.displayProjects(projects);
+
+        // Prompt the user to select a project
+        System.out.print("Enter the number of the project to toggle visibility: ");
+        int choice = ScannerUtility.SCANNER.nextInt();
+        ScannerUtility.SCANNER.nextLine(); // Consume newline
+
+        if (choice == 0) {
+            view.displayInfo("Toggle visibility operation canceled.");
+            return;
+        }
+
+        if (choice < 1 || choice > projects.size()) {
+            view.displayError("Invalid selection. Please try again.");
+            return;
+        }
+
+        // Get the selected project
+        Project selectedProject = projects.get(choice - 1);
+
+        // Toggle visibility
+        boolean currentVisibility = selectedProject.getProjectVisibility();
+        selectedProject.setProjectVisibility(!currentVisibility);
+
+        // Persist the change to the database
+        try {
+            if (ProjectDB.updateProject(selectedProject)) {
+                view.displaySuccess("Project visibility toggled to " + (selectedProject.getProjectVisibility() ? "Visible" : "Hidden") + ".");
+            } else {
+                view.displayError("Failed to update project visibility in the database.");
+            }
+        } catch (IOException e) {
+            view.displayError("Error updating project visibility: " + e.getMessage());
+        }
+    }
+
+    public void deleteProjectView(ArrayList<Project> projects, ManagerProjectController controller) {
+        if (projects.isEmpty()) {
+            view.displayError("No projects found to delete.");
+            return;
+        }
+    
+        // Display the details of the projects found
+        System.out.println("\nProjects found:");
+        view.displayProjects(projects); // Assuming you have a method to display project details
+    
+        // Prompt for confirmation
+        System.out.print("Enter the index of the project to delete (1-based): ");
+        int indexToDelete = -1;
+    
+        while (true) {
+            if (ScannerUtility.SCANNER.hasNextInt()) {
+                indexToDelete = ScannerUtility.SCANNER.nextInt() - 1; // Convert to 0-based index
+                ScannerUtility.SCANNER.nextLine(); // Consume newline
+    
+                if (indexToDelete >= 0 && indexToDelete < projects.size()) {
+                    break; // Valid index
+                } else {
+                    System.out.println("[ERROR] Invalid index. Please try again.");
+                }
+            } else {
+                System.out.println("[ERROR] Please enter a valid number.");
+                ScannerUtility.SCANNER.nextLine(); // Clear invalid input
+            }
+        }
+    
+        Project projectToDelete = projects.get(indexToDelete);
+        System.out.print("Are you sure you want to delete the project '" + projectToDelete.getProjectName() + "'? (yes/no): ");
+        String confirmation = ScannerUtility.SCANNER.nextLine();
+    
+        if (confirmation.equalsIgnoreCase("yes")) {
+            controller.deleteProject(projectToDelete); // Call the controller method to delete the project
+            view.displaySuccess("Project '" + projectToDelete.getProjectName() + "' deleted successfully.");
+        } else {
+            view.displaySuccess("Project deletion canceled.");
+        }
+    }
+
+
+    /**
+     * Prompts the user to enter a date in the format yyyy-MM-dd and parses it.
+     *
+     * @return A valid Date object or null if the input is invalid.
+     */
+    private Date getDateInput() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        dateFormat.setLenient(false); // Ensure strict date parsing
+
+        try {
+            String dateInput = ScannerUtility.SCANNER.nextLine();
+            return dateFormat.parse(dateInput);
+        } catch (ParseException e) {
+            LoggerUtility.logError("Invalid date format entered: " + e.getMessage(), e);
+            return null;
+        }
+    }
+
+    /**
+     * Displays a menu for filtering projects and allows users to define and store filtering preferences.
+     *
+     * @param allProjects The list of all projects to filter.
+     * @return true if the user successfully filters and views projects, false otherwise.
+     */
+    public boolean filterProjectsMenu(ArrayList<Project> allProjects) {
+        List<String> filters = new ArrayList<>(List.of("", "", "", "", "")); // Initialize empty filters
+        while (true) {
+            System.out.println("\n=========================================");
+            System.out.println("              FILTER PROJECTS            ");
+            System.out.println("=========================================");
+            System.out.println("1. Filter by Project Name");
+            System.out.println("2. Filter by Neighborhood");
+            System.out.println("3. Filter by Minimum Price");
+            System.out.println("4. Filter by Maximum Price");
+            System.out.println("5. Filter by Flat Type");
+            System.out.println("6. View Current Filters");
+            System.out.println("7. Clear All Filters");
+            System.out.println("8. Apply Filters and Sort by Name");
+            System.out.println("9. Apply Filters and Sort by Neighborhood");
+            System.out.println("10. Apply Filters and Sort by Price");
+            System.out.println("0. Exit");
+            System.out.println("=========================================");
+            System.out.print("\nSelect an option: ");
+    
+            int option = -1;
+            try {
+                option = ScannerUtility.SCANNER.nextInt();
+                ScannerUtility.SCANNER.nextLine(); // Consume newline
+            } catch (InputMismatchException e) {
+                ScannerUtility.SCANNER.nextLine();
+                view.displayError("Invalid selection. Please try again.");
+                continue;
+            }
+    
+            ArrayList<Project> projectsToFilter = new ArrayList<>(allProjects);
+            switch (option) {
+                case 0:
+                    return false;
+                case 1:
+                    filters.set(FilterIndex.PROJECT_NAME.getIndex(), promptProjectNameFilter(allProjects));
+                    break;
+                    case 2:
+                    filters.set(FilterIndex.NEIGHBOURHOOD.getIndex(), promptNeighbourhoodFilter(allProjects));
+                    break;
+                case 3: {
+                    Double price = promptMinPriceFilter();
+                    if (price == 0) {
+                        filters.set(FilterIndex.PRICE_START.getIndex(), "");
+                    } else if (price > 0) {
+                        filters.set(FilterIndex.PRICE_START.getIndex(), String.format("%.2f", price));
+                    }
+                    break;
+                }
+                case 4: {
+                    Double price = promptMaxPriceFilter();
+                    if (price == 0) {
+                        filters.set(FilterIndex.PRICE_END.getIndex(), "");
+                    } else if (price > 0) {
+                        filters.set(FilterIndex.PRICE_END.getIndex(), String.format("%.2f", price));
+                    }
+                    break;
+                }
+                case 5: {
+                    int selectedFlat = promptFlatTypeFilter();
+                    if (selectedFlat == 1) {
+                        filters.set(FilterIndex.FLAT_TYPE.getIndex(), FlatTypeName.TWO_ROOM.getflatTypeName());
+                    } else if (selectedFlat == 2) {
+                        filters.set(FilterIndex.FLAT_TYPE.getIndex(), FlatTypeName.THREE_ROOM.getflatTypeName());
+                    } else if (selectedFlat == 3) {
+                        filters.set(FilterIndex.FLAT_TYPE.getIndex(), "");
+                    }
+                    break;
+                }
+                case 6: // View Current Filters
+                    displayCurrentFilters(filters);
+                    break;
+                case 7:
+                    filters.clear();
+                    filters.addAll(List.of("", "", "", "", ""));
+                    view.displayInfo("Filters cleared.");
+                    break;
+                case 8:
+                    Project.filterProject(projectsToFilter, filters);
+                    if (projectsToFilter.isEmpty()) {
+                        view.displayInfo("No results found.");
+                    } else {
+                        Project.sortProjectByName(projectsToFilter);
+                        view.displayProjects(projectsToFilter);
+                    }
+                    break;
+                case 9:
+                    Project.filterProject(projectsToFilter, filters);
+                    if (projectsToFilter.isEmpty()) {
+                        view.displayInfo("No results found.");
+                    } else {
+                        Project.sortProjectByNeighbourhood(projectsToFilter);
+                        view.displayProjects(projectsToFilter);
+                    }
+                    break;
+                case 10:
+                    Project.filterProject(projectsToFilter, filters);
+                    if (projectsToFilter.isEmpty()) {
+                        view.displayInfo("No results found.");
+                    } else {
+                        int order = promptSortOrder();
+                        if (order == 1) {
+                            Project.sortProjectByPrice(projectsToFilter, true);
+                        } else if (order == 2) {
+                            Project.sortProjectByPrice(projectsToFilter, false);
+                        } else {
+                            view.displayError("Invalid selection. Please try again.");
+                            break;
+                        }
+                        view.displayProjects(projectsToFilter);
+                    }
+                    break;
+                default:
+                    view.displayError("Invalid selection. Please try again.");
+                    break;
+            }
+        }
+    }
+    
+    private void displayCurrentFilters(List<String> filters) {
+        System.out.println("\n=========================================");
+        System.out.println("           CURRENT FILTERS               ");
+        System.out.println("=========================================");
+        System.out.println("1. Project Name: " + (filters.get(FilterIndex.PROJECT_NAME.getIndex()).isEmpty() ? "Not Set" : filters.get(FilterIndex.PROJECT_NAME.getIndex())));
+        System.out.println("2. Neighborhood: " + (filters.get(FilterIndex.NEIGHBOURHOOD.getIndex()).isEmpty() ? "Not Set" : filters.get(FilterIndex.NEIGHBOURHOOD.getIndex())));
+        System.out.println("3. Minimum Price: " + (filters.get(FilterIndex.PRICE_START.getIndex()).isEmpty() ? "Not Set" : filters.get(FilterIndex.PRICE_START.getIndex())));
+        System.out.println("4. Maximum Price: " + (filters.get(FilterIndex.PRICE_END.getIndex()).isEmpty() ? "Not Set" : filters.get(FilterIndex.PRICE_END.getIndex())));
+        System.out.println("5. Flat Type: " + (filters.get(FilterIndex.FLAT_TYPE.getIndex()).isEmpty() ? "Not Set" : filters.get(FilterIndex.FLAT_TYPE.getIndex())));
+        System.out.println("=========================================");
+    }
+
+    public String promptProjectNameFilter() {
+        System.out.print("\nEnter project name (Nothing to clear filter): ");
+        return ScannerUtility.SCANNER.nextLine();
+    }
+    public String promptNeighbourhoodFilter() {
+        System.out.print("\nEnter neighbourhood name (Nothing to clear filter): ");
+        return ScannerUtility.SCANNER.nextLine();
+    }
+    public Double promptMinPriceFilter() {
+        while (true){
+        System.out.print("\nEnter minimum price (0 to clear filter): ");
+            try {
+                double price = ScannerUtility.SCANNER.nextDouble();
+                ScannerUtility.SCANNER.nextLine();
+                return price;
+            } catch (InputMismatchException e) {
+                ScannerUtility.SCANNER.nextLine();
+                view.displayError("Invalid Price. Please try again.");
+            }
+        }
+    }
+
+    public String promptProjectNameFilter(ArrayList<Project> allProjects) {
+        System.out.println("\n=========================================");
+        System.out.println("           AVAILABLE PROJECT NAMES       ");
+        System.out.println("=========================================");
+        for (int i = 0; i < allProjects.size(); i++) {
+            System.out.printf("%d. %s\n", i + 1, allProjects.get(i).getProjectName());
+        }
+        System.out.println("0. Clear Filter");
+        System.out.println("=========================================");
+    
+        while (true) {
+            System.out.print("\nEnter the number corresponding to the project name (0 to clear filter): ");
+            try {
+                int choice = ScannerUtility.SCANNER.nextInt();
+                ScannerUtility.SCANNER.nextLine(); // Consume newline
+    
+                if (choice == 0) {
+                    return ""; // Clear filter
+                }
+    
+                if (choice >= 1 && choice <= allProjects.size()) {
+                    return allProjects.get(choice - 1).getProjectName();
+                } else {
+                    view.displayError("Invalid selection. Please try again.");
+                }
+            } catch (InputMismatchException e) {
+                ScannerUtility.SCANNER.nextLine(); // Consume invalid input
+                view.displayError("Invalid input. Please enter a valid number.");
+            }
+        }
+    }
+    public String promptNeighbourhoodFilter(ArrayList<Project> allProjects) {
+        // Extract unique neighborhoods from the list of projects
+        Set<String> neighborhoods = new HashSet<>();
+        for (Project project : allProjects) {
+            neighborhoods.add(project.getNeighborhood());
+        }
+
+        // Display the list of neighborhoods
+        System.out.println("\n=========================================");
+        System.out.println("           AVAILABLE NEIGHBORHOODS       ");
+        System.out.println("=========================================");
+        List<String> neighborhoodList = new ArrayList<>(neighborhoods);
+        for (int i = 0; i < neighborhoodList.size(); i++) {
+            System.out.printf("%d. %s\n", i + 1, neighborhoodList.get(i));
+        }
+        System.out.println("0. Clear Filter");
+        System.out.println("=========================================");
+
+        // Prompt the user to select a neighborhood
+        while (true) {
+            System.out.print("\nEnter the number corresponding to the neighborhood (0 to clear filter): ");
+            try {
+                int choice = ScannerUtility.SCANNER.nextInt();
+                ScannerUtility.SCANNER.nextLine(); // Consume newline
+
+                if (choice == 0) {
+                    return ""; // Clear filter
+                }
+
+                if (choice >= 1 && choice <= neighborhoodList.size()) {
+                    return neighborhoodList.get(choice - 1);
+                } else {
+                    view.displayError("Invalid selection. Please try again.");
+                }
+            } catch (InputMismatchException e) {
+                ScannerUtility.SCANNER.nextLine(); // Consume invalid input
+                view.displayError("Invalid input. Please enter a valid number.");
+            }
+        }
+    }
+    public Double promptMaxPriceFilter() {
+        while (true){
+            System.out.print("\nEnter maximum price (0 to clear filter): ");
+            try {
+                double price = ScannerUtility.SCANNER.nextDouble();
+                ScannerUtility.SCANNER.nextLine();
+                return price;
+            } catch (InputMismatchException e) {
+                ScannerUtility.SCANNER.nextLine();
+                view.displayError("Invalid Price. Please try again.");
+            }
+        }
+    }
+    public int promptFlatTypeFilter() {
+        while (true) {
+            try {
+                System.out.println("\nApplicable Flat Types:");
+                System.out.println("1. 2~ROOM");
+                System.out.println("2. 3~ROOM");
+                System.out.println("3. Clear Filter");
+                System.out.print("\nEnter Option: ");
+                int selectedFlat = ScannerUtility.SCANNER.nextInt();
+                ScannerUtility.SCANNER.nextLine();
+                if (selectedFlat >= 1 && selectedFlat <= 3) {
+                    return selectedFlat;
+                }
+                view.displayInfo("Invalid option.");
+            } catch (InputMismatchException e) {
+                ScannerUtility.SCANNER.nextLine();
+                view.displayInfo("Invalid option.");
+            }
+        }
+    }
+
+    // Prompt user for sort order (ascending/descending) for price sorting
+    public int promptSortOrder() {
+        while (true) {
+            try {
+                System.out.println("\nHow would you like it sorted?");
+                System.out.println("1. Ascending");
+                System.out.println("2. Descending");
+                System.out.print("\nEnter Option: ");
+                int order = ScannerUtility.SCANNER.nextInt();
+                ScannerUtility.SCANNER.nextLine();
+                if (order == 1 || order == 2) {
+                    return order;
+                }
+                view.displayError("Invalid selection. Please try again.");
+            } catch (InputMismatchException e) {
+                ScannerUtility.SCANNER.nextLine();
+                view.displayError("Invalid . Please try again.");
+            }
+        }
     }
 
 }
