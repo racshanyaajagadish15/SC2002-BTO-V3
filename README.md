@@ -22,10 +22,9 @@ HDB Manager: Manage Projects and reply to applicant enquiries
 
 ### Running the Application
 
-1. Compile the Java source files.
-2. Run the main class:
+1. Run SC2002-BTO.jar:
    ```
-   java Main.java
+   java -jar SC2002-BTO.jar
    ```
 
 ## Project Structure
@@ -35,7 +34,6 @@ HDB Manager: Manage Projects and reply to applicant enquiries
 - `resources/data/` - Data files (Not for manual modification!)
 - `src/` - Java source files
 - `logs/` - Log files for errors and info logs
-- `Main.java` - Main class with main function to start program
 - `README.md` - Project documentation
 
 ## Authors
