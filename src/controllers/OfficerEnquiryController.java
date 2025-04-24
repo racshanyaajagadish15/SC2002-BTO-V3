@@ -73,6 +73,10 @@ public class OfficerEnquiryController implements IOfficerEnquiryController {
         return projectEnquiries;		
     }
 
+    
+    /** 
+     * @param officer
+     */
     // New method: main entry point for officer to handle enquiries (all logic here)
     public void enquiryActionMenu(HDBOfficer officer) {
         try {
@@ -86,13 +90,12 @@ public class OfficerEnquiryController implements IOfficerEnquiryController {
                 }
             }
             for (Project project : projectsAssigned){
-                System.out.println("test" + project.getProjectName());
                 ArrayList<Enquiry> projectEnquiries = Enquiry.getProjectEnquiries(project);
                 projectEnquiriesMap.put(project, projectEnquiries);
             }
 
             if (projectEnquiriesMap.size() == 0) {
-                view.displayInfo("You are not handling any projects.");
+                view.displayInfo("There are no enquiries from projects you are managing.");
                 return;
             }
 
