@@ -11,6 +11,7 @@ public class OfficerRegistrationView implements IDisplayResult {
 
     /**
      * Displays the registration status for the officer.
+     * @param registrations List of officer registrations.
      */
     public void showRegistrationStatus(ArrayList<OfficerRegistration> registrations) {
         System.out.println("\n=========================================");
@@ -35,6 +36,7 @@ public class OfficerRegistrationView implements IDisplayResult {
 
     /**
      * Displays the list of registrable projects.
+     * @param projects List of registrable projects.
      */
     public void showRegistrableProjects(ArrayList<Project> projects) {
         if (projects.size() == 0){
@@ -56,6 +58,7 @@ public class OfficerRegistrationView implements IDisplayResult {
     /**
      * Gets the user's project selection.
      * Returns -1 if user selects 0 (back), otherwise returns the index (0-based).
+     * @param numProjects The number of projects available for selection.
      */
     public int getProjectSelection(int numProjects) {
         while (true) {
@@ -81,6 +84,7 @@ public class OfficerRegistrationView implements IDisplayResult {
     /**
      * Gets confirmation from the user for registration.
      * Returns true if confirmed, false otherwise.
+     * @param projectName The name of the project to confirm registration for.
      */
     public boolean getRegistrationConfirmation(String projectName) {
         int confirmation;
@@ -108,6 +112,7 @@ public class OfficerRegistrationView implements IDisplayResult {
 
     /**
      * Waits for the user to select "Back" (0) to continue.
+     * This method will loop until the user selects 0.
      */
     public void waitForBack() {
         int option = -1;

@@ -86,6 +86,12 @@ public class OfficerRegistration {
     public void setRegistrationStatus(String registrationStatus) {
         this.registrationStatus = registrationStatus;
     }
+    /**
+     * Retrieve all officer registrations from the database.
+     * 
+     * @return A list of all officer registrations.
+     * @throws IOException If there is an error retrieving the data from the database.
+     */
     
     public static ArrayList<OfficerRegistration> getPendingRegistrationsDB() throws IOException {
         ArrayList<OfficerRegistration> allRegistrations = OfficerRegistrationDB.getAllOfficerRegistrations();
@@ -100,6 +106,13 @@ public class OfficerRegistration {
         return pendingRegistrations;
     }
 
+    /**
+     * Retrieve all officer registrations from the database.
+     * 
+     * @return A list of all officer registrations.
+     * @throws IOException If there is an error retrieving the data from the database.
+     */
+
     public static ArrayList<OfficerRegistration> getOfficerRegistrationsByOfficerDB(HDBOfficer officer) throws IOException {
         ArrayList<OfficerRegistration> allRegistrations = OfficerRegistrationDB.getAllOfficerRegistrations();
         ArrayList<OfficerRegistration> officerRegistrations = new ArrayList<>();
@@ -112,6 +125,12 @@ public class OfficerRegistration {
 
         return officerRegistrations;
     }
+    /**
+     * Retrieve all officer registrations from the database.
+     * 
+     * @return A list of all officer registrations.
+     * @throws IOException If there is an error retrieving the data from the database.
+     */
 
     public static void updateOfficerApplicationStatusDB(int registrationID, String status) throws IOException {
         OfficerRegistrationDB.updateOfficerRegistration(registrationID, status);

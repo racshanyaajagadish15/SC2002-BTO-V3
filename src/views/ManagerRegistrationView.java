@@ -7,16 +7,30 @@ import models.OfficerRegistration;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * This class handles the view for managing officer registrations.
+ * It provides methods to display the registration menu, view all registrations,
+ * view pending registrations, and update registration status.
+ */
+
 public class ManagerRegistrationView {
 
     private Scanner scanner;
     private ManagerRegistrationController controller;
-
+    
+    /**
+     * Constructor for ManagerRegistrationView.
+     * Initializes the scanner and controller.
+     */
     public ManagerRegistrationView() {
         this.scanner = new Scanner(System.in);
         this.controller = new ManagerRegistrationController();
     }
 
+    /**
+     * Displays the registration management menu and handles user input.
+     * @param manager The HDBManager instance to manage registrations.
+     */
     public void showRegistrationMenu(HDBManager manager) {
         while (true) {
             System.out.println("\n=========================================");
@@ -48,7 +62,10 @@ public class ManagerRegistrationView {
             }
         }
     }
-
+    /**
+     * Displays all registrations and handles user input for viewing or updating status.
+     * @param manager The HDBManager instance to manage registrations.
+     */
     private void viewAllRegistrations(HDBManager manager) {
         try {
             ArrayList<OfficerRegistration> registrations = controller.getAllRegistrations(manager);
@@ -61,7 +78,10 @@ public class ManagerRegistrationView {
             System.out.println("[ERROR] Failed to retrieve registrations: " + e.getMessage());
         }
     }
-
+    /**
+     * Displays pending registrations and handles user input for viewing or updating status.
+     * @param manager The HDBManager instance to manage registrations.
+     */
     private void viewPendingRegistrations(HDBManager manager) {
         try {
             ArrayList<OfficerRegistration> pendingRegistrations = controller.getPendingRegistrations(manager);
@@ -74,7 +94,10 @@ public class ManagerRegistrationView {
             System.out.println("[ERROR] Failed to retrieve pending registrations: " + e.getMessage());
         }
     }
-
+    /**
+     * Displays the registration status menu and handles user input for updating status.
+     * @param manager The HDBManager instance to manage registrations.
+     */
     private void updateRegistrationStatusMenu(HDBManager manager) {
         try {
             ArrayList<OfficerRegistration> allRegistrations = controller.getAllRegistrations(manager);
@@ -140,6 +163,10 @@ public class ManagerRegistrationView {
         }
     }
 
+    /**
+     * Displays the registrations in a formatted table.
+     * @param registrations The list of registrations to display.
+     */
     private void displayRegistrations(ArrayList<OfficerRegistration> registrations) {
         System.out.println("\n==========================================================================");
         System.out.printf("| %-5s | %-15s | %-10s | %-15s |\n", "ID", "Officer NRIC", "Project ID", "Status");
@@ -155,5 +182,3 @@ public class ManagerRegistrationView {
         System.out.println("==========================================================================");
     }
 }
-
-//commit

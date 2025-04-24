@@ -5,13 +5,13 @@ import models.HDBManager;
 import models.OfficerRegistration;
 
 
-public interface IManagerRegistrationController {
+/**
+ * Interface for the ManagerRegistrationController class.
+ * This interface defines the methods that a manager can use to manage officer registrations.
+ */
 
-	/**
-	 * 
-	 * @param officerApplication
-	 * @param status
-	 */
+public interface IManagerRegistrationController {
+	
 	public void updateOfficerApplicationStatus(OfficerRegistration officerApplication, String status);
 	public ArrayList<OfficerRegistration> getPendingRegistrations(HDBManager manager);
 

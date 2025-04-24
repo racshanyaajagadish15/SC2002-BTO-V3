@@ -1,3 +1,9 @@
+/*
+ * ProjectVisibility.java
+ * This enum represents the visibility of a project.
+ * It can be either visible or hidden.
+ */
+
 package enums;
 
 public enum ProjectVisibility {

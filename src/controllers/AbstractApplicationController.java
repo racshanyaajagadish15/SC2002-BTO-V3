@@ -13,25 +13,65 @@ import models.FlatType;
 import models.Project;
 import views.ApplicationView;
 
+/**
+ * Abstract controller for managing application-related actions.
+ * Provides methods for handling application flows, project actions, and filtering logic.
+ */
+
 public abstract class AbstractApplicationController implements IApplicationController {
 
+    /**
+     * The view associated with this controller.
+     */
     protected final ApplicationView view;
 
+    /**
+     * Constructor for AbstractApplicationController.
+     * Initializes the view instance.
+     */
     public AbstractApplicationController() {
         this.view = new ApplicationView();
     }
-
+    
+    /**
+     * Abstract method to get applicable projects for a given applicant.
+     * Must be implemented by subclasses to provide specific project filtering logic.
+     *
+     * @param applicant The applicant for whom to retrieve applicable projects.
+     * @return A list of applicable projects for the given applicant.
+     */
     public abstract ArrayList<Project> getApplicableProjects(Applicant applicant);
 
+    /**
+     * Abstract method to get the project ID for a given applicant.
+     * Must be implemented by subclasses to provide specific project ID retrieval logic.
+     *
+     * @param applicant The applicant for whom to retrieve the project ID.
+     * @return The project ID for the given applicant.
+     */
     public void projectAction(Applicant applicant) {
         ArrayList<Project> applicableProjects = getApplicableProjects(applicant);
         showApplicationMenu(applicableProjects, applicant);
     }
 
+    /**
+     * Abstract method to show the application details for a given applicant.
+     * Must be implemented by subclasses to provide specific application detail display logic.
+     *
+     * @param applicant The applicant for whom to show application details.
+     */
     public void applicationAction(Applicant applicant) {
         showApplicationDetails(applicant);
     }
 
+    /**
+     * Submits an application for a given project and applicant.
+     *
+     * @param project The project for which to submit the application.
+     * @param applicant The applicant submitting the application.
+     * @param flatType The type of flat being applied for.
+     * @return true if the application was successfully submitted, false otherwise.
+     */
     public boolean submitApplication(Project project, Applicant applicant, FlatType flatType) {
         try {
             Application.createApplicationDB(applicant, project, ApplicationStatus.PENDING.getStatus(), flatType);
@@ -41,6 +81,12 @@ public abstract class AbstractApplicationController implements IApplicationContr
         }
     }
 
+    /**
+     * Withdraws an application for a given applicant.
+     *
+     * @param application The application to withdraw.
+     * @return true if the withdrawal was successful, false otherwise.
+     */
     public boolean withdrawApplication(Application application) {
         application.setApplicationStatus(ApplicationStatus.WITHDRAWAL_PENDING.getStatus());
         try {
@@ -53,7 +99,13 @@ public abstract class AbstractApplicationController implements IApplicationContr
         }
     }
 
-    // --- Controller logic for menu and flows ---
+    /**
+     * Displays the application menu for a given applicant.
+     * Allows the applicant to view applicable projects and apply for them.
+     *
+     * @param applicableProjects The list of applicable projects for the applicant.
+     * @param applicant The applicant viewing the menu.
+     */
 
     public void showApplicationMenu(ArrayList<Project> applicableProjects, Applicant applicant) {
         try {
@@ -91,6 +143,14 @@ public abstract class AbstractApplicationController implements IApplicationContr
         }
     }
 
+    /**
+     * Displays applicable projects for a given applicant.
+     * Allows the applicant to select a project and apply for it or create an enquiry.
+     *
+     * @param applicableProjects The list of applicable projects for the applicant.
+     * @param applicant The applicant viewing the projects.
+     * @return true if the application was successfully submitted, false otherwise.
+     */
     public boolean showApplicableProjects(ArrayList<Project> applicableProjects, Applicant applicant) {
         if (applicableProjects == null || applicableProjects.size() == 0) {
             view.displayInfo("You are uneligible to apply for any projects!");
@@ -138,6 +198,14 @@ public abstract class AbstractApplicationController implements IApplicationContr
         }
     }
 
+    /**
+     * Displays a filtered list of applicable projects for a given applicant.
+     * Allows the applicant to set filters and view the filtered projects.
+     *
+     * @param applicableProjects The list of applicable projects for the applicant.
+     * @param applicant The applicant viewing the filtered projects.
+     * @return true if the application was successfully submitted, false otherwise.
+     */
     public boolean showApplicableFilteredProjects(ArrayList<Project> applicableProjects, Applicant applicant) {
         List<String> filters = applicant.getFilter();
         while (true) {
@@ -249,6 +317,13 @@ public abstract class AbstractApplicationController implements IApplicationContr
             }
         }
     }
+
+    /**
+     * Displays the application details for a given applicant.
+     * Allows the applicant to view their application status and withdraw their application if applicable.
+     *
+     * @param applicant The applicant whose application details are to be displayed.
+     */
 
     public void showApplicationDetails(Applicant applicant) {
         try {

@@ -4,39 +4,16 @@ import models.Applicant;
 import models.Enquiry;
 import models.Project;
 
+/**
+ * This interface defines the methods for handling the enquiry process for applicants.
+ * It provides methods to manage enquiries, including creating, editing, and deleting enquiries.
+ */
 public interface IApplicantEnquiryController {
 
-	/**
-	 *
-	 * @param applicant
-	 */
 	public void enquiryActionMenu(Applicant applicant);
-
-	/**
-	 * 
-	 * @param enquiry
-	 */
 	boolean submitEnquiry(Enquiry enquiry) ;
-
-	/**
-	 * 
-	 * @param enquiry
-	 * @param newText
-	 */
 	void editEnquiry(Enquiry enquiry, String newText);
-
-	/**
-	 * 
-	 * @param id
-	 * @return 
-	 */
 	boolean deleteEnquiry(int id);
-
-	/**
-	 * 
-	 * @param project
-	 * @param applicant
-	 */
 	void createEnquiryFlow(Project project, Applicant applicant);
 
 }

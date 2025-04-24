@@ -10,7 +10,6 @@ import databases.OfficerRegistrationDB;
 import databases.ProjectDB;
 import enums.OfficerRegisterationStatus;
 
-//commit
 
 public class ManagerRegistrationController implements IManagerRegistrationController {
 

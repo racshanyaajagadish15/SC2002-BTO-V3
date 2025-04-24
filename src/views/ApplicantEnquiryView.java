@@ -11,7 +11,13 @@ import utilities.ScannerUtility;
 
 public class ApplicantEnquiryView implements IDisplayResult {
 
-    // Displays the main menu and returns the selected project index (or -1 for exit)
+    /**
+     * Displays the menu for viewing and managing enquiries.
+     * If no enquiries are found, it displays a message and returns -1.
+     * @param projectEnquiriesMap
+     * @param projectList
+     * @return
+     */
     public int showEnquiriesMenu(Map<Project, ArrayList<Enquiry>> projectEnquiriesMap, List<Project> projectList) {
         if (projectEnquiriesMap.size() == 0) {
             displayInfo("You have not made any enquiries!");
@@ -38,7 +44,12 @@ public class ApplicantEnquiryView implements IDisplayResult {
         return projectIndex;
     }
 
-    // Displays the list of enquiries and returns the selected enquiry index (or -1 for back)
+    /**
+     * Displays the list of enquiries for a selected project.
+     * If no enquiries are found, it displays a message and returns -1.
+     * @param enquiries
+     * @return
+     */
     public int showEnquiriesList(ArrayList<Enquiry> enquiries) {
         displayEnquiries(enquiries);
         System.out.println("\nNote: Enquiries with replies can not be modified!");
@@ -54,7 +65,11 @@ public class ApplicantEnquiryView implements IDisplayResult {
         return enquiryIndex;
     }
 
-    // Displays options for a selected enquiry and returns the selected option
+    /**
+     * Displays the options for modifying an enquiry.
+     * If an invalid option is selected, it returns -1.
+     * @return options
+     */
     public int showEnquiryOptions() {
         System.out.println("\nEnquiry options:");
         System.out.println("1. Edit Enquiry");
@@ -72,13 +87,21 @@ public class ApplicantEnquiryView implements IDisplayResult {
         return option;
     }
 
-    // Prompts for new enquiry text
+    /**
+     * Prompts for the new enquiry text.
+     * If the input is blank, it returns an empty string.
+     * @return enquiryText
+     */
     public String promptNewEnquiryText() {
         System.out.print("Enter your new enquiry (Blank to return): ");
         return ScannerUtility.SCANNER.nextLine();
     }
 
-    // Prompts for new enquiry creation
+    /**
+     * Displays a message indicating that the enquiry has been modified successfully.
+     * @param project
+     * @return
+     */
     public String showCreateEnquiry(Project project) {
         System.out.println("\n=========================================");
         System.out.println("            CREATE NEW ENQUIRY           ");
@@ -88,8 +111,11 @@ public class ApplicantEnquiryView implements IDisplayResult {
         String enquiryText = ScannerUtility.SCANNER.nextLine();
         return enquiryText;
     }
-
-    // Displays the list of enquiries in a table
+    
+   /**
+    * Displays all enquiries in a formatted table.
+    * @param enquiries
+    */
     public void displayEnquiries(ArrayList<Enquiry> enquiries) {
         System.out.println("\n---------------------------------------------------------------------------------------------------------------------------------------------------------------");
         System.out.printf("| %-3s | %-40s | %-30s | %-30s | %-40s |\n", 
@@ -118,7 +144,13 @@ public class ApplicantEnquiryView implements IDisplayResult {
         }
     }
 
-    // Table helper method
+    /**
+     * Helper to display information messages.
+     * @param text
+     * @param width
+     * @return
+     * 
+     */
     private List<String> wrapText(String text, int width) {
         List<String> lines = new ArrayList<>();
         if (text == null) return lines;

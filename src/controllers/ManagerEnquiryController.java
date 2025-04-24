@@ -6,6 +6,11 @@ import java.util.ArrayList;
 import models.Enquiry;
 import models.Project;
 
+/**
+ * Interface for the ManagerEnquiryController class.
+ * This interface defines the methods that a manager can use to manage project enquiries.
+ */
+
 public class ManagerEnquiryController implements IManagerEnquiryController {
 
     /**

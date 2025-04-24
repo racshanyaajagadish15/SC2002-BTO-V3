@@ -10,12 +10,34 @@ import models.User;
 import views.AuthenticatorView;
 import utilities.LoggerUtility;
 
+/**
+ * This class is responsible for handling the authentication process for users.
+ * It provides methods for user login and password change functionality.
+ */
+
 public class AuthenticatorController {
 
+    /**
+     * The view used for displaying information to the user.
+     */
 	private final AuthenticatorView authenticatorView;
+
+    /**
+     * Constructor for the AuthenticatorController class.
+     * Initializes the view used for displaying information to the user.
+     */
 	public AuthenticatorController(){
 		this.authenticatorView = new AuthenticatorView();
 	}
+
+    /**
+     * This method handles the password change process for the given user.
+     * It prompts the user for their current password, new password, and confirmation of the new password.
+     * If the passwords match and the current password is correct, it updates the user's password.
+     * 
+     * @param user The user whose password is to be changed.
+     * @return true if the password change was successful, false otherwise.
+     */
     public boolean handlePasswordChange(User user) {
         authenticatorView.showPasswordChangePrompt();
         String currentPassword = authenticatorView.getCurrentPassword();
@@ -49,6 +71,11 @@ public class AuthenticatorController {
         }
     }
 
+    /**
+     * This method handles the authentication process for the user.
+     * It prompts the user for their NRIC and password, validates the input, and checks if the user exists in the database.
+     * If the authentication is successful, it redirects the user to their respective main menu based on their role.
+     */
     public void authenticate() {
         String inNric, inPassword;
         

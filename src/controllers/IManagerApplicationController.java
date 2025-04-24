@@ -1,20 +1,14 @@
 package controllers;
 import models.Application;
 
+/**
+ * This interface defines the methods for handling the application process for managers.
+ * It provides methods to manage applications, including updating application status and withdrawal status.
+ */
+
 public interface IManagerApplicationController {
 
-	/**
-	 * 
-	 * @param application
-	 * @param status
-	 */
 	void updateBTOApplicationStatus(Application application, String status);
-
-	/**
-	 * 
-	 * @param application
-	 * @param status
-	 */
 	void updateBTOApplicationWithdrawalStatus(Application application, String status);
 
 }

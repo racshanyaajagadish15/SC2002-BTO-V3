@@ -3,6 +3,11 @@ package controllers;
 import models.HDBOfficer;
 import views.OfficerMainView;
 
+/**
+ * OfficerMainController handles the main menu actions for HDB officers.
+ * It provides options for managing applications, enquiries, registrations, and bookings.
+ */
+
 public class OfficerMainController {
 	private final OfficerMainView mainView;
 	private final OfficerApplicationController officerApplicationController;
@@ -12,6 +17,10 @@ public class OfficerMainController {
 	private final OfficerBookingController officerBookingController;
 	private final AuthenticatorController authenticatorController;
 
+	/**
+	 * Constructor for OfficerMainController.
+	 * Initializes the main view and various controllers for handling officer actions.
+	 */
 
 	public OfficerMainController() {
 		this.mainView = new OfficerMainView();
@@ -22,6 +31,11 @@ public class OfficerMainController {
 		this.officerBookingController = new OfficerBookingController();
 		this.authenticatorController = new AuthenticatorController();
 	}
+
+	/**
+	 * Displays the officer menu and handles the selected action.
+	 * @param officer The HDB officer who is logged in.
+	 */
 	public void officerSelectMenu(HDBOfficer officer) {
 		int option=0;
 	
