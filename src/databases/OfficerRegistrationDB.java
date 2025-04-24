@@ -18,8 +18,25 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import enums.OfficerRegistrationFileIndex;
 
+
+/**
+ * OfficerRegistrationDB.java
+ * This class is responsible for managing the Officer Registration database.
+ */
+
 public class OfficerRegistrationDB {
     private static final String REGISTRATION_FILEPATH = "resources/data/OfficerRegistration.xlsx";
+
+    /**
+     * createOfficerRegistration(HDBOfficer officer, Project project, String registrationStatus)
+     * This method creates a new officer registration entry in the database.
+     * It generates a new registration ID, populates the row with officer details, and saves the changes to the file.
+     * @param officer The HDBOfficer object to register.
+     * @param project The Project object associated with the registration.
+     * @param registrationStatus The status of the registration.
+     * @return OfficerRegistration object containing the registration details.
+     * @throws IOException if there is an error reading or writing the file.
+     */
 
     public static OfficerRegistration createOfficerRegistration(HDBOfficer officer, Project project, String registrationStatus) throws IOException {
         try (FileInputStream fileStreamIn = new FileInputStream(REGISTRATION_FILEPATH);
@@ -43,6 +60,14 @@ public class OfficerRegistrationDB {
             return new OfficerRegistration(registrationID, officer, project, registrationStatus);
         }
     }
+
+    /**
+     * getAllOfficerRegistrations()
+     * This method retrieves all officer registrations from the database.
+     * It reads the file, iterates through the rows, and creates OfficerRegistration objects for each entry.
+     * @return ArrayList of OfficerRegistration objects.
+     * * @throws IOException if there is an error reading the file.
+     */
 
     public static ArrayList<OfficerRegistration> getAllOfficerRegistrations() throws IOException {
         ArrayList<OfficerRegistration> officerRegistrations = new ArrayList<>();
@@ -71,6 +96,14 @@ public class OfficerRegistrationDB {
         }
     
 
+    /**
+     * getOfficerRegistrationByID(int registrationID)
+     * This method retrieves an officer registration entry by its ID.
+     * It reads the file, iterates through the rows, and returns the matching OfficerRegistration object.
+     * @param registrationID The ID of the officer registration to retrieve.
+     * @return OfficerRegistration object if found, null otherwise.
+     * @throws IOException if there is an error reading the file.
+     */
     public static void updateOfficerRegistration(int registrationID, String newStatus) throws IOException {
         try (FileInputStream fileStreamIn = new FileInputStream(REGISTRATION_FILEPATH);
              Workbook workbook = new XSSFWorkbook(fileStreamIn)) {
@@ -106,7 +139,16 @@ public class OfficerRegistrationDB {
         }
     }
 
-    public static void deleteApplicationByProjID(Project project) throws IOException {
+    /**
+     * deleteOfficerRegistrationByProjID(Project project)
+     * This method deletes officer registrations associated with a specific project ID.
+     * It reads the file, identifies the rows to delete, and removes them from the sheet.
+     * @param project The Project object whose registrations are to be deleted.
+     * @return void
+     * @throws IOException if there is an error reading or writing the file.
+     */
+
+    public static void deleteOfficerRegistrationByProjID(Project project) throws IOException {
         try (FileInputStream fileStreamIn = new FileInputStream(REGISTRATION_FILEPATH);
              Workbook workbook = new XSSFWorkbook(fileStreamIn)) {
 
@@ -145,6 +187,16 @@ public class OfficerRegistrationDB {
         }        
     }
 
+    /**
+     * populateRegistrationRow(Row row, int registrationID, HDBOfficer officer, Project project, String status)
+     * This method populates a row with officer registration details.
+     * It sets the values for ID, NRIC, project ID, status, and date.
+     * @param row The Row object to populate.
+     * @param registrationID The ID of the registration.
+     * @param officer The HDBOfficer object associated with the registration.
+     * @param project The Project object associated with the registration.
+     * @param status The status of the registration.
+     */
     private static void populateRegistrationRow(Row row, int registrationID, HDBOfficer officer, Project project, String status) {
         row.createCell(OfficerRegistrationFileIndex.ID.getIndex()).setCellValue(registrationID); // Using row number as ID
         row.createCell(OfficerRegistrationFileIndex.NRIC.getIndex()).setCellValue(officer.getNric());

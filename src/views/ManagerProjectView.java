@@ -7,6 +7,11 @@ import utilities.LoggerUtility;
 
 public class ManagerProjectView implements IDisplayResult {
 
+    /**
+     * Displays the menu for managing BTO projects.
+     * @return The selected option as an integer.
+     */
+
     public void showProjectMenuHeader() {
         System.out.println("\n=========================================");
         System.out.println("           MANAGE BTO PROJECTS           ");
@@ -24,21 +29,40 @@ public class ManagerProjectView implements IDisplayResult {
         System.out.print("Enter your choice: ");
     }
 
+    /**
+     * Displays the menu for managing BTO projects.
+     * @return The selected option as an integer.
+     */
+
     public void displaySuccess(String message) {
         System.out.println("SUCCESS: " + message);
         LoggerUtility.logInfo(message);
     }
+
+    /**
+     * Displays an error message and logs it.
+     * @param message The error message to display.
+     */
 
     public void displayError(String message) {
         System.out.println("ERROR: " + message);
         LoggerUtility.logError(message, new Exception("Error logged without stack trace"));
     }
 
+    /**
+     * Displays an info message and logs it.
+     * @param message The info message to display.
+     */
+
     public void displayInfo(String message) {
         System.out.println("INFO: " + message);
         LoggerUtility.logInfo(message);
     }
 
+    /**
+     * Displays the details of all projects.
+     * @param projects The list of projects to display.
+     */
     public void displayProjects(ArrayList<Project> projects) {
         if (projects.isEmpty()) {
             displayInfo("No projects found.");

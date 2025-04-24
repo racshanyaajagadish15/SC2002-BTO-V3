@@ -13,7 +13,11 @@ import utilities.ScannerUtility;
 
 public class ApplicationView implements IDisplayResult {
 
-    // Display a list of projects and return the selected project index or -1 for back
+    /**
+     * Prompts the user to select a project from a list of applicable projects.
+     * @param applicableProjects
+     * @return
+     */
     public int promptProjectSelection(ArrayList<Project> applicableProjects) {
         System.out.println("\n=========================================");
         System.out.println("            APPLY FOR PROJECT            ");
@@ -40,7 +44,10 @@ public class ApplicationView implements IDisplayResult {
         }
     }
 
-    // Prompt for action on a selected project (enquiry/application/back)
+    /**
+     * Prompts the user to select an action for a project.
+     * @return option
+     */
     public int promptProjectAction() {
         while (true) {
             try {
@@ -62,7 +69,11 @@ public class ApplicationView implements IDisplayResult {
         }
     }
 
-    // Display flat types for a project and return selected index or -1 for back
+    /**
+     * Prompts the user to select a flat type from a list of available flat types.
+     * @param flatTypes
+     * @return option
+     */
     public int promptFlatTypeSelection(List<FlatType> flatTypes) {
         int i = 0;
         System.out.println("\nFlat Types:");
@@ -82,7 +93,10 @@ public class ApplicationView implements IDisplayResult {
         }
     }
 
-    // Confirm application
+    /**
+     * Prompts the user to confirm the application submission.
+     * @return true if confirmed, false otherwise
+     */
     public boolean promptApplicationConfirmation() {
         while (true) {
             System.out.println("\nNote: Only 1 application can be made and it cannot be modified. ");
@@ -103,7 +117,11 @@ public class ApplicationView implements IDisplayResult {
         }
     }
 
-    // Show filter menu and return selected option
+    /**
+     * Prompts the user to enter a reason for application withdrawal.
+     * @param filters
+     * @return option
+     */
     public int showFilterMenu(List<String> filters) {
         System.out.println("\n=========================================");
         System.out.println("             FILTER PROJECTS             ");
@@ -137,15 +155,26 @@ public class ApplicationView implements IDisplayResult {
         }
     }
 
-    // Prompt for filter values
+    /**
+     * Prompt project name filter
+     * @return filter
+     */
     public String promptProjectNameFilter() {
         System.out.print("\nEnter project name (Nothing to clear filter): ");
         return ScannerUtility.SCANNER.nextLine();
     }
+    /**
+     * Prompt neighbourhood name filter
+     * @return filter
+     */
     public String promptNeighbourhoodFilter() {
         System.out.print("\nEnter neighbourhood name (Nothing to clear filter): ");
         return ScannerUtility.SCANNER.nextLine();
     }
+    /**
+     * Prompt minimum price filter
+     * @return filter
+     */
     public Double promptMinPriceFilter() {
         while (true){
         System.out.print("\nEnter minimum price (0 to clear filter): ");
@@ -159,6 +188,10 @@ public class ApplicationView implements IDisplayResult {
             }
         }
     }
+    /**
+     * Prompt maximum price filter
+     * @return filter
+     */
     public Double promptMaxPriceFilter() {
         while (true){
             System.out.print("\nEnter maximum price (0 to clear filter): ");
@@ -172,6 +205,10 @@ public class ApplicationView implements IDisplayResult {
             }
         }
     }
+    /**
+     * Prompt flat type filter
+     * @return filter
+     */
     public int promptFlatTypeFilter() {
         while (true) {
             try {
@@ -192,8 +229,10 @@ public class ApplicationView implements IDisplayResult {
             }
         }
     }
-
-    // Prompt user for sort order (ascending/descending) for price sorting
+    /**
+     * Prompt sort order
+     * @return filter
+     */
     public int promptSortOrder() {
         while (true) {
             try {
@@ -214,7 +253,10 @@ public class ApplicationView implements IDisplayResult {
         }
     }
 
-    // Show main application menu and return option
+    /**
+     * Prompts the user to enter an option for viewing projects to apply for.
+     * @return option
+     */
     public int showApplicationMenuPrompt() {
         System.out.println("\n=========================================");
         System.out.println("              VIEW PROJECTS              ");
@@ -234,7 +276,11 @@ public class ApplicationView implements IDisplayResult {
         }
     }
 
-    // Show application details and return action
+    /**
+     * Displays the details of a specific application.
+     * @param application
+     * @return option
+     */
     public int showApplicationDetails(Application application) {
         while (true){
             System.out.println("\n=========================================");

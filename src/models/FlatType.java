@@ -10,6 +10,10 @@ public class FlatType {
     private int numFlats;
     private double pricePerFlat;
 
+    public FlatType(){
+
+    }
+
     /**
      * Constructor for FlatType
      * @param flatType The type of flat (e.g., "2-bedroom", "3-bedroom")
@@ -17,9 +21,6 @@ public class FlatType {
     * @param pricePerFlat The price of this flat type
      */
 
-    public FlatType(){
-
-    }
     public FlatType(String flatType, int numFlats, double pricePerFlat) {
         validateFlatType(flatType);
         validateNumFlats(numFlats);
@@ -29,7 +30,11 @@ public class FlatType {
         this.pricePerFlat = pricePerFlat;
     }
 
-    // Validation methods
+    /**
+     * Constructor for FlatType with default price
+     * @param flatType The type of flat (e.g., "2-bedroom", "3-bedroom")
+     * @param numFlats The number of flats available of this type
+     */
     private void validateFlatType(String flatType) {
         if (flatType == null || flatType.trim().isEmpty()) {
             throw new IllegalArgumentException("Flat type cannot be null or empty");
@@ -40,45 +45,85 @@ public class FlatType {
             throw new IllegalArgumentException("Invalid flat type. Only '2-ROOM' or '3-ROOM' are allowed.");
         }
     }
-
+    /**
+     * Constructor for FlatType with default price
+     * @param flatType The type of flat (e.g., "2-bedroom", "3-bedroom")
+     * @param numFlats The number of flats available of this type
+     */
     private void validateNumFlats(int numFlats) {
         if (numFlats < 0) {
             throw new IllegalArgumentException("Number of flats cannot be negative");
         }
     }
-
+    /**
+     * Constructor for FlatType with default price
+     * @param flatType The type of flat (e.g., "2-bedroom", "3-bedroom")
+     * @param numFlats The number of flats available of this type
+     */
     public String getFlatType() {
         return this.flatType;
     }
-
+    /**
+     * Constructor for FlatType with default price
+     * @param flatType The type of flat (e.g., "2-bedroom", "3-bedroom")
+     * @param numFlats The number of flats available of this type
+     */
     public int getNumFlats() {
         return this.numFlats;
     }
-
+    /**
+     * Constructor for FlatType with default price
+     * @param flatType The type of flat (e.g., "2-bedroom", "3-bedroom")
+     * @param numFlats The number of flats available of this type
+     */
     public double getPricePerFlat() {
         return this.pricePerFlat;
     }
+    /**
+     * Constructor for FlatType with default price
+     * @param flatType The type of flat (e.g., "2-bedroom", "3-bedroom")
+     * @param numFlats The number of flats available of this type
+     */
 
     @Override
     public String toString() {
         return flatType + ": " + numFlats + " units, $" + String.format("%,.2f", pricePerFlat);
     }
 
+    /**
+     * Constructor for FlatType with default price
+     * @param flatType The type of flat (e.g., "2-bedroom", "3-bedroom")
+     * @param numFlats The number of flats available of this type
+     */
     public void setNumFlats(int numFlats) {
         validateNumFlats(numFlats);
         this.numFlats = numFlats;
     }
+    /**
+     * Constructor for FlatType with default price
+     * @param flatType The type of flat (e.g., "2-bedroom", "3-bedroom")
+     * @param numFlats The number of flats available of this type
+     */
     public void setPricePerFlat(double pricePerFlat) {
         if (pricePerFlat < 0) {
             throw new IllegalArgumentException("Price per flat cannot be negative");
         }
         this.pricePerFlat = pricePerFlat;
     }
+    /**
+     * Constructor for FlatType with default price
+     * @param flatType The type of flat (e.g., "2-bedroom", "3-bedroom")
+     * @param numFlats The number of flats available of this type
+     */
     public void setFlatType(String flatType) {
         validateFlatType(flatType);
         this.flatType = flatType.trim().toUpperCase();
     }
-
+    /**
+     * Constructor for FlatType with default price
+     * @param flatType The type of flat (e.g., "2-bedroom", "3-bedroom")
+     * @param numFlats The number of flats available of this type
+     */
     public void addFlatType(ArrayList<FlatType> flatTypes) {
         System.out.print("Enter Flat Type Name (e.g., 2-Room, 3-Room): ");
         String flatTypeName = ScannerUtility.SCANNER.nextLine();
@@ -115,7 +160,14 @@ public class FlatType {
         LoggerUtility.logInfo("Added Flat Type: " + flatTypeName + " with " + numUnits + " units at $" + pricePerFlat);
         System.out.println("Flat Type added successfully.");
     }
-
+    /*
+     * editExistingFlatType method to edit an existing flat type.
+     * This method takes an ArrayList of FlatType objects as a parameter.
+     * It allows the user to select a flat type by index and edit its details.
+     * @param flatTypes The ArrayList of FlatType objects to edit.
+     * @throws IllegalArgumentException if the flat type is invalid.
+     * @throws NumberFormatException if the input is not a valid number.
+     */
     public void editExistingFlatType(ArrayList<FlatType> flatTypes) {
         if (flatTypes.isEmpty()) {
             System.out.println("[ERROR] No flat types available to edit.");
@@ -188,6 +240,15 @@ public class FlatType {
         LoggerUtility.logInfo("Updated Flat Type: " + flatType.getFlatType());
         System.out.println("Flat Type updated successfully.");
     }
+
+    /*
+     * removeFlatType method to remove an existing flat type.
+     * This method takes an ArrayList of FlatType objects as a parameter.
+     * It allows the user to select a flat type by index and remove it from the list.
+     * @param flatTypes The ArrayList of FlatType objects to remove from.
+     * @throws IllegalArgumentException if the flat type is invalid.
+     * @throws NumberFormatException if the input is not a valid number.
+     */
 
     public void removeFlatType(ArrayList<FlatType> flatTypes) {
         if (flatTypes.isEmpty()) {

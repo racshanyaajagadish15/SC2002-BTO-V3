@@ -1,5 +1,10 @@
 package enums;
 
+
+/*
+ * ApplicationStatus.java
+ * This enum represents the various statuses of an application.
+ */
 public enum ApplicationStatus {
     PENDING("Pending"),
     SUCESSFUL("Successful"),

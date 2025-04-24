@@ -5,6 +5,12 @@ import java.util.List;
 
 import databases.ApplicationDB;
 
+/**
+ * The Application class represents an application made by an applicant for a project.
+ * It contains information about the applicant, the project, the application status,
+ * the application ID, and the flat type.
+ */
+
 public class Application {
 
 	private Applicant applicant;
@@ -39,33 +45,77 @@ public class Application {
 		ApplicationDB.updateApplication(applicantion);
 	}
 
+	/**
+	 * 
+	 * @param applicant
+	 * @param project
+	 * @param applicationStatus
+	 * @param flatType
+	 * @throws IOException
+	 */
 	public static void createApplicationDB(Applicant applicant, Project project, String applicationStatus, FlatType flatType) throws IOException {
 		ApplicationDB.createApplication(applicant, project, applicationStatus, flatType);
 	}
 
+	/**
+	 * 
+	 * @param applicationID
+	 * @throws IOException
+	 */
 	public static Application getApplicationByNricDB(String nric) throws IOException {
 		return ApplicationDB.getApplicationByNric(nric);
 	}
 
+	/**
+	 * 
+	 * @param applicationID
+	 * @throws IOException
+	 */
 	public static List<Application> getAllApplicationDB() throws IOException {
 		return ApplicationDB.getAllApplications();
 	}
+
+	/**
+	 * 
+	 * @param applicationID
+	 * @throws IOException
+	 */
 	public Applicant getApplicant() {
 		return this.applicant;
 	}
 
+	/**
+	 * 
+	 * @param applicationID
+	 * @throws IOException
+	 */
 	public Project getProject() {
 		return this.project;
 	}
 
+	/**
+	 * 
+	 * @param applicationID
+	 * @throws IOException
+	 */
 	public String getApplicationStatus() {
 		return this.applicationStatus;
 	}
 
+	/**
+	 * 
+	 * @param applicationID
+	 * @throws IOException
+	 */
 	public int getApplicationID() {
 		return this.applicationID;
 	}
 	
+	/**
+	 * 
+	 * @param applicationID
+	 * @throws IOException
+	 */
 	public String getFlatType() {
 		return this.flatType;
 	}

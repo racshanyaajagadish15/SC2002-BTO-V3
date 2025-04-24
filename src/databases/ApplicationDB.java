@@ -11,7 +11,13 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class ApplicationDB {
     private static final String APPLICATION_FILEPATH = "resources/data/ProjectApplication.xlsx";
 
-    // Create a new application
+    /**
+     * Creates a new application for a given applicant and project.
+     * @param applicant The applicant object containing applicant information.
+     * @param project The project object containing project information.
+     * @param status The status of the application.
+     * @param flatType The type of flat applied for.
+     */
     public static void createApplication(Applicant applicant, Project project, String status, FlatType flatType) throws IOException {
         File file = new File(APPLICATION_FILEPATH);
         try (FileInputStream fis = new FileInputStream(file);
@@ -20,7 +26,7 @@ public class ApplicationDB {
             Row lastRow = sheet.getRow(sheet.getLastRowNum());
             int applicationID;
             if (lastRow == null || lastRow.getCell(ProjectApplicationFileIndex.ID.getIndex()).getCellType() != CellType.NUMERIC) {
-                applicationID = 1; // Start with ID 1 if no valid last row exists
+                applicationID = 1; 
             } else {
                 applicationID  = (int) lastRow.getCell(ProjectApplicationFileIndex.ID.getIndex()).getNumericCellValue() + 1;
             }
@@ -40,7 +46,12 @@ public class ApplicationDB {
         }
     }
 
-    // Create a new application
+    /**
+     * Updates an existing application in the Excel file.
+     * @param application The application object containing updated information.
+     * @return void
+     * @throws IOException If there is an error reading or writing the file.
+     */
     public static void updateApplication(Application application) throws IOException {
         File file = new File(APPLICATION_FILEPATH);
         Workbook workbook;
@@ -51,7 +62,7 @@ public class ApplicationDB {
         }
             
         for (Row row : sheet) {
-            if (row.getRowNum() == 0) continue; // Skip header row
+            if (row.getRowNum() == 0) continue; 
             if (row.getCell(ProjectApplicationFileIndex.ID.getIndex()) == null || row.getCell(ProjectApplicationFileIndex.ID.getIndex()).getCellType() == CellType.BLANK) continue;
             int applicationID = (int) row.getCell(ProjectApplicationFileIndex.ID.getIndex()).getNumericCellValue();
             
@@ -66,21 +77,25 @@ public class ApplicationDB {
                 break;
             }
         }
-        // Save the changes to the file
+        
         try (FileOutputStream fos = new FileOutputStream(file)) {
             workbook.write(fos);
         }
         workbook.close();
     }
 
-    // Check if a project has applications
+    /**
+     * Checks if there are any applications for a given project ID.
+     * @param projectID The ID of the project to check.
+     * @return true if there are applications for the project, false otherwise.
+     */
     public static boolean hasApplicationsForProject(int projectID) throws IOException {
         try (FileInputStream fis = new FileInputStream(APPLICATION_FILEPATH);
              Workbook workbook = new XSSFWorkbook(fis)) {
             
             Sheet sheet = workbook.getSheetAt(0);
             for (Row row : sheet) {
-                if (row.getRowNum() == 0) continue; // Skip header
+                if (row.getRowNum() == 0) continue; 
                 Cell projectIDCell = row.getCell(ProjectApplicationFileIndex.PROJECT_ID.getIndex());
                 if (projectIDCell == null || projectIDCell.getCellType() == CellType.BLANK) continue;
 
@@ -95,7 +110,11 @@ public class ApplicationDB {
         return false;
     }
 
-    // Get all applications for a project
+    /**
+     * Retrieves a list of applications for a given project ID.
+     * @param projectID The ID of the project to retrieve applications for.
+     * @return A list of Application objects for the specified project ID.
+     */
     public static List<Application> getApplicationsForProject(int projectID) throws IOException {
         List<Application> applications = new ArrayList<>();
         try (FileInputStream fis = new FileInputStream(APPLICATION_FILEPATH);
@@ -229,7 +248,7 @@ public class ApplicationDB {
         return applications;
     }
 
-    public static void deleteOfficerRegistrationByProjID(Project project) throws IOException {
+    public static void deleteApplicationbyProj(Project project) throws IOException {
         File file = new File(APPLICATION_FILEPATH);
         try (FileInputStream fis = new FileInputStream(file);
              Workbook workbook = new XSSFWorkbook(fis)) {

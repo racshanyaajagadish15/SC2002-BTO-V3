@@ -12,6 +12,11 @@ import models.OfficerRegistration;
 import models.Project;
 import views.OfficerRegistrationView;
 
+/**
+ * OfficerRegistrationController handles the officer's registration actions.
+ * It allows officers to join projects and view their registration status.
+ */
+
 public class OfficerRegistrationController implements IOfficerRegistrationController {
 
     private final OfficerRegistrationView officerRegistrationView;
@@ -57,6 +62,10 @@ public class OfficerRegistrationController implements IOfficerRegistrationContro
 
     /**
      * Registers the officer for a project.
+     * @param officer The officer to register.
+     * @param project The project to register for.
+     * @return true if registration is successful, false otherwise.
+     * @throws IOException If there is an error writing to the database.
      */
     public boolean registerForProject(HDBOfficer officer, Project project) {
         try {
@@ -70,6 +79,9 @@ public class OfficerRegistrationController implements IOfficerRegistrationContro
 
     /**
      * Shows the officer's registration status.
+     * @param officer The officer requesting the registration status.
+     * @return true if the status was successfully displayed, false otherwise.
+     * @throws IOException If there is an error reading from the database.
      */
     public void showRegistrations(HDBOfficer officer){
         try {
@@ -83,6 +95,9 @@ public class OfficerRegistrationController implements IOfficerRegistrationContro
 
     /**
      * Gets the list of projects the officer can register for.
+     * @param officer The officer requesting the projects.
+     * @return A list of registrable projects.
+     * @exception IOException If there is an error reading from the database.
      */
     public ArrayList<Project> getRegistrableProjects(HDBOfficer officer){
         try {

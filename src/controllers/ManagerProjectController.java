@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Set;
-
 import databases.ProjectDB;
 import enums.FilterIndex;
 import enums.FlatTypeName;
@@ -20,8 +19,19 @@ import utilities.ScannerUtility;
 import models.FlatType;
 import models.HDBManager;
 
+/**
+ * The ManagerProjectController class handles the project management functionalities for HDB managers.
+ * It allows managers to create, edit, delete, and filter projects, as well as manage flat types within those projects.
+ */
+
 public class ManagerProjectController implements IManagerProjectController {
 
+    /**
+     * Filters the projects based on the provided filters.
+     *
+     * @param filters The list of filters to apply.
+     * @return A list of filtered projects.
+     */
     @Override
     public ArrayList<Project> getFilteredProjects(List<String> filters) {
         ArrayList<Project> allProjects = getAllProjects();
@@ -44,10 +54,18 @@ public class ManagerProjectController implements IManagerProjectController {
     private ManagerProjectView view;
     private HDBManager loggedInManager;
 
+
+    /**
+     * Constructor for ManagerProjectController.
+     * Initializes the view for project management.
+     */
     public ManagerProjectController() {
         this.view = new ManagerProjectView();
     }
 
+    /**
+     * Displays the project management menu and handles user input for various project-related actions.
+     */
     public void handleProjectMenu() {
         int choice;
 
@@ -126,6 +144,13 @@ public class ManagerProjectController implements IManagerProjectController {
         } while (choice != 0);
     }
 
+    /**
+     * Prompts the user for a valid choice within the specified range.
+     *
+     * @param min The minimum valid choice.
+     * @param max The maximum valid choice.
+     * @return The user's choice as an integer.
+     */
     private int getValidChoice(int min, int max) {
         while (!ScannerUtility.SCANNER.hasNextInt()) {
             System.out.print("Invalid input. Please enter a number: ");
@@ -136,6 +161,10 @@ public class ManagerProjectController implements IManagerProjectController {
         return choice;
     }
 
+    /**
+     * Creates a new project instance and passes to database storage method.
+     * If the project creation is successful, a success message is displayed.
+     */
     @Override
     public void createProject() {
         try {
@@ -168,6 +197,12 @@ public class ManagerProjectController implements IManagerProjectController {
         }
     }
 
+    /**
+     * Edits an existing project and passes to database storage method.
+     *
+     * @param project The project to edit.
+     */
+
     @Override
     public void editProject(Project project) {
         try {
@@ -185,7 +220,11 @@ public class ManagerProjectController implements IManagerProjectController {
         }
     }
 
-
+    /**
+     * Toggles the visibility of a project and passes it to the database storage method.
+     *
+     * @param project The project whose visibility to toggle.
+     */
     @Override
     public void toggleProjectVisibility(Project project) {
         try {
@@ -203,6 +242,12 @@ public class ManagerProjectController implements IManagerProjectController {
         }
     }
 
+    /**
+     * Retrieves all projects from the database without duplicates.
+     *
+     * @return A list of unique projects.
+     */
+
     @Override
     public ArrayList<Project> getAllProjects() {
         try {
@@ -218,6 +263,12 @@ public class ManagerProjectController implements IManagerProjectController {
         }
     }
 
+
+    /**
+     * Retrieves all projects owned by the logged-in manager.
+     *
+     * @return A list of projects owned by the logged-in manager.
+     */
     @Override
     public ArrayList<Project> getOwnedProjects() {
         try {
@@ -230,6 +281,13 @@ public class ManagerProjectController implements IManagerProjectController {
             return new ArrayList<>();
         }
     }
+
+    /**
+     * Retrieves a specific project by its name.
+     *
+     * @param projectName The name of the project to retrieve.
+     * @return A list of projects matching the specified name.
+     */
 
     @Override
     public ArrayList<Project> getSpecificProject(String projectName) {
@@ -248,15 +306,26 @@ public class ManagerProjectController implements IManagerProjectController {
         }
     }
 
+    /**
+     * Deletes a project from the database.
+     *
+     * @param project The project to delete.
+     */
+
     @Override
     public void deleteProject(Project project) {
         try {
-            ProjectDB.deleteProject(project.getProjectName());
+            ProjectDB.deleteProject(project);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * Displays a menu for deleting a project and handles user input for deletion confirmation.
+     *
+     * @param projects The list of projects to choose from for deletion.
+     */
     public void deleteProjectView(ArrayList<Project> projects) {
         // Display the list of projects
         System.out.println("\n=========================================");
@@ -267,62 +336,65 @@ public class ManagerProjectController implements IManagerProjectController {
             System.out.printf("%d. %s (Neighborhood: %s)\n",
                     i + 1,
                     project.getProjectName(),
-                    project.getNeighborhood(),
-                    project.getApplicationOpeningDate());
+                    project.getNeighborhood());
         }
         System.out.println("0. Back");
         System.out.println("=========================================");
+    
         int choice;
-        while (true){
+        while (true) {
             // Prompt the user to select a project
-            try{
+            try {
                 System.out.print("\nEnter the project number to delete: ");
                 choice = ScannerUtility.SCANNER.nextInt();
-                ScannerUtility.SCANNER.nextLine(); 
+                ScannerUtility.SCANNER.nextLine();
                 if (choice == 0) {
                     view.displayInfo("Delete canceled.");
                     return;
                 }
-        
-                if (choice < 1 || choice > projects.size()) {
+    
+                if (choice >= 1 && choice <= projects.size()) {
+                    break;
+                } else {
                     view.displayError("Invalid selection. Please try again.");
-                    continue;
                 }
-                break;
-            }
-            catch (InputMismatchException e){
-                ScannerUtility.SCANNER.nextLine(); 
-                view.displayError("Invalid selection. Please try again.");
+            } catch (InputMismatchException e) {
+                ScannerUtility.SCANNER.nextLine();
+                view.displayError("Invalid input. Please enter a valid number.");
+                continue;
             }
         }
-        while (true){
+    
+        while (true) {
             // Prompt the user to confirm
             int confirm;
-            try{
+            try {
                 System.out.println("\nConfirm the deletion of " + projects.get(choice - 1).getProjectName() + "?");
                 System.out.println("1. Yes");
                 System.out.println("2. No");
+                System.out.print("Enter your choice: ");
                 confirm = ScannerUtility.SCANNER.nextInt();
-                ScannerUtility.SCANNER.nextLine(); 
+                ScannerUtility.SCANNER.nextLine();
                 if (confirm == 1) {
                     deleteProject(projects.get(choice - 1));
                     view.displaySuccess("Project deleted successfully.");
                     break;
-                }
-        
-                if (confirm == 2) {
+                } else if (confirm == 2) {
                     view.displayInfo("Delete canceled.");
                     return;
+                } else {
+                    view.displayError("Invalid selection. Please try again.");
                 }
-                view.displayError("Invalid selection. Please try again.");
-            }
-            catch (InputMismatchException e){
-                ScannerUtility.SCANNER.nextLine(); // Consume newline
-                view.displayError("Invalid selection. Please try again.");
+            } catch (InputMismatchException e) {
+                ScannerUtility.SCANNER.nextLine();
+                view.displayError("Invalid input. Please enter 1 or 2.");
             }
         }
     }
 
+    /**
+     * Searches for projects based on user input and displays the results.
+     */
     private void searchProjects() {
         System.out.print("Enter search keyword (e.g., project name or neighborhood): ");
         String keyword = ScannerUtility.SCANNER.nextLine().trim().toLowerCase();
@@ -345,10 +417,20 @@ public class ManagerProjectController implements IManagerProjectController {
         }
     }
 
+    /**
+     * Sets the logged-in manager for the controller.
+     *
+     * @param manager The logged-in HDBManager instance.
+     */
     public void setLoggedInManager(HDBManager manager) {
         this.loggedInManager = manager;
     }
 
+    /**
+     * Retrieves the logged-in manager.
+     *
+     * @return The logged-in HDBManager instance.
+     */
     public static void filterProject(ArrayList<Project> projects, List<String> filters) {
         // Filter by Project Name
         if (!filters.get(FilterIndex.PROJECT_NAME.getIndex()).isEmpty()) {
@@ -384,20 +466,23 @@ public class ManagerProjectController implements IManagerProjectController {
         }
     }
 
+    /**
+     * Prompts the user to create a new project and returns the created project.
+     *
+     * @return The created Project object or null if the creation was canceled.
+     */
+
     public Project createNewProjectMenu() {
         System.out.println("\n=========================================");
         System.out.println("           CREATE NEW PROJECT            ");
         System.out.println("=========================================");
     
-        // Step 1: Enter Project Name
         System.out.print("Enter Project Name: ");
         String projectName = ScannerUtility.SCANNER.nextLine();
     
-        // Step 2: Enter Neighborhood
         System.out.print("Enter Neighborhood: ");
         String neighborhood = ScannerUtility.SCANNER.nextLine();
     
-        // Step 3: Enter Opening Date
         System.out.print("Enter Opening Date (yyyy-MM-dd): ");
         Date openingDate = getDateInput();
         if (openingDate == null) {
@@ -405,7 +490,6 @@ public class ManagerProjectController implements IManagerProjectController {
             return null;
         }
     
-        // Step 4: Enter Application Closing Date
         System.out.print("Enter Application Closing Date (yyyy-MM-dd): ");
         Date closingDate = getDateInput();
         if (closingDate == null || closingDate.before(openingDate)) {
@@ -413,16 +497,14 @@ public class ManagerProjectController implements IManagerProjectController {
             return null;
         }
     
-        // Step 5: Enter Officer Slots
         System.out.print("Enter Officer Slots: ");
         int officerSlots = ScannerUtility.SCANNER.nextInt();
-        ScannerUtility.SCANNER.nextLine(); // Consume newline
-    
-        // Step 6: Add Flat Types
+        ScannerUtility.SCANNER.nextLine(); 
+        
+
         ArrayList<FlatType> flatTypes = new ArrayList<>();
         editFlatTypes(flatTypes);
     
-        // Step 7: Confirm Project Creation
         System.out.println("\n=========================================");
         System.out.println("           PROJECT SUMMARY               ");
         System.out.println("=========================================");
@@ -443,7 +525,6 @@ public class ManagerProjectController implements IManagerProjectController {
             return null;
         }
     
-        // Step 8: Create and Return Project
         System.out.println("=========================================");
         System.out.println("Project created successfully!");
         LoggerUtility.logInfo("New project created: " + projectName);
@@ -451,6 +532,12 @@ public class ManagerProjectController implements IManagerProjectController {
         return new Project(0, projectName, null, neighborhood, flatTypes, openingDate, closingDate, officerSlots, true);
     }
 
+    /**
+     * Displays a menu for editing an existing project and handles user input for project details.
+     *
+     * @param projects The list of projects to choose from for editing.
+     * @return The edited Project object or null if the editing was canceled.
+     */
 
     public Project editProjectMenu(ArrayList<Project> projects) {
         if (projects.isEmpty()) {
@@ -458,7 +545,6 @@ public class ManagerProjectController implements IManagerProjectController {
             return null;
         }
     
-        // Display the list of projects
         System.out.println("\n=========================================");
         System.out.println("           AVAILABLE PROJECTS            ");
         System.out.println("=========================================");
@@ -579,6 +665,12 @@ public class ManagerProjectController implements IManagerProjectController {
         }
     }
 
+    /**
+     * Displays a menu for editing flat types and handles user input for adding, editing, or removing flat types.
+     *
+     * @param flatTypes The list of flat types to edit.
+     */
+
     private void editFlatTypes(ArrayList<FlatType> flatTypes) {
         while (true) {
             System.out.println("\n=========================================");
@@ -627,8 +719,11 @@ public class ManagerProjectController implements IManagerProjectController {
         }
     }
 
-    
-
+    /**
+     * Toggles the visibility of a project and updates it in the database.
+     *
+     * @param projects The list of projects to choose from for toggling visibility.
+     */
     public void toggleProjectVisibilityMenu(ArrayList<Project> projects) {
         if (projects.isEmpty()) {
             view.displayError("No projects available to toggle visibility.");
@@ -671,7 +766,13 @@ public class ManagerProjectController implements IManagerProjectController {
             view.displayError("Error updating project visibility: " + e.getMessage());
         }
     }
-
+    
+    /**
+     * Deletes a project from the database and updates the view accordingly.
+     *
+     * @param projects The list of projects to choose from for deletion.
+     * @param controller The controller instance to handle deletion logic.
+     */
     public void deleteProjectView(ArrayList<Project> projects, ManagerProjectController controller) {
         if (projects.isEmpty()) {
             view.displayError("No projects found to delete.");
@@ -695,6 +796,7 @@ public class ManagerProjectController implements IManagerProjectController {
                     break; // Valid index
                 } else {
                     System.out.println("[ERROR] Invalid index. Please try again.");
+                    continue;
                 }
             } else {
                 System.out.println("[ERROR] Please enter a valid number.");
@@ -857,6 +959,12 @@ public class ManagerProjectController implements IManagerProjectController {
             }
         }
     }
+
+    /**
+     * Displays the current filters applied to the project list.
+     *
+     * @param filters The list of filters currently applied.
+     */
     
     private void displayCurrentFilters(List<String> filters) {
         System.out.println("\n=========================================");
@@ -892,7 +1000,14 @@ public class ManagerProjectController implements IManagerProjectController {
         }
     }
 
-    private String promptProjectNameFilter(ArrayList<Project> allProjects) {
+    
+    /**
+     * Prompts the user to select a project name from a list of available projects.
+     *
+     * @param allProjects The list of all projects to choose from.
+     * @return The selected project name or an empty string if the filter is cleared.
+     */
+    public String promptProjectNameFilter(ArrayList<Project> allProjects) {
         System.out.println("\n=========================================");
         System.out.println("           AVAILABLE PROJECT NAMES       ");
         System.out.println("=========================================");
@@ -923,7 +1038,16 @@ public class ManagerProjectController implements IManagerProjectController {
             }
         }
     }
-    private String promptNeighbourhoodFilter(ArrayList<Project> allProjects) {
+
+    
+    /**
+     * Prompts the user to select a neighborhood from a list of available neighborhoods.
+     *
+     * @param allProjects The list of all projects to choose from.
+     * @return The selected neighborhood or an empty string if the filter is cleared.
+     */
+
+    public String promptNeighbourhoodFilter(ArrayList<Project> allProjects) {
         // Extract unique neighborhoods from the list of projects
         Set<String> neighborhoods = new HashSet<>();
         for (Project project : allProjects) {
@@ -963,7 +1087,14 @@ public class ManagerProjectController implements IManagerProjectController {
             }
         }
     }
-    private Double promptMaxPriceFilter() {
+  
+    /**
+     * Prompts the user to enter a maximum price for filtering projects.
+     *
+     * @return The entered maximum price or 0 if the filter is cleared.
+     */
+
+    public Double promptMaxPriceFilter() {
         while (true){
             System.out.print("\nEnter maximum price (0 to clear filter): ");
             try {
@@ -976,7 +1107,14 @@ public class ManagerProjectController implements IManagerProjectController {
             }
         }
     }
-    private int promptFlatTypeFilter() {
+
+    /**
+     * Prompts the user to select a flat type for filtering projects.
+     *
+     * @return The selected flat type or 0 if the filter is cleared.
+     */
+
+    public int promptFlatTypeFilter() {
         while (true) {
             try {
                 System.out.println("\nApplicable Flat Types:");
@@ -997,8 +1135,13 @@ public class ManagerProjectController implements IManagerProjectController {
         }
     }
 
-    // Prompt user for sort order (ascending/descending) for price sorting
-    private int promptSortOrder() {
+    /**
+     * Prompts the user to select a sort order for filtering projects.
+     *
+     * @return The selected sort order (1 for ascending, 2 for descending).
+     */
+    
+    public int promptSortOrder() {
         while (true) {
             try {
                 System.out.println("\nHow would you like it sorted?");

@@ -16,15 +16,28 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The ManagerApplicationView class is responsible for displaying the application management menu and handling user interactions related to applications.
+ * It allows the manager to view all applications, update application statuses, and update withdrawal statuses.
+ */
 public class ManagerApplicationView implements IDisplayResult {
 
     private final ManagerApplicationController controller = new ManagerApplicationController();
     private final HDBManager loggedInManager;
 
+    /**
+     * Constructor for the ManagerApplicationView class.
+     * @param loggedInManager The HDBManager object representing the currently logged-in manager.
+     */
+
     public ManagerApplicationView(HDBManager loggedInManager) {
         this.loggedInManager = loggedInManager;
     }
 
+    /**
+     * Displays the application management menu and handles user interactions.
+     * It allows the manager to view all applications, update application statuses, and update withdrawal statuses.
+     */
     public void showApplicationMenu() {
         int choice = -1;
         do {
@@ -53,6 +66,11 @@ public class ManagerApplicationView implements IDisplayResult {
             }
         } while (choice != 0);
     }
+    
+    /**
+     * Displays the list of applications for the selected project.
+     * @param projectApplicationsMap A map containing projects and their corresponding applications.
+     */
     private void showApplications(Map<Project, List<Application>> projectApplicationsMap){
         List<Application> selectedProjectApplications = new ArrayList<Application>();
         for (Project project : projectApplicationsMap.keySet()){
@@ -73,6 +91,10 @@ public class ManagerApplicationView implements IDisplayResult {
             System.out.println("---------------------------------------------------------------------------------------------");
         }
     }
+    /**
+     * Updates the status of a pending application.
+     * It prompts the user to select a project and an application, and then updates the status accordingly.
+     */
 
     private void updatePendingApplicationStatus() {
         try {
@@ -120,6 +142,11 @@ public class ManagerApplicationView implements IDisplayResult {
             displayError("Failed to update application status. If error persist, contact admin." );
         }
     }
+
+    /**
+     * Updates the withdrawal status of an application.
+     * It prompts the user to select a project and an application, and then updates the withdrawal status accordingly.
+     */
 
     private void updateWithdrawalApplicationStatus() {
         try {
@@ -178,6 +205,11 @@ public class ManagerApplicationView implements IDisplayResult {
         }
     }
 
+    /**
+     * Prompts the user to select a project and an application from the list of applications.
+     * @param projectApplicationsMap A map containing projects and their corresponding applications.
+     * @return The selected application, or null if the user chooses to go back.
+     */
     private Application promptForApplication(Map<Project, List<Application>> projectApplicationsMap) {
         int id = -1;
         while (true) {
@@ -251,6 +283,11 @@ public class ManagerApplicationView implements IDisplayResult {
         }
     }
 
+    /**
+     * Retrieves all applications owned by the logged-in manager.
+     * @return A map containing projects and their corresponding applications.
+     */
+
     private Map<Project, List<Application>> getAllWithdrawalApplications() {
         try {
             List<Project> managedProjects = ProjectDB.getProjectsByManager(loggedInManager.getName());
@@ -281,6 +318,10 @@ public class ManagerApplicationView implements IDisplayResult {
         }
     }
 
+    /**
+     * Retrieves all applications owned by the logged-in manager.
+     * @return A map containing projects and their corresponding applications.
+     */
     private Map<Project, List<Application>> getAllOwnedApplications() {
         try {
             List<Project> managedProjects = ProjectDB.getProjectsByManager(loggedInManager.getName());
@@ -311,6 +352,10 @@ public class ManagerApplicationView implements IDisplayResult {
         }
     }
 
+    /**
+     * Retrieves all pending applications owned by the logged-in manager.
+     * @return A map containing projects and their corresponding applications.
+     */
     private Map<Project, List<Application>> getPendingOwnedApplications() {
         try {
             List<Project> managedProjects = ProjectDB.getProjectsByManager(loggedInManager.getName());
@@ -338,23 +383,6 @@ public class ManagerApplicationView implements IDisplayResult {
             displayError("Failed to retrieve applications. If error persist, contact admin.");
             return new HashMap<>();
         }
-    }
-
-    private Application fetchApplicationByID(int applicationID) {
-        try {
-            List<Project> managedProjects = ProjectDB.getProjectsByManager(loggedInManager.getNric());
-            for (Project project : managedProjects) {
-                List<Application> applications = ApplicationDB.getApplicationsForProject(project.getProjectID());
-                for (Application application : applications) {
-                    if (application.getApplicationID() == applicationID) {
-                        return application;
-                    }
-                }
-            }
-        } catch (IOException e) {
-            displayError("Failed to fetch application. If error persist, contact admin.");
-        }
-        return null;
     }
     
 }

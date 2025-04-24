@@ -57,12 +57,12 @@ public class HDBManager extends User {
 	 * @param password      The new password of the HDBManager.
 	 */
 	public void updateHDBManager(String name, String nric, int age, String maritalStatus, String password) {
-		// Use setters from the superclass (User)
-        super.setName(name); // From User class
-		this.setNric(nric); // From User class
-		this.setAge(age); // From User class
-		this.setMaritalStatus(maritalStatus); // From User class
-		this.setPassword(password); // From User class
+		
+        super.setName(name); 
+		this.setNric(nric); 
+		this.setAge(age); 
+		this.setMaritalStatus(maritalStatus); 
+		this.setPassword(password); 
 
 		System.out.println("[SUCCESS] HDBManager details updated successfully.");
 	}
@@ -92,4 +92,5 @@ public class HDBManager extends User {
     public String getNric() {
         return this.nric;
     }
+    
 }

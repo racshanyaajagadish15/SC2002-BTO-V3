@@ -2,7 +2,17 @@ package views;
 
 import utilities.ScannerUtility;
 
+/**
+ * OfficerMainView class implements IDisplayResult interface to display the officer dashboard menu.
+ * It provides methods to show the officer menu and handle user input.
+ */
+
 public class OfficerMainView implements IDisplayResult {
+
+    /**
+     * Displays the main menu for the officer dashboard.
+     * @return The selected option as an integer.
+     */
 
     public int showOfficerMenu() {
         System.out.println("\n=========================================");

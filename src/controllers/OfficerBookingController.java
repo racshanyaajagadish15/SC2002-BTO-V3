@@ -22,6 +22,10 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 
+/**
+ * OfficerBookingController.java
+ * This class is responsible for handling the booking process of applications by HDB officers.
+ */
 public class OfficerBookingController implements IOfficerBookingController {
 
     private OfficerBookingView view;
@@ -88,6 +92,12 @@ public class OfficerBookingController implements IOfficerBookingController {
         return true;
     }
 
+    /**
+     * Select an application to book.
+     * 
+     * @param officer The HDB officer making the booking.
+     */
+
     public void selectApplicationToBook(HDBOfficer officer){
         List<Application> allApplications;
         ArrayList<OfficerRegistration> registrations;
@@ -127,6 +137,12 @@ public class OfficerBookingController implements IOfficerBookingController {
         }
 
     }
+
+    /**
+     * View and generate a receipt for a booked application.
+     * 
+     * @param officer The HDB officer making the booking.
+     */
 
     public void viewGenerateReceipt(HDBOfficer officer){
         List<Application> allApplications;

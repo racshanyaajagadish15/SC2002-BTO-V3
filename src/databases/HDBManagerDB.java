@@ -9,10 +9,26 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
 
+/**
+ * HDBManagerDB.java
+ * This class is responsible for managing the HDBManager database.
+ */
 
 public class HDBManagerDB {
     private static final String MANAGER_FILEPATH = "resources/data/ManagerList.xlsx";
+
+    /**
+     * getManagerByNRIC(String nric)
+     * This method retrieves a HDBManager object from the database using the NRIC.
+     * It reads the NRIC from the file and checks if it matches the provided NRIC.
+     * @param nric The NRIC of the HDBManager to retrieve.
+     * @return HDBManager object if found, null otherwise.
+     * @throws IOException if there is an error reading the file.
+     * @throws NumberFormatException if there is an error converting the age from the file.
+     * @throws IllegalArgumentException if the NRIC is invalid.
+     */
 
     public static HDBManager getManagerByNRIC(String nric) throws IOException, NumberFormatException {
         try (FileInputStream fileStreamIn = new FileInputStream(MANAGER_FILEPATH);
@@ -37,9 +53,18 @@ public class HDBManagerDB {
                 }
             } 
         }
-    // No results
     return null;
     }
+    
+    /**
+     * getManagerByName(String name)
+     * This method retrieves a HDBManager object from the database using the name.
+     * It reads the name from the file and checks if it matches the provided name.
+     * @param name The name of the HDBManager to retrieve.
+     * @return HDBManager object if found, null otherwise.
+     * @throws IOException if there is an error reading the file.
+     * @throws NumberFormatException if there is an error converting the age from the file.
+     */
     public static HDBManager getManagerbyName(String name) throws IOException, NumberFormatException {
         try (FileInputStream fileStreamIn = new FileInputStream(MANAGER_FILEPATH);
         Workbook workbook = new XSSFWorkbook(fileStreamIn)) {
@@ -67,6 +92,14 @@ public class HDBManagerDB {
     return null;
     }
 
+    /** 
+     * saveUser(HDBManager manager)
+     * This method saves the HDBManager object to the database.
+     * It checks if the NRIC already exists in the file and updates the password if it does.
+     * @param manager The HDBManager object to save.
+     * @return true if the user was saved successfully, false otherwise.
+     * @throws IOException if there is an error reading or writing the file.
+     */
     public static boolean saveUser(HDBManager manager) throws IOException {
         try (FileInputStream fis = new FileInputStream(MANAGER_FILEPATH);
              Workbook workbook = new XSSFWorkbook(fis)) {
@@ -92,4 +125,38 @@ public class HDBManagerDB {
             return false;
         }
     }
+
+    /** 
+     * updateManagerPassword(String nric, String newPassword)
+     * This method updates the password of the HDBManager in the database.
+     * It reads the NRIC from the file and checks if it matches the provided NRIC.
+     * @param nric The NRIC of the HDBManager to update.
+     * @param newPassword The new password to set.
+     * @throws IOException if there is an error reading or writing the file.
+     */
+
+    public static void updateManagerPassword(String nric, String newPassword) throws IOException {
+        try (FileInputStream fis = new FileInputStream(MANAGER_FILEPATH);
+             Workbook workbook = new XSSFWorkbook(fis)) {
+
+            Sheet sheet = workbook.getSheetAt(0);
+            for (Row row : sheet) {
+                if (row.getRowNum() == 0) continue; 
+
+                Cell nricCell = row.getCell(0); 
+                if (nricCell != null && nricCell.getStringCellValue().equals(nric)) {
+                    Cell passwordCell = row.getCell(1); 
+                    if (passwordCell == null) {
+                        passwordCell = row.createCell(1);
+                    }
+                    passwordCell.setCellValue(newPassword);
+                    break;
+                }
+            }
+            try (FileOutputStream fos = new FileOutputStream(MANAGER_FILEPATH)) {
+                workbook.write(fos);
+            }
+        }
+    }
+    
 }

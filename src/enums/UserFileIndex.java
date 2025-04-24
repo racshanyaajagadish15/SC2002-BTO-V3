@@ -1,4 +1,10 @@
 package enums;
+
+/**
+ * Enum representing the indices of user attributes in a user file.
+ * Each enum constant corresponds to a specific attribute of a user.
+ */
+
 public enum UserFileIndex {
 	NAME(0),
 	NRIC(1),

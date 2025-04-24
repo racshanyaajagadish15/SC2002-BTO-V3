@@ -36,6 +36,13 @@ public class Enquiry {
         this.replyDate = replyDate;
     }
 
+    /**
+     * Constructor for Enquiry
+     * @param enquiry The enquiry text
+     * @param nric The NRIC of the applicant
+     * @param project The project associated with the enquiry
+     */
+
     public Enquiry(String enquiry, String nric, Project project) {
         this.enquiry = enquiry;
         this.nric = nric;
@@ -45,21 +52,65 @@ public class Enquiry {
         this.replyDate = null;
     }
 
+    /*
+     * createEnquiryDB method to create a new enquiry in the database.
+     * This method takes an Enquiry object as a parameter and returns a boolean indicating success or failure.
+     * @param enquiry The Enquiry object to be created in the database.
+     * @return true if the enquiry was created successfully, false otherwise.
+     * @throws NumberFormatException if there is an error in number formatting.
+     * @throws IOException if there is an error in file handling.
+     */
     public static boolean createEnquiryDB(Enquiry enquiry) throws NumberFormatException, IOException {
         return EnquiryDB.createEnquiry(enquiry);
     }
+
+    /*
+     * updateEnquiryDB method to update an existing enquiry in the database.
+     * This method takes an Enquiry object as a parameter and returns a boolean indicating success or failure.
+     * @param enquiry The Enquiry object to be updated in the database.
+     * @return true if the enquiry was updated successfully, false otherwise.
+     * @throws NumberFormatException if there is an error in number formatting.
+     * @throws IOException if there is an error in file handling.
+     */
 
     public static boolean updateEnquiryDB(Enquiry enquiry) throws NumberFormatException, IOException {
         return EnquiryDB.updateEnquiry(enquiry);
     }
 
+    /*
+     * deleteEnquiryDB method to delete an enquiry from the database.
+     * This method takes an enquiry ID as a parameter and returns a boolean indicating success or failure.
+     * @param ID The ID of the enquiry to be deleted from the database.
+     * @return true if the enquiry was deleted successfully, false otherwise.
+     * @throws NumberFormatException if there is an error in number formatting.
+     * @throws IOException if there is an error in file handling.
+     */
+
     public static boolean deleteEnquiryDB(int ID) throws NumberFormatException, IOException {
         return EnquiryDB.deleteEnquiryByID(ID);
     }
 
+    /*
+     * getEnquiryByNricDB method to retrieve an enquiry by NRIC from the database.
+     * This method takes an NRIC as a parameter and returns an ArrayList of Enquiry objects.
+     * @param nric The NRIC of the applicant whose enquiry is to be retrieved.
+     * @return An ArrayList of Enquiry objects associated with the specified NRIC.
+     * @throws NumberFormatException if there is an error in number formatting.
+     * @throws IOException if there is an error in file handling.
+     */
+
     public static ArrayList<Enquiry> getEnquiriesByNricDB(String nric) throws NumberFormatException, IOException {
         return EnquiryDB.getEnquiriesByNricDB(nric);
     }
+
+    /*
+     * getEnquiryByIDDB method to retrieve an enquiry by ID from the database.
+     * This method takes an enquiry ID as a parameter and returns an Enquiry object.
+     * @param ID The ID of the enquiry to be retrieved.
+     * @return An Enquiry object associated with the specified ID.
+     * @throws NumberFormatException if there is an error in number formatting.
+     * @throws IOException if there is an error in file handling.
+     */
 
     public static ArrayList<Enquiry> getAllEnquiriesDB() throws NumberFormatException, IOException {
         return EnquiryDB.getAllEnquiries();		
@@ -86,34 +137,58 @@ public class Enquiry {
         return projectEnquiries;
     }
 
+    /**
+     * Retrieve enquiries for a specific project by its ID.
+     * 
+     * @return The ID of an enquiry
+     */
+
     public int getEnquiryID() {
         return this.enquiryID;
     }
 
+    /*
+     * @return the nric
+     */
     public String getNric() {
         return this.nric;
     }
 
+    /**
+     * @return the projectID
+     */
     public int getProjectID() {
         return this.project.getProjectID();
     }
 
+    /**
+     * @return the projectName
+     */
     public Project getProject() {
         return this.project;
     }
 
+    /**
+     * @return the enquiry
+     */
     public String getEnquiry() {
         return this.enquiry;
     }
-
+    /**
+     * @return the reply
+     */
     public String getReply() {
         return this.reply;
     }
-
+    /**
+     * @return the enquiryDate
+     */
     public Date getEnquiryDate() {
         return this.enquiryDate;
     }
-
+    /**
+     * @return the replyDate
+     */
     public Date getReplyDate() {
         return this.replyDate;
     }
@@ -158,6 +233,10 @@ public class Enquiry {
         this.replyDate = replyDate;
     }
 
+    /**
+     * 
+     * @param nric
+     */
     public void setProject(Project project) {
         this.project = project;
     }

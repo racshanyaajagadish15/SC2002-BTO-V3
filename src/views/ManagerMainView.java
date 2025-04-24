@@ -4,8 +4,7 @@ import utilities.ScannerUtility;
 import controllers.ManagerMainController;
 import controllers.ManagerProjectController;
 import models.HDBManager;
-
-//commit
+import controllers.AuthenticatorController;
 
 
 public class ManagerMainView {
@@ -14,12 +13,11 @@ public class ManagerMainView {
     private ManagerProjectView projectView;
     private ManagerEnquiryView enquiryView;
     private HDBManager loggedInManager;
-
     public ManagerMainView(HDBManager manager) {
         this.loggedInManager = manager;
         this.applicationView = new ManagerApplicationView(loggedInManager);
         this.projectView = new ManagerProjectView();
-        this.enquiryView = new ManagerEnquiryView();
+        this.enquiryView = new ManagerEnquiryView(loggedInManager); // Pass the required argument(s)
         this.registrationView = new ManagerRegistrationView();
     }
 
@@ -45,6 +43,10 @@ public class ManagerMainView {
                     break;
                 case 5:
                     handleReportGeneration();
+
+                case 6:
+                   AuthenticatorController authenticatorController = new AuthenticatorController();
+                   authenticatorController.handlePasswordChange(loggedInManager);
                     break;
                 case 0:
                     System.out.println("Exiting... Thank you!");
@@ -65,6 +67,7 @@ public class ManagerMainView {
         System.out.println("3. Manage Enquiries");
         System.out.println("4. Manage Officer Registrations");
         System.out.println("5. Generate Applicant Report");
+        System.out.println("6. Change Password");
         System.out.println("0. Logout");
         System.out.println("=========================================");
         System.out.print("Please enter your choice: ");

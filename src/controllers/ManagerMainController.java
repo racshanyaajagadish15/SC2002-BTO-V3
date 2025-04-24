@@ -3,20 +3,24 @@ package controllers;
 //commit
 
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.stream.Collectors;
 
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 
 import databases.ApplicationDB;
+import databases.HDBManagerDB;
 import models.HDBManager;
 import views.ManagerMainView;
 import models.Application;
 import java.util.List;
 
 
+/**
+ * Controller class for managing the main menu and functionalities of the HDB Manager.
+ * This class handles the interactions between the view and the model for the manager's main menu.
+ */
 public class ManagerMainController {
 
     public void managerSelectMenu(HDBManager manager) {
@@ -25,23 +29,26 @@ public class ManagerMainController {
         view.showManagerMenu();
     }
 
+    /**
+     * Generates a report of applicants based on the provided filters and saves it to an Excel file.
+     * 
+     * @param maritalStatusFilter The marital status filter (e.g., "Single", "Married").
+     * @param flatTypeFilter The flat type filter (e.g., "2 Room", "3 Room").
+     * @param projectNameFilter The project name filter (e.g., "Project A").
+     * @param outputFilePath The path where the Excel file will be saved.
+     */
     public void generateApplicantReport(String maritalStatusFilter, String flatTypeFilter, String projectNameFilter, String outputFilePath) {
         try {
-            // Retrieve all applications
             List<Application> allApplications = ApplicationDB.getAllApplications();
 
-            // Filter applications based on the provided filters
             List<Application> filteredApplications = allApplications.stream()
                 .filter(app -> maritalStatusFilter == null || app.getApplicant().getMaritalStatus().equalsIgnoreCase(maritalStatusFilter))
                 .filter(app -> flatTypeFilter == null || app.getFlatType().equalsIgnoreCase(flatTypeFilter))
                 .filter(app -> projectNameFilter == null || app.getProject().getProjectName().equalsIgnoreCase(projectNameFilter))
                 .collect(Collectors.toList());
 
-            // Create a new Excel workbook and sheet
             Workbook workbook = new XSSFWorkbook();
             Sheet sheet = workbook.createSheet("Applicant Report");
-
-            // Create the header row
             Row headerRow = sheet.createRow(0);
             headerRow.createCell(0).setCellValue("Applicant Name");
             headerRow.createCell(1).setCellValue("Age");
@@ -49,7 +56,6 @@ public class ManagerMainController {
             headerRow.createCell(3).setCellValue("Project Name");
             headerRow.createCell(4).setCellValue("Flat Type");
 
-            // Populate the sheet with filtered applications
             int rowIndex = 1;
             for (Application app : filteredApplications) {
                 Row row = sheet.createRow(rowIndex++);
@@ -60,17 +66,14 @@ public class ManagerMainController {
                 row.createCell(4).setCellValue(app.getFlatType());
             }
 
-            // Auto-size the columns for better readability
             for (int i = 0; i < 5; i++) {
                 sheet.autoSizeColumn(i);
             }
 
-            // Write the workbook to the specified file
             try (FileOutputStream fos = new FileOutputStream(outputFilePath)) {
                 workbook.write(fos);
             }
 
-            // Close the workbook
             workbook.close();
 
             System.out.println("[SUCCESS] Report generated successfully: " + outputFilePath);
@@ -78,5 +81,27 @@ public class ManagerMainController {
             System.out.println("[ERROR] Failed to generate report: " + e.getMessage());
         }
     }
+
+    /**
+     * Change the password of the HDB Manager.
+     * 
+     * @param manager The HDB Manager whose password is to be changed.
+     * @param newPassword The new password to set.
+     */
     
+    public void changePassword(HDBManager manager, String newPassword) {
+    try {
+        // Update the password in memory
+        manager.setPassword(newPassword);
+
+        // Update the password in the Excel file
+        HDBManagerDB.updateManagerPassword(manager.getNric(), newPassword);
+
+        System.out.println("[SUCCESS] Password changed successfully.");
+    } catch (IOException e) {
+        System.out.println("[ERROR] Failed to update password in the database: " + e.getMessage());
+    } catch (Exception e) {
+        System.out.println("[ERROR] Failed to change password: " + e.getMessage());
+    }
+}
 }

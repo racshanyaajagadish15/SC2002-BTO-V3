@@ -13,10 +13,22 @@ import models.Enquiry;
 import models.Project;
 import utilities.LoggerUtility;
 
+/**
+ * EnquiryDB class handles the database operations for the Enquiry entity.
+ * It provides methods to create, read, update, and delete enquiries in an Excel file.
+ * It also includes helper methods to convert between Enquiry objects and Excel rows.
+ */
+
 public class EnquiryDB {
     private static final String ENQUIRY_FILEPATH = "resources/data/ProjectEnquiry.xlsx";
 
-    // Helper function to get numeric cell value safely
+    /**
+     * Helper function to get numeric cell value from a cell.
+     * Handles both numeric and string types.
+     * @param cell The cell to retrieve the value from.
+     * @return The numeric value of the cell.
+     * @throws IllegalArgumentException if the cell is null or not numeric/string.
+     */
     private static double getNumericCellValue(Cell cell) {
         if (cell == null) {
             throw new IllegalArgumentException("Cell is null");
@@ -34,6 +46,14 @@ public class EnquiryDB {
         }
     }
 
+    /**
+     * Helper function to get string cell value from a cell.
+     * Handles null and non-string types.
+     * @param cell The cell to retrieve the value from.
+     * @return The string value of the cell.
+     * @throws IllegalArgumentException if the cell is null or not string.
+     */
+
     private static String getStringCellValue(Cell cell) {
         if (cell == null || cell.getCellType() != CellType.STRING) {
             return ""; // Return an empty string if the cell is null or not a string
@@ -41,14 +61,27 @@ public class EnquiryDB {
         return cell.getStringCellValue();
     }
     
+    /**
+     * Helper function to get date cell value from a cell.
+     * Handles null and non-date types.
+     * @param cell The cell to retrieve the value from.
+     * @return The date value of the cell.
+     * @throws IllegalArgumentException if the cell is null or not a date.
+     */
+
     private static Date getDateCellValue(Cell cell) {
         if (cell == null || cell.getCellType() != CellType.NUMERIC || !DateUtil.isCellDateFormatted(cell)) {
-            return null; // Return null if the cell is not a valid date
+            return null; 
         }
         return cell.getDateCellValue();
     }
 
-    // Helper function to create Enquiry object from excel row
+    /**
+     * Helper function to create an Enquiry object from a row in the Excel sheet.
+     * @param row The row to create the Enquiry object from.
+     * @return The Enquiry object created from the row.
+     * @throws IOException if there is an error reading the cell values.
+     */
     private static Enquiry createEnquiryFromRow(Row row) throws IOException {
         if (row == null) {
             throw new IllegalArgumentException("Row is null");
@@ -61,7 +94,7 @@ public class EnquiryDB {
     
         if (project == null) {
             LoggerUtility.logInfo("Project with ID " + projectID + " not found for enquiry ID: " + enquiryID);
-            return null; // Skip creating the Enquiry object if the Project is null
+            return null; 
         }
     
         String enquiry = getStringCellValue(row.getCell(EnquiryFileIndex.ENQUIRY.getIndex()));
@@ -72,7 +105,12 @@ public class EnquiryDB {
         return new Enquiry(enquiryID, nric, project, enquiry, reply, enquiryDate, replyDate);
     }
 
-    // Helper function to create excel row from Enquiry object 
+    /**
+     * Helper function to populate a row in the Excel sheet with Enquiry data.
+     * @param row The row to populate with Enquiry data.
+     * @param enquiry The Enquiry object containing the data to populate the row.
+     * @throws NumberFormatException if there is an error converting cell values.
+     */
     private static void populateEnquiryRow(Row row, Enquiry enquiry) throws NumberFormatException {
         if (enquiry.getEnquiryID() != 0) {
             row.createCell(EnquiryFileIndex.ID.getIndex()).setCellValue(enquiry.getEnquiryID());
@@ -105,14 +143,18 @@ public class EnquiryDB {
         }
     }
 
-    // Create Enquiry
+    /**
+     * Creates a new enquiry in the Excel file.
+     * @param enquiry The Enquiry object to create.
+     * @return true if the enquiry was created successfully, false otherwise.
+     */
     public static boolean createEnquiry(Enquiry enquiry) throws IOException, NumberFormatException {
         try (FileInputStream fileStreamIn = new FileInputStream(ENQUIRY_FILEPATH);
         Workbook workbook = new XSSFWorkbook(fileStreamIn)) {
             Sheet sheet = workbook.getSheetAt(0);
             Row lastRow = sheet.getRow(sheet.getLastRowNum());
             if (lastRow == null || lastRow.getCell(EnquiryFileIndex.ID.getIndex()) == null) {
-                enquiry.setEnquiryID(1); // Start with ID 1 if no valid last row exists
+                enquiry.setEnquiryID(1); 
             } else {
                 enquiry.setEnquiryID((int) lastRow.getCell(EnquiryFileIndex.ID.getIndex()).getNumericCellValue() + 1);
             }
@@ -129,10 +171,13 @@ public class EnquiryDB {
             LoggerUtility.logError("Failed to create enquiry for user: " + enquiry.getNric(), e);
             throw e;
         }
-        // False will only occur when error is thrown to controller
     }
 
-    // Get all enquiries
+    /**
+     * Retrieves all enquiries from the Excel file.
+     * @return An ArrayList of Enquiry objects.
+     * @throws IOException if there is an error reading the file.
+     */
     public static ArrayList<Enquiry> getAllEnquiries() throws IOException {
         ArrayList<Enquiry> enquiries = new ArrayList<>();
     
@@ -159,7 +204,12 @@ public class EnquiryDB {
         }
     }
 
-    // Get all enquiries by user nric
+    /**
+     * Retrieves all enquiries for a specific NRIC from the Excel file.
+     * @param nric The NRIC to filter enquiries by.
+     * @return An ArrayList of Enquiry objects for the specified NRIC.
+     * @throws IOException if there is an error reading the file.
+     */
     public static ArrayList<Enquiry> getEnquiriesByNricDB(String nric) throws IOException, NumberFormatException {
         ArrayList<Enquiry> enquiries = new ArrayList<>();
         
@@ -177,7 +227,12 @@ public class EnquiryDB {
         return enquiries;
     }
 
-    // Update Enquiry using ID
+    /**
+     * Retrieves all enquiries for a specific project ID from the Excel file.
+     * @param projectID The project ID to filter enquiries by.
+     * @return An ArrayList of Enquiry objects for the specified project ID.
+     * @throws IOException if there is an error reading the file.
+     */
     public static boolean updateEnquiry(Enquiry enquiry) throws IOException, NumberFormatException {
         try (FileInputStream fileStreamIn = new FileInputStream(ENQUIRY_FILEPATH);
         Workbook workbook = new XSSFWorkbook(fileStreamIn)) {
@@ -207,7 +262,12 @@ public class EnquiryDB {
     
     }
 
-    // Delete Enquiry using ID
+    /**
+     * Deletes an enquiry by its ID from the Excel file.
+     * @param ID The ID of the enquiry to delete.
+     * @return true if the enquiry was deleted successfully, false otherwise.
+     * @throws IOException if there is an error reading or writing the file.
+     */
     public static boolean deleteEnquiryByID(int ID) throws IOException, NumberFormatException {
         try (FileInputStream fileStreamIn = new FileInputStream(ENQUIRY_FILEPATH);
         Workbook workbook = new XSSFWorkbook(fileStreamIn)) {

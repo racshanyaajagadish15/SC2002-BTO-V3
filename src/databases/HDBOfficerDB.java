@@ -10,8 +10,24 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Row; 
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+/**
+ * HDBOfficerDB.java
+ * This class is responsible for managing the HDBOfficer database.
+ */
+
 public class HDBOfficerDB {
     private static final String MANAGER_FILEPATH = "resources/data/OfficerList.xlsx";
+
+    /**
+     * getOfficerByNRIC(String nric)
+     * This method retrieves a HDBOfficer object from the database using the NRIC.
+     * It reads the NRIC from the file and checks if it matches the provided NRIC.
+     * @param nric The NRIC of the HDBOfficer to retrieve.
+     * @return HDBOfficer object if found, null otherwise.
+     * @throws IOException if there is an error reading the file.
+     * @throws NumberFormatException if there is an error converting the age from the file.
+     * @throws IllegalArgumentException if the NRIC is invalid.
+     */
 
     public static HDBOfficer getOfficerByNRIC(String nric) throws IOException, NumberFormatException {
         try (FileInputStream fileStreamIn = new FileInputStream(MANAGER_FILEPATH);
@@ -39,6 +55,15 @@ public class HDBOfficerDB {
     // No results
     return null;
     }
+
+    /**
+     * saveUser(HDBOfficer officer)
+     * This method saves the HDBOfficer object to the database.
+     * It updates the password of the officer in the file.
+     * @param officer The HDBOfficer object to save.
+     * @return true if the officer was found and updated, false otherwise.
+     * @throws IOException if there is an error reading or writing the file.
+     */
 
     public static boolean saveUser(HDBOfficer officer) throws IOException {
         try (FileInputStream fis = new FileInputStream(MANAGER_FILEPATH);
