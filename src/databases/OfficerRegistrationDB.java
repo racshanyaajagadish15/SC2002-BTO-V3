@@ -106,6 +106,45 @@ public class OfficerRegistrationDB {
         }
     }
 
+    public static void deleteApplicationByProjID(Project project) throws IOException {
+        try (FileInputStream fileStreamIn = new FileInputStream(REGISTRATION_FILEPATH);
+             Workbook workbook = new XSSFWorkbook(fileStreamIn)) {
+
+            Sheet sheet = workbook.getSheetAt(0);
+            int projectIdToDelete = project.getProjectID();
+
+            // Collect row indices to delete (skip header)
+            ArrayList<Integer> rowsToDelete = new ArrayList<>();
+            for (Row row : sheet) {
+                if (row.getRowNum() == 0) continue;
+                int rowProjectId = (int) row.getCell(OfficerRegistrationFileIndex.PROJECT.getIndex()).getNumericCellValue();
+                if (rowProjectId == projectIdToDelete) {
+                    rowsToDelete.add(row.getRowNum());
+                }
+            }
+
+            // Delete rows in reverse order to avoid shifting issues
+            for (int i = rowsToDelete.size() - 1; i >= 0; i--) {
+                int rowIndex = rowsToDelete.get(i);
+                int lastRowNum = sheet.getLastRowNum();
+                if (rowIndex >= 0 && rowIndex <= lastRowNum) {
+                    sheet.removeRow(sheet.getRow(rowIndex));
+                    // Shift rows up if not the last row
+                    if (rowIndex < lastRowNum) {
+                        sheet.shiftRows(rowIndex + 1, lastRowNum, -1);
+                    }
+                }
+            }
+
+            // Save changes
+            try (FileOutputStream fos = new FileOutputStream(REGISTRATION_FILEPATH)) {
+                workbook.write(fos);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }        
+    }
+
     private static void populateRegistrationRow(Row row, int registrationID, HDBOfficer officer, Project project, String status) {
         row.createCell(OfficerRegistrationFileIndex.ID.getIndex()).setCellValue(registrationID); // Using row number as ID
         row.createCell(OfficerRegistrationFileIndex.NRIC.getIndex()).setCellValue(officer.getNric());
