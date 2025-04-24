@@ -253,7 +253,7 @@ public class ManagerApplicationView implements IDisplayResult {
 
     private Map<Project, List<Application>> getAllWithdrawalApplications() {
         try {
-            List<Project> managedProjects = ProjectDB.getProjectsByManager(loggedInManager.getNric());
+            List<Project> managedProjects = ProjectDB.getProjectsByManager(loggedInManager.getName());
             if (managedProjects.isEmpty()) {
                 return new HashMap<>();
             }
@@ -283,7 +283,7 @@ public class ManagerApplicationView implements IDisplayResult {
 
     private Map<Project, List<Application>> getAllOwnedApplications() {
         try {
-            List<Project> managedProjects = ProjectDB.getProjectsByManager(loggedInManager.getNric());
+            List<Project> managedProjects = ProjectDB.getProjectsByManager(loggedInManager.getName());
             if (managedProjects.isEmpty()) {
                 return new HashMap<>();
             }
@@ -291,17 +291,19 @@ public class ManagerApplicationView implements IDisplayResult {
             Map<Project, List<Application>> pendingProjectApplicationsMap = new HashMap<>();
             for (Project project : managedProjects) {
                 List<Application> applications = ApplicationDB.getApplicationsForProject(project.getProjectID());
+                if (project.getProjectID() == 1) {
+                    System.out.println("Applications for Project ID 1: " + applications.size());
+                }
+                System.out.println("Project ID: " + project.getProjectID() + ", Applications: " + applications.size());
                 for (Application application : applications) {
-                    if (pendingProjectApplicationsMap.containsKey(project)){
+                    if (pendingProjectApplicationsMap.containsKey(project)) {
                         pendingProjectApplicationsMap.get(project).add(application);
-                    }
-                    else{
+                    } else {
                         pendingProjectApplicationsMap.put(project, new ArrayList<Application>());
                         pendingProjectApplicationsMap.get(project).add(application);
                     }
                 }
             }
-
             return pendingProjectApplicationsMap;
         } catch (IOException e) {
             displayError("Failed to retrieve applications. If error persist, contact admin.");
@@ -311,7 +313,7 @@ public class ManagerApplicationView implements IDisplayResult {
 
     private Map<Project, List<Application>> getPendingOwnedApplications() {
         try {
-            List<Project> managedProjects = ProjectDB.getProjectsByManager(loggedInManager.getNric());
+            List<Project> managedProjects = ProjectDB.getProjectsByManager(loggedInManager.getName());
             if (managedProjects.isEmpty()) {
                 return new HashMap<>();
             }
