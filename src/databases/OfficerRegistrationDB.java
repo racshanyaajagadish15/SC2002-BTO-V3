@@ -106,7 +106,7 @@ public class OfficerRegistrationDB {
         }
     }
 
-    public static void deleteApplicationByProjID(Project project) throws IOException {
+    public static void deleteOfficerRegistrationByProjID(Project project) throws IOException {
         try (FileInputStream fileStreamIn = new FileInputStream(REGISTRATION_FILEPATH);
              Workbook workbook = new XSSFWorkbook(fileStreamIn)) {
 

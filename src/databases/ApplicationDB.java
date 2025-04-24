@@ -229,7 +229,7 @@ public class ApplicationDB {
         return applications;
     }
 
-    public static void deleteOfficerRegistrationByProjID(Project project) throws IOException {
+    public static void deleteApplicationbyProj(Project project) throws IOException {
         File file = new File(APPLICATION_FILEPATH);
         try (FileInputStream fis = new FileInputStream(file);
              Workbook workbook = new XSSFWorkbook(fis)) {

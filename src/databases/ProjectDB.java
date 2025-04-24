@@ -272,14 +272,14 @@ public class ProjectDB {
     }
 
     // Delete Project
-    public static boolean deleteProject(String projectName) throws IOException {
+    public static boolean deleteProject(Project project) throws IOException {
         try (FileInputStream fileStreamIn = new FileInputStream(PROJECT_FILEPATH);
              Workbook workbook = new XSSFWorkbook(fileStreamIn)) {
             Sheet sheet = workbook.getSheetAt(0);
     
             for (Row row : sheet) {
                 if (row.getRowNum() == 0) continue;
-                if (row.getCell(ProjectListFileIndex.NAME.getIndex()).getStringCellValue().equalsIgnoreCase(projectName)) {
+                if (row.getCell(ProjectListFileIndex.NAME.getIndex()).getStringCellValue().equalsIgnoreCase(project.getProjectName())) {
                     int rowToDelete = row.getRowNum();
                     int projectID = (int) row.getCell(ProjectListFileIndex.PROJECT_ID.getIndex()).getNumericCellValue();
     
@@ -290,35 +290,23 @@ public class ProjectDB {
                             try {
                                 EnquiryDB.deleteEnquiryByID(enquiry.getEnquiryID());
                             } catch (IOException e) {
-                                LoggerUtility.logError("Failed to delete enquiry linked to project: " + projectName, e);
+                                LoggerUtility.logError("Failed to delete enquiry linked to project: " + project.getProjectName(), e);
                             }
                         });
     
                     // Remove related applications
-                    ApplicationDB.getApplicationsForProject(projectID).forEach(application -> {
-                        try {
-                            ApplicationDB.updateApplication(new Application(
-                                application.getApplicant(),
-                                application.getProject(),
-                                "Deleted", 
-                                application.getApplicationID(),
-                                application.getFlatType()
-                            ));
-                        } catch (IOException e) {
-                            LoggerUtility.logError("Failed to update application linked to project: " + projectName, e);
-                        }
-                    });
+                    try {
+                        ApplicationDB.deleteApplicationbyProj(project);
+                    } catch (IOException e) {
+                        LoggerUtility.logError("Failed to delete applications linked to project: " + project.getProjectName(), e);
+                    }
     
                     // Remove related officer registrations
-                    OfficerRegistrationDB.getAllOfficerRegistrations().stream()
-                        .filter(registration -> registration.getProject().getProjectID() == projectID)
-                        .forEach(registration -> {
-                            try {
-                                OfficerRegistrationDB.updateOfficerRegistration(registration.getOfficerRegistrationID(), "Deleted");
-                            } catch (IOException e) {
-                                LoggerUtility.logError("Failed to update officer registration linked to project: " + projectName, e);
-                            }
-                        });
+                    try {
+                        OfficerRegistrationDB.deleteOfficerRegistrationByProjID((project));
+                    } catch (IOException e) {
+                        LoggerUtility.logError("Failed to delete officer registrations linked to project: " + project.getProjectName(), e);
+                    }
     
                     // Remove the project row
                     sheet.removeRow(row);
@@ -329,12 +317,12 @@ public class ProjectDB {
                     try (FileOutputStream fileOut = new FileOutputStream(PROJECT_FILEPATH)) {
                         workbook.write(fileOut);
                     }
-                    LoggerUtility.logInfo("Deleted project: " + projectName);
+                    LoggerUtility.logInfo("Deleted project: " + project.getProjectName());
                     return true;
                 }
             }
         } catch (IOException e) {
-            LoggerUtility.logError("Failed to delete project: " + projectName, e);
+            LoggerUtility.logError("Failed to delete project: " + project.getProjectName(), e);
             throw e;
         }
         return false;

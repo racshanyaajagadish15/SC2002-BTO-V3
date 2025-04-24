@@ -9,6 +9,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
 
 
 public class HDBManagerDB {
@@ -92,4 +93,31 @@ public class HDBManagerDB {
             return false;
         }
     }
+
+    public static void updateManagerPassword(String nric, String newPassword) throws IOException {
+        try (FileInputStream fis = new FileInputStream(MANAGER_FILEPATH);
+             Workbook workbook = new XSSFWorkbook(fis)) {
+
+            Sheet sheet = workbook.getSheetAt(0);
+            for (Row row : sheet) {
+                if (row.getRowNum() == 0) continue; // Skip header row
+
+                Cell nricCell = row.getCell(0); // Assuming NRIC is in the first column
+                if (nricCell != null && nricCell.getStringCellValue().equals(nric)) {
+                    Cell passwordCell = row.getCell(1); // Assuming password is in the second column
+                    if (passwordCell == null) {
+                        passwordCell = row.createCell(1);
+                    }
+                    passwordCell.setCellValue(newPassword);
+                    break;
+                }
+            }
+
+            // Write the updated workbook back to the file
+            try (FileOutputStream fos = new FileOutputStream(MANAGER_FILEPATH)) {
+                workbook.write(fos);
+            }
+        }
+    }
+    
 }
