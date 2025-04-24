@@ -6,7 +6,9 @@ import java.util.ArrayList;
 
 import models.Application;
 import utilities.ScannerUtility;
-
+/**
+ * OfficerBookingView class handles displaying of bookings
+ */
 public class OfficerBookingView implements IDisplayResult {
 
     // Helper method to wrap text to a specified width

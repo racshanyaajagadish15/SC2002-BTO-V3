@@ -1,8 +1,7 @@
 package enums;
 
 /*
- * EnquiryFileIndex.java
- * This enum represents the various indices of the enquiry file.
+ * This enum represents the various indices of the OfficerRegistration file.
  */
 
 public enum OfficerRegistrationFileIndex {

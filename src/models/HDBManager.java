@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import databases.ProjectDB;
-
+/**
+ * HDBManager class representing a HDBManager in the system.
+ */
 public class HDBManager extends User {
 
     private List<Project> ManagedProjects;

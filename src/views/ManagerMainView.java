@@ -6,6 +6,9 @@ import controllers.ManagerProjectController;
 import models.HDBManager;
 import controllers.AuthenticatorController;
 
+/**
+ * ManagerMainView class handles displaying routes
+ */
 
 public class ManagerMainView {
     private ManagerApplicationView applicationView;

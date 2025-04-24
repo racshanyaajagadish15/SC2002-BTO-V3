@@ -5,6 +5,10 @@ import java.util.Date;
 import models.Project;
 import utilities.LoggerUtility;
 
+/**
+ * ManagerProjectView class handles displaying of projects
+ */
+
 public class ManagerProjectView implements IDisplayResult {
 
     /**

@@ -6,7 +6,7 @@ import models.HDBOfficer;
 import models.Project;
 
 /**
- * Interface for Officer Enquiry Controller.
+ * Interface for OfficerEnquiryController.
  */
 public interface IOfficerEnquiryController {
     

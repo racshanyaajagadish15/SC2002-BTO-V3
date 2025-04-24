@@ -1,7 +1,9 @@
 package controllers;
 
 import models.Application;
-
+/**
+ * Interface for OfficerBookingController.
+ */
 public interface IOfficerBookingController {
 
 	boolean updateApplications(Application application, String status);

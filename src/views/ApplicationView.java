@@ -10,7 +10,9 @@ import models.Application;
 import models.FlatType;
 import models.Project;
 import utilities.ScannerUtility;
-
+/**
+ * ApplicationView class handles displaying applications
+ */
 public class ApplicationView implements IDisplayResult {
 
     /**

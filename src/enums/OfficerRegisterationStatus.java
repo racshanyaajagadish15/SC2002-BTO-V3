@@ -1,10 +1,8 @@
 package enums;
 
-/*
- * EnquiryFileIndex.java
- * This enum represents the various indices of the enquiry file.
+/**
+ * This enum represents the various statuses for officer registratons
  */
-
 public enum OfficerRegisterationStatus {
     PENDING("Pending"),
     SUCESSFUL("Successful"),

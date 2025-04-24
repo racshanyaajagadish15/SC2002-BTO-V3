@@ -17,9 +17,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The ManagerApplicationView class is responsible for displaying the application management menu and handling user interactions related to applications.
- * It allows the manager to view all applications, update application statuses, and update withdrawal statuses.
+ * ManagerApplicationView class handles displaying applications
  */
+
 public class ManagerApplicationView implements IDisplayResult {
 
     private final ManagerApplicationController controller = new ManagerApplicationController();

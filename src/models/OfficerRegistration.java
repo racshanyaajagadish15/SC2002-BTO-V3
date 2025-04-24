@@ -3,7 +3,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import databases.OfficerRegistrationDB;
-
+/**
+ * OfficerRegistration class representing a registrations in the system.
+ */
 public class OfficerRegistration {
 
     private int officerRegistrationID;

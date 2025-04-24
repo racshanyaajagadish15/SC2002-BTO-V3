@@ -8,7 +8,7 @@ import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-/*
+/**
  * LoggerUtility.java
  * This utility class provides methods for logging error and info messages to separate log files.
  * It creates a directory for logs if it doesn't exist and handles the creation of log files.

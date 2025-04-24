@@ -9,7 +9,9 @@ import java.util.List;
 import databases.ApplicationDB;
 import databases.ProjectDB;
 import enums.FilterIndex;
-
+/**
+ * Project class representing a project in the system.
+ */
 public class Project {
 
     private int projectID;
@@ -286,26 +288,19 @@ public class Project {
      * 
      * @param officerName The name of the officer to add.
      */
-    public void addOfficerToManagerList(String officerName) {
+    public void addOfficerToManagerList(String officerName){
         if (this.projectManager == null) {
-            throw new IllegalStateException("Project does not have an assigned manager.");
+            return;
         }
-
-        // Ensure the ManagerList is initialized
         if (this.projectManager.getManagedProjects() == null) {
             this.projectManager.setManagedProjects(new ArrayList<>());
         }
-
-        // Add the officer's name to the ManagerList
         List<Project> managedProjects = this.projectManager.getManagedProjects();
         if (!managedProjects.contains(this)) {
             managedProjects.add(this);
         }
-
-        System.out.println("[SUCCESS] Officer " + officerName + " added to the ManagerList for Project: " + this.projectName);
+        System.out.println("[SUCCESS] Officer " + officerName + " added for Project: " + this.projectName);
     }
-
-
     public int getProjectID() {
         return projectID;
     }

@@ -1,7 +1,9 @@
 package views;
 
 import utilities.ScannerUtility;
-
+/**
+ * ApplicantMainView class handles displaying routes
+ */
 public class ApplicantMainView implements IDisplayResult {
 
     /**

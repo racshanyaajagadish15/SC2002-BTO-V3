@@ -2,8 +2,7 @@ package models;
 
 import java.util.List;
 
-/*
- * Applicant.java
+/**
  * This class represents an applicant in the system.
  * It extends the User class and contains information about the applicant's project application and enquiries.
  */

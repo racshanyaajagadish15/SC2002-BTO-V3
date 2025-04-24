@@ -7,7 +7,11 @@ import java.io.*;
 import java.util.*;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
+/**
+ * ApplicationDB class handles the database operations for the Application entity.
+ * It provides methods to create, read, update, and delete Application in an Excel file.
+ * It also includes helper methods to convert between Application objects and Excel rows.
+ */
 public class ApplicationDB {
     private static final String APPLICATION_FILEPATH = "resources/data/ProjectApplication.xlsx";
 

@@ -1,7 +1,9 @@
 package views;
 
 import utilities.ScannerUtility;
-
+/**
+ * AuthenticatorView class handles displaying login and password change
+ */
 public class AuthenticatorView implements IDisplayResult {
 
     /**

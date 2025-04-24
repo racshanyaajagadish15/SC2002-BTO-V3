@@ -3,8 +3,7 @@ package views;
 import utilities.ScannerUtility;
 
 /**
- * OfficerMainView class implements IDisplayResult interface to display the officer dashboard menu.
- * It provides methods to show the officer menu and handle user input.
+ * OfficerMainView class handles routing displays
  */
 
 public class OfficerMainView implements IDisplayResult {
