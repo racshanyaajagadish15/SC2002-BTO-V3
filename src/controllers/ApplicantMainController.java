@@ -6,13 +6,13 @@ import views.ApplicantMainView;
 public class ApplicantMainController {
     private final ApplicantMainView mainView;
     private final ApplicantApplicationController applicationController;
-    private final ApplicantEnquiryController enquiryController;
+    private final ApplicantEnquiryController applicantEnquiryController;
 	private final AuthenticatorController authenticatorController;
 
     public ApplicantMainController() {
         this.mainView = new ApplicantMainView();
         this.applicationController = new ApplicantApplicationController();
-        this.enquiryController = new ApplicantEnquiryController();
+        this.applicantEnquiryController = new ApplicantEnquiryController();
 		this.authenticatorController = new AuthenticatorController();
     }
 
@@ -28,7 +28,7 @@ public class ApplicantMainController {
                     applicationController.projectAction(applicant);
                     break;
                 case 3:
-                    enquiryController.enquiryActionMenu(applicant);
+                    applicantEnquiryController.enquiryActionMenu(applicant);
                     break;
                 case 4:
                     authenticatorController.handlePasswordChange(applicant);
