@@ -74,10 +74,10 @@ public class ManagerRegistrationController implements IManagerRegistrationContro
     }
 
         /**
-     * Retrieve all pending officer registrations.
-     * 
-     * @return A list of pending officer registrations.
-     */
+         * Retrieve all pending officer registrations.
+         * 
+         * @return A list of pending officer registrations.
+         */
     public ArrayList<OfficerRegistration> getAllRegistrations(HDBManager manager) {
         ArrayList<OfficerRegistration> pendingRegistrations = new ArrayList<>();
         try {
@@ -86,12 +86,10 @@ public class ManagerRegistrationController implements IManagerRegistrationContro
 
             // Filter for pending registrations
             for (OfficerRegistration registration : allRegistrations) {
-                if (registration.getRegistrationStatus().equalsIgnoreCase("Pending")) {
                     pendingRegistrations.add(registration);
-                }
             }
         } catch (IOException e) {
-            System.out.println("[ERROR] Failed to retrieve pending registrations: " + e.getMessage());
+            System.out.println("[ERROR] Failed to retrieve registrations: " + e.getMessage());
         }
         return pendingRegistrations;
     }

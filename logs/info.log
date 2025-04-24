@@ -137,3 +137,15 @@
 [2025-04-24 16:28:13] INFO: Neighborhood updated to: Bedok
 [2025-04-24 16:28:17] INFO: Project updated successfully!
 [2025-04-24 16:28:17] INFO: Project updated successfully and saved to storage.
+[2025-04-24 17:34:00] INFO: Deleted enquiry ID: 4
+[2025-04-24 17:34:00] INFO: Deleted all applications for Project ID: 4
+[2025-04-24 17:34:00] INFO: Deleted project: Savannah Condopark
+[2025-04-24 17:34:00] INFO: Project 'Savannah Condopark' deleted successfully.
+[2025-04-24 17:47:23] INFO: Reply to an Enquiry selected.
+[2025-04-24 17:47:31] INFO: Reply to an Enquiry selected.
+[2025-04-24 17:47:33] INFO: Reply to an Enquiry selected.
+[2025-04-24 17:48:10] INFO: View All Enquiries selected.
+[2025-04-24 18:00:15] INFO: Reply sent successfully.
+[2025-04-24 18:00:15] INFO: Reply sent successfully for Enquiry ID: 5
+[2025-04-24 18:00:17] INFO: Viewed all enquiries.
+[2025-04-24 18:00:20] INFO: Manager exited the enquiry menu.

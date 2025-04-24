@@ -3,14 +3,14 @@ package controllers;
 //commit
 
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.stream.Collectors;
 
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 
 import databases.ApplicationDB;
+import databases.HDBManagerDB;
 import models.HDBManager;
 import views.ManagerMainView;
 import models.Application;
@@ -79,4 +79,19 @@ public class ManagerMainController {
         }
     }
     
+    public void changePassword(HDBManager manager, String newPassword) {
+    try {
+        // Update the password in memory
+        manager.setPassword(newPassword);
+
+        // Update the password in the Excel file
+        HDBManagerDB.updateManagerPassword(manager.getNric(), newPassword);
+
+        System.out.println("[SUCCESS] Password changed successfully.");
+    } catch (IOException e) {
+        System.out.println("[ERROR] Failed to update password in the database: " + e.getMessage());
+    } catch (Exception e) {
+        System.out.println("[ERROR] Failed to change password: " + e.getMessage());
+    }
+}
 }

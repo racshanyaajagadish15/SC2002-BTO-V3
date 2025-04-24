@@ -123,7 +123,7 @@ public class Project {
             throw new IllegalStateException("Cannot delete project with existing applications");
         }
 
-        return ProjectDB.deleteProject(projectName);
+        return ProjectDB.deleteProject(project);
     }
 
     public static void filterProject(ArrayList<Project> projects,  List<String> filters){

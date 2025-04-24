@@ -432,3 +432,103 @@ Stacktrace: 	java.base/java.text.DateFormat.parse(DateFormat.java:399)
 	controllers.AuthenticatorController.authenticate(AuthenticatorController.java:88)
 	Main.main(Main.java:7)
 
+[2025-04-24 17:40:41] ERROR: [ERROR] Invalid index. Please try again. - Error logged without stack trace
+Stacktrace: 	views.ManagerProjectView.displayError(ManagerProjectView.java:34)
+	controllers.ManagerProjectController.deleteProjectView(ManagerProjectController.java:702)
+	controllers.ManagerProjectController.handleProjectMenu(ManagerProjectController.java:105)
+	views.ManagerMainView.handleProjects(ManagerMainView.java:90)
+	views.ManagerMainView.showManagerMenu(ManagerMainView.java:38)
+	controllers.ManagerMainController.managerSelectMenu(ManagerMainController.java:25)
+	controllers.AuthenticatorController.authenticate(AuthenticatorController.java:88)
+	Main.main(Main.java:7)
+
+[2025-04-24 17:42:18] ERROR: [ERROR] Invalid index. Please try again. - Error logged without stack trace
+Stacktrace: 	views.ManagerProjectView.displayError(ManagerProjectView.java:34)
+	controllers.ManagerProjectController.deleteProjectView(ManagerProjectController.java:702)
+	controllers.ManagerProjectController.handleProjectMenu(ManagerProjectController.java:105)
+	views.ManagerMainView.handleProjects(ManagerMainView.java:90)
+	views.ManagerMainView.showManagerMenu(ManagerMainView.java:38)
+	controllers.ManagerMainController.managerSelectMenu(ManagerMainController.java:25)
+	controllers.AuthenticatorController.authenticate(AuthenticatorController.java:88)
+	Main.main(Main.java:7)
+
+[2025-04-24 17:42:20] ERROR: [ERROR] Invalid index. Please try again. - Error logged without stack trace
+Stacktrace: 	views.ManagerProjectView.displayError(ManagerProjectView.java:34)
+	controllers.ManagerProjectController.deleteProjectView(ManagerProjectController.java:702)
+	controllers.ManagerProjectController.handleProjectMenu(ManagerProjectController.java:105)
+	views.ManagerMainView.handleProjects(ManagerMainView.java:90)
+	views.ManagerMainView.showManagerMenu(ManagerMainView.java:38)
+	controllers.ManagerMainController.managerSelectMenu(ManagerMainController.java:25)
+	controllers.AuthenticatorController.authenticate(AuthenticatorController.java:88)
+	Main.main(Main.java:7)
+
+[2025-04-24 17:42:21] ERROR: [ERROR] Invalid index. Please try again. - Error logged without stack trace
+Stacktrace: 	views.ManagerProjectView.displayError(ManagerProjectView.java:34)
+	controllers.ManagerProjectController.deleteProjectView(ManagerProjectController.java:702)
+	controllers.ManagerProjectController.handleProjectMenu(ManagerProjectController.java:105)
+	views.ManagerMainView.handleProjects(ManagerMainView.java:90)
+	views.ManagerMainView.showManagerMenu(ManagerMainView.java:38)
+	controllers.ManagerMainController.managerSelectMenu(ManagerMainController.java:25)
+	controllers.AuthenticatorController.authenticate(AuthenticatorController.java:88)
+	Main.main(Main.java:7)
+
+[2025-04-24 17:43:33] ERROR: [ERROR] Invalid index. Please try again. - Error logged without stack trace
+Stacktrace: 	views.ManagerProjectView.displayError(ManagerProjectView.java:34)
+	controllers.ManagerProjectController.deleteProjectView(ManagerProjectController.java:701)
+	controllers.ManagerProjectController.handleProjectMenu(ManagerProjectController.java:105)
+	views.ManagerMainView.handleProjects(ManagerMainView.java:90)
+	views.ManagerMainView.showManagerMenu(ManagerMainView.java:38)
+	controllers.ManagerMainController.managerSelectMenu(ManagerMainController.java:25)
+	controllers.AuthenticatorController.authenticate(AuthenticatorController.java:88)
+	Main.main(Main.java:7)
+
+[2025-04-24 17:43:35] ERROR: [ERROR] Invalid index. Please try again. - Error logged without stack trace
+Stacktrace: 	views.ManagerProjectView.displayError(ManagerProjectView.java:34)
+	controllers.ManagerProjectController.deleteProjectView(ManagerProjectController.java:701)
+	controllers.ManagerProjectController.handleProjectMenu(ManagerProjectController.java:105)
+	views.ManagerMainView.handleProjects(ManagerMainView.java:90)
+	views.ManagerMainView.showManagerMenu(ManagerMainView.java:38)
+	controllers.ManagerMainController.managerSelectMenu(ManagerMainController.java:25)
+	controllers.AuthenticatorController.authenticate(AuthenticatorController.java:88)
+	Main.main(Main.java:7)
+
+[2025-04-24 17:44:37] ERROR: [ERROR] Invalid index. Please try again. - Error logged without stack trace
+Stacktrace: 	views.ManagerProjectView.displayError(ManagerProjectView.java:34)
+	controllers.ManagerProjectController.deleteProjectView(ManagerProjectController.java:701)
+	controllers.ManagerProjectController.handleProjectMenu(ManagerProjectController.java:105)
+	views.ManagerMainView.handleProjects(ManagerMainView.java:90)
+	views.ManagerMainView.showManagerMenu(ManagerMainView.java:38)
+	controllers.ManagerMainController.managerSelectMenu(ManagerMainController.java:25)
+	controllers.AuthenticatorController.authenticate(AuthenticatorController.java:88)
+	Main.main(Main.java:7)
+
+[2025-04-24 17:44:38] ERROR: [ERROR] Invalid index. Please try again. - Error logged without stack trace
+Stacktrace: 	views.ManagerProjectView.displayError(ManagerProjectView.java:34)
+	controllers.ManagerProjectController.deleteProjectView(ManagerProjectController.java:701)
+	controllers.ManagerProjectController.handleProjectMenu(ManagerProjectController.java:105)
+	views.ManagerMainView.handleProjects(ManagerMainView.java:90)
+	views.ManagerMainView.showManagerMenu(ManagerMainView.java:38)
+	controllers.ManagerMainController.managerSelectMenu(ManagerMainController.java:25)
+	controllers.AuthenticatorController.authenticate(AuthenticatorController.java:88)
+	Main.main(Main.java:7)
+
+[2025-04-24 17:45:18] ERROR: [ERROR] Invalid index. Please try again. - Error logged without stack trace
+Stacktrace: 	views.ManagerProjectView.displayError(ManagerProjectView.java:34)
+	controllers.ManagerProjectController.deleteProjectView(ManagerProjectController.java:701)
+	controllers.ManagerProjectController.handleProjectMenu(ManagerProjectController.java:105)
+	views.ManagerMainView.handleProjects(ManagerMainView.java:90)
+	views.ManagerMainView.showManagerMenu(ManagerMainView.java:38)
+	controllers.ManagerMainController.managerSelectMenu(ManagerMainController.java:25)
+	controllers.AuthenticatorController.authenticate(AuthenticatorController.java:88)
+	Main.main(Main.java:7)
+
+[2025-04-24 17:45:19] ERROR: [ERROR] Invalid index. Please try again. - Error logged without stack trace
+Stacktrace: 	views.ManagerProjectView.displayError(ManagerProjectView.java:34)
+	controllers.ManagerProjectController.deleteProjectView(ManagerProjectController.java:701)
+	controllers.ManagerProjectController.handleProjectMenu(ManagerProjectController.java:105)
+	views.ManagerMainView.handleProjects(ManagerMainView.java:90)
+	views.ManagerMainView.showManagerMenu(ManagerMainView.java:38)
+	controllers.ManagerMainController.managerSelectMenu(ManagerMainController.java:25)
+	controllers.AuthenticatorController.authenticate(AuthenticatorController.java:88)
+	Main.main(Main.java:7)
+

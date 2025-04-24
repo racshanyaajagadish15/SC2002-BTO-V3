@@ -251,7 +251,7 @@ public class ManagerProjectController implements IManagerProjectController {
     @Override
     public void deleteProject(Project project) {
         try {
-            ProjectDB.deleteProject(project.getProjectName());
+            ProjectDB.deleteProject(project);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -267,58 +267,58 @@ public class ManagerProjectController implements IManagerProjectController {
             System.out.printf("%d. %s (Neighborhood: %s)\n",
                     i + 1,
                     project.getProjectName(),
-                    project.getNeighborhood(),
-                    project.getApplicationOpeningDate());
+                    project.getNeighborhood());
         }
         System.out.println("0. Back");
         System.out.println("=========================================");
+    
         int choice;
-        while (true){
+        while (true) {
             // Prompt the user to select a project
-            try{
+            try {
                 System.out.print("\nEnter the project number to delete: ");
                 choice = ScannerUtility.SCANNER.nextInt();
-                ScannerUtility.SCANNER.nextLine(); 
+                ScannerUtility.SCANNER.nextLine();
                 if (choice == 0) {
                     view.displayInfo("Delete canceled.");
                     return;
                 }
-        
-                if (choice < 1 || choice > projects.size()) {
+    
+                if (choice >= 1 && choice <= projects.size()) {
+                    break;
+                } else {
                     view.displayError("Invalid selection. Please try again.");
-                    continue;
                 }
-                break;
-            }
-            catch (InputMismatchException e){
-                ScannerUtility.SCANNER.nextLine(); 
-                view.displayError("Invalid selection. Please try again.");
+            } catch (InputMismatchException e) {
+                ScannerUtility.SCANNER.nextLine();
+                view.displayError("Invalid input. Please enter a valid number.");
+                continue;
             }
         }
-        while (true){
+    
+        while (true) {
             // Prompt the user to confirm
             int confirm;
-            try{
+            try {
                 System.out.println("\nConfirm the deletion of " + projects.get(choice - 1).getProjectName() + "?");
                 System.out.println("1. Yes");
                 System.out.println("2. No");
+                System.out.print("Enter your choice: ");
                 confirm = ScannerUtility.SCANNER.nextInt();
-                ScannerUtility.SCANNER.nextLine(); 
+                ScannerUtility.SCANNER.nextLine();
                 if (confirm == 1) {
                     deleteProject(projects.get(choice - 1));
                     view.displaySuccess("Project deleted successfully.");
                     break;
-                }
-        
-                if (confirm == 2) {
+                } else if (confirm == 2) {
                     view.displayInfo("Delete canceled.");
                     return;
+                } else {
+                    view.displayError("Invalid selection. Please try again.");
                 }
-                view.displayError("Invalid selection. Please try again.");
-            }
-            catch (InputMismatchException e){
-                ScannerUtility.SCANNER.nextLine(); // Consume newline
-                view.displayError("Invalid selection. Please try again.");
+            } catch (InputMismatchException e) {
+                ScannerUtility.SCANNER.nextLine();
+                view.displayError("Invalid input. Please enter 1 or 2.");
             }
         }
     }
@@ -695,6 +695,7 @@ public class ManagerProjectController implements IManagerProjectController {
                     break; // Valid index
                 } else {
                     System.out.println("[ERROR] Invalid index. Please try again.");
+                    continue;
                 }
             } else {
                 System.out.println("[ERROR] Please enter a valid number.");
