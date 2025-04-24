@@ -86,10 +86,6 @@ Loading source file /Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/Main.java..
 Loading source file /Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/controllers/AbstractApplicationController.java...
 Loading source file /Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/controllers/ApplicantApplicationController.java...
 Loading source file /Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/controllers/ApplicantEnquiryController.java...
-/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/controllers/ApplicantEnquiryController.java:132: error: unnamed variables are a preview feature and are disabled by default.
-            projectEnquiriesMap.computeIfAbsent(existingProject, _ -> new ArrayList<>()).add(enquiry);
-                                                                 ^
-  (use --enable-preview to enable unnamed variables)
 Loading source file /Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/controllers/ApplicantMainController.java...
 Loading source file /Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/controllers/AuthenticatorController.java...
 Loading source file /Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/controllers/IApplicantEnquiryController.java...
@@ -154,6 +150,173 @@ Loading source file /Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/views/O
 Loading source file /Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/views/OfficerEnquiryView.java...
 Loading source file /Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/views/OfficerMainView.java...
 Loading source file /Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/views/OfficerRegistrationView.java...
-1 error
+Constructing Javadoc information...
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/controllers/ManagerMainController.java:9: error: package org.apache.poi.xssf.usermodel does not exist
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+                                    ^
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/controllers/ManagerMainController.java:10: error: package org.apache.poi.ss.usermodel does not exist
+import org.apache.poi.ss.usermodel.*;
+^
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/controllers/OfficerBookingController.java:18: error: package org.apache.pdfbox.pdmodel does not exist
+import org.apache.pdfbox.pdmodel.PDDocument;
+                                ^
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/controllers/OfficerBookingController.java:19: error: package org.apache.pdfbox.pdmodel does not exist
+import org.apache.pdfbox.pdmodel.PDPage;
+                                ^
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/controllers/OfficerBookingController.java:20: error: package org.apache.pdfbox.pdmodel does not exist
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+                                ^
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/controllers/OfficerBookingController.java:21: error: package org.apache.pdfbox.pdmodel.common does not exist
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+                                       ^
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/controllers/OfficerBookingController.java:22: error: package org.apache.pdfbox.pdmodel.font does not exist
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+                                     ^
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/controllers/OfficerBookingController.java:23: error: package org.apache.pdfbox.pdmodel.font does not exist
+import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
+                                     ^
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/databases/ApplicantDB.java:8: error: package org.apache.poi.ss.usermodel does not exist
+import org.apache.poi.ss.usermodel.Workbook;
+                                  ^
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/databases/ApplicantDB.java:9: error: package org.apache.poi.ss.usermodel does not exist
+import org.apache.poi.ss.usermodel.Sheet;
+                                  ^
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/databases/ApplicantDB.java:10: error: package org.apache.poi.ss.usermodel does not exist
+import org.apache.poi.ss.usermodel.Row; 
+                                  ^
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/databases/ApplicantDB.java:11: error: package org.apache.poi.xssf.usermodel does not exist
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+                                    ^
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/databases/ApplicationDB.java:9: error: package org.apache.poi.xssf.usermodel does not exist
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+                                    ^
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/databases/ApplicationDB.java:165: error: cannot find symbol
+    private static Application createApplicationFromRow(Row row) throws IOException {
+                                                        ^
+  symbol:   class Row
+  location: class ApplicationDB
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/databases/ApplicationDB.java:295: error: cannot find symbol
+    private static void populateApplicationRow(Row row, int applicationID,Applicant applicant, Project project, String status, String flatType) {
+                                               ^
+  symbol:   class Row
+  location: class ApplicationDB
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/databases/ApplicationDB.java:8: error: package org.apache.poi.ss.usermodel does not exist
+import org.apache.poi.ss.usermodel.*;
+^
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/databases/EnquiryDB.java:9: error: package org.apache.poi.xssf.usermodel does not exist
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+                                    ^
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/databases/EnquiryDB.java:32: error: cannot find symbol
+    private static double getNumericCellValue(Cell cell) {
+                                              ^
+  symbol:   class Cell
+  location: class EnquiryDB
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/databases/EnquiryDB.java:57: error: cannot find symbol
+    private static String getStringCellValue(Cell cell) {
+                                             ^
+  symbol:   class Cell
+  location: class EnquiryDB
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/databases/EnquiryDB.java:72: error: cannot find symbol
+    private static Date getDateCellValue(Cell cell) {
+                                         ^
+  symbol:   class Cell
+  location: class EnquiryDB
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/databases/EnquiryDB.java:85: error: cannot find symbol
+    private static Enquiry createEnquiryFromRow(Row row) throws IOException {
+                                                ^
+  symbol:   class Row
+  location: class EnquiryDB
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/databases/EnquiryDB.java:114: error: cannot find symbol
+    private static void populateEnquiryRow(Row row, Enquiry enquiry) throws NumberFormatException {
+                                           ^
+  symbol:   class Row
+  location: class EnquiryDB
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/databases/EnquiryDB.java:8: error: package org.apache.poi.ss.usermodel does not exist
+import org.apache.poi.ss.usermodel.*;
+^
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/databases/HDBManagerDB.java:8: error: package org.apache.poi.ss.usermodel does not exist
+import org.apache.poi.ss.usermodel.Row;
+                                  ^
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/databases/HDBManagerDB.java:9: error: package org.apache.poi.ss.usermodel does not exist
+import org.apache.poi.ss.usermodel.Sheet;
+                                  ^
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/databases/HDBManagerDB.java:10: error: package org.apache.poi.ss.usermodel does not exist
+import org.apache.poi.ss.usermodel.Workbook;
+                                  ^
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/databases/HDBManagerDB.java:11: error: package org.apache.poi.xssf.usermodel does not exist
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+                                    ^
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/databases/HDBManagerDB.java:12: error: package org.apache.poi.ss.usermodel does not exist
+import org.apache.poi.ss.usermodel.Cell;
+                                  ^
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/databases/HDBOfficerDB.java:8: error: package org.apache.poi.ss.usermodel does not exist
+import org.apache.poi.ss.usermodel.Workbook;
+                                  ^
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/databases/HDBOfficerDB.java:9: error: package org.apache.poi.ss.usermodel does not exist
+import org.apache.poi.ss.usermodel.Sheet;
+                                  ^
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/databases/HDBOfficerDB.java:10: error: package org.apache.poi.ss.usermodel does not exist
+import org.apache.poi.ss.usermodel.Row; 
+                                  ^
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/databases/HDBOfficerDB.java:11: error: package org.apache.poi.xssf.usermodel does not exist
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+                                    ^
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/databases/OfficerRegistrationDB.java:13: error: package org.apache.poi.ss.usermodel does not exist
+import org.apache.poi.ss.usermodel.Row;
+                                  ^
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/databases/OfficerRegistrationDB.java:14: error: package org.apache.poi.ss.usermodel does not exist
+import org.apache.poi.ss.usermodel.Cell;
+                                  ^
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/databases/OfficerRegistrationDB.java:15: error: package org.apache.poi.ss.usermodel does not exist
+import org.apache.poi.ss.usermodel.Sheet;
+                                  ^
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/databases/OfficerRegistrationDB.java:16: error: package org.apache.poi.ss.usermodel does not exist
+import org.apache.poi.ss.usermodel.Workbook;
+                                  ^
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/databases/OfficerRegistrationDB.java:17: error: package org.apache.poi.xssf.usermodel does not exist
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+                                    ^
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/databases/OfficerRegistrationDB.java:200: error: cannot find symbol
+    private static void populateRegistrationRow(Row row, int registrationID, HDBOfficer officer, Project project, String status) {
+                                                ^
+  symbol:   class Row
+  location: class OfficerRegistrationDB
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/databases/ProjectDB.java:13: error: package org.apache.poi.xssf.usermodel does not exist
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+                                    ^
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/databases/ProjectDB.java:26: error: cannot find symbol
+    private static Project createProjectFromRow(Row row) {
+                                                ^
+  symbol:   class Row
+  location: class ProjectDB
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/databases/ProjectDB.java:92: error: cannot find symbol
+    private static String getStringCellValue(Row row, int cellIndex) {
+                                             ^
+  symbol:   class Row
+  location: class ProjectDB
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/databases/ProjectDB.java:97: error: cannot find symbol
+    private static int getNumericCellValue(Row row, int cellIndex) {
+                                           ^
+  symbol:   class Row
+  location: class ProjectDB
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/databases/ProjectDB.java:102: error: cannot find symbol
+    private static Date getDateCellValue(Row row, int cellIndex) {
+                                         ^
+  symbol:   class Row
+  location: class ProjectDB
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/databases/ProjectDB.java:107: error: cannot find symbol
+    private static void populateProjectRow(Row row, Project project) {
+                                           ^
+  symbol:   class Row
+  location: class ProjectDB
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/databases/ProjectDB.java:235: error: cannot find symbol
+    private static boolean isRowEmpty(Row row) {
+                                      ^
+  symbol:   class Row
+  location: class ProjectDB
+/Users/racshanyaa/Documents/GitHub/SC2002-BTO-V3/src/databases/ProjectDB.java:12: error: package org.apache.poi.ss.usermodel does not exist
+import org.apache.poi.ss.usermodel.*;
+^
+46 errors
 
 

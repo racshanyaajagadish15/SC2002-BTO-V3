@@ -129,7 +129,7 @@ public class ApplicantEnquiryController implements IApplicantEnquiryController {
                 .filter(p -> p.getProjectID() == project.getProjectID())
                 .findFirst()
                 .orElse(project);
-            projectEnquiriesMap.computeIfAbsent(existingProject, _ -> new ArrayList<>()).add(enquiry);
+            projectEnquiriesMap.computeIfAbsent(existingProject, p -> new ArrayList<>()).add(enquiry);
         }
         return projectEnquiriesMap;
     }
