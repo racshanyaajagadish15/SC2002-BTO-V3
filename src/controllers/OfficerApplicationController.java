@@ -13,7 +13,7 @@ import models.HDBOfficer;
 import models.OfficerRegistration;
 import models.Project;
 
-/*
+/**
  * OfficerApplicationController.java
  * This class is responsible for handling the officer application process. 
  */

@@ -10,6 +10,10 @@ import databases.OfficerRegistrationDB;
 import databases.ProjectDB;
 import enums.OfficerRegisterationStatus;
 
+/**
+ * ManagerRegistrationController.java
+ * This class is responsible for handling the officer registrations process. 
+ */
 
 public class ManagerRegistrationController implements IManagerRegistrationController {
 

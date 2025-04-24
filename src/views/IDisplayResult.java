@@ -1,6 +1,8 @@
 package views;
 
-
+/**
+ * IDisplayResult class is implemented by view classes to display messages
+ */
 public interface IDisplayResult {
     /**
      * Displays a message indicating that the operation was erroneous.

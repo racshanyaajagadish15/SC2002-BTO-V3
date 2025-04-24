@@ -7,6 +7,9 @@ import models.OfficerRegistration;
 import models.Project;
 import utilities.ScannerUtility;
 
+/**
+ * OfficerRegistrationView class handles displaying of registrations
+ */
 public class OfficerRegistrationView implements IDisplayResult {
 
     /**

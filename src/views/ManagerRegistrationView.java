@@ -8,12 +8,10 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
- * This class handles the view for managing officer registrations.
- * It provides methods to display the registration menu, view all registrations,
- * view pending registrations, and update registration status.
+ * ManagerRegistrationView class handles displaying of registrations
  */
 
-public class ManagerRegistrationView {
+public class ManagerRegistrationView implements IDisplayResult{
 
     private Scanner scanner;
     private ManagerRegistrationController controller;
@@ -136,6 +134,7 @@ public class ManagerRegistrationView {
             System.out.println("1. Successful");
             System.out.println("2. Unsuccessful");
             System.out.println("0. Cancel");
+            System.out.print("Enter your choice: ");
 
             String choice = scanner.nextLine();
             String newStatus = null;

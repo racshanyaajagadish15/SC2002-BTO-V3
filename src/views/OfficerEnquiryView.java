@@ -8,6 +8,9 @@ import models.Enquiry;
 import models.Project;
 import utilities.ScannerUtility;
 
+/**
+ * OfficerEnquiryView class handles displaying of registrations OfficerEnquiryView
+ */
 public class OfficerEnquiryView implements IDisplayResult {
 
     /**

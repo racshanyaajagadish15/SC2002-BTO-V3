@@ -7,7 +7,7 @@ import models.Project;
 
 
 /**
- * Interface for Officer Registration Controller.
+ * Interface for OfficerRegistrationController.
  * This interface defines the methods that an officer can use to manage project registrations.
  */
 public interface IOfficerRegistrationController {

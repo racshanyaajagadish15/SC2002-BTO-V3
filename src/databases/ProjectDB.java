@@ -11,7 +11,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
+/**
+ * ProjectDB class handles the database operations for the Project entity.
+ * It provides methods to create, read, update, and delete Project in an Excel file.
+ * It also includes helper methods to convert between Project objects and Excel rows.
+ */
 public class ProjectDB {
     private static final String PROJECT_FILEPATH = "resources/data/ProjectList.xlsx";
 

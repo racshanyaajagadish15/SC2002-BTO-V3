@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import databases.EnquiryDB;
-
+/**
+ * Enquiry class representing a Enquiry in the system.
+ */
 public class Enquiry {
 
     private int enquiryID;

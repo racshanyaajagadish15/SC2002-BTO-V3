@@ -1,7 +1,9 @@
 package models;
 
 import java.util.ArrayList;
-
+/**
+ * HDBOfficer class representing a HDBOfficer in the system.
+ */
 public class HDBOfficer extends Applicant {
 
 	private ArrayList<OfficerRegistration> officerRegistrations;

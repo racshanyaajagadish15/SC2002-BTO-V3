@@ -8,7 +8,9 @@ import java.util.Map;
 import models.Enquiry;
 import models.Project;
 import utilities.ScannerUtility;
-
+/**
+ * ApplicantEnquiryView class handles displaying enquiries
+ */
 public class ApplicantEnquiryView implements IDisplayResult {
 
     /**

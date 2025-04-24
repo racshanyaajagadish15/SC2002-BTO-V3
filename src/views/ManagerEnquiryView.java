@@ -13,9 +13,9 @@ import utilities.ScannerUtility;
 import models.HDBManager;
 
 /**
- * The ManagerEnquiryView class is responsible for displaying the enquiry management interface for the HDB Manager.
- * It allows the manager to view, reply to, and manage enquiries related to projects.
+ * ManagerEnquiryView class handles displaying enquiries
  */
+
 
 public class ManagerEnquiryView implements IDisplayResult {
 

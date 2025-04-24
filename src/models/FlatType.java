@@ -4,7 +4,9 @@ import java.util.ArrayList;
 
 import utilities.LoggerUtility;
 import utilities.ScannerUtility;
-
+/**
+ * FlatType class representing a FlatType in the system.
+ */
 public class FlatType {
     private String flatType;
     private int numFlats;
