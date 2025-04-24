@@ -65,3 +65,74 @@
 [2025-04-24 03:04:35] INFO: Project deleted successfully.
 [2025-04-24 03:05:52] INFO: Delete canceled.
 [2025-04-24 03:05:53] INFO: Returning to main menu.
+[2025-04-24 03:18:12] INFO: Added Flat Type: 2-Room with 10 units at $100000.0
+[2025-04-24 03:18:20] INFO: Added Flat Type: 3-Room with 10 units at $200000.0
+[2025-04-24 03:18:25] INFO: New project created: Savannah Condopark
+[2025-04-24 03:18:25] INFO: Created new project: Savannah Condopark
+[2025-04-24 03:18:25] INFO: Project created successfully!
+[2025-04-24 03:28:31] INFO: No projects found.
+[2025-04-24 03:34:21] INFO: Project visibility toggled to Visible.
+[2025-04-24 03:34:48] INFO: Returning to main menu.
+[2025-04-24 10:44:47] INFO: Project updated successfully!
+[2025-04-24 10:44:48] INFO: Project updated successfully and saved to storage.
+[2025-04-24 10:46:57] INFO: Added Flat Type: 2-Room with 10 units at $100000.0
+[2025-04-24 10:47:07] INFO: Added Flat Type: 3-Room with 20 units at $100000.0
+[2025-04-24 10:47:13] INFO: New project created: Archipelago
+[2025-04-24 10:47:13] INFO: Created new project: Archipelago
+[2025-04-24 10:47:13] INFO: Saving project to storage...
+[2025-04-24 15:24:49] INFO: Project updated successfully!
+[2025-04-24 15:24:49] INFO: Project updated successfully and saved to storage.
+[2025-04-24 15:25:38] INFO: Project updated successfully!
+[2025-04-24 15:25:38] INFO: Project updated successfully and saved to storage.
+[2025-04-24 15:42:36] INFO: Project updated successfully!
+[2025-04-24 15:42:36] INFO: Project updated successfully and saved to storage.
+[2025-04-24 15:44:13] INFO: Project updated successfully!
+[2025-04-24 15:44:13] INFO: Project updated successfully and saved to storage.
+[2025-04-24 15:51:37] INFO: Project updated successfully!
+[2025-04-24 15:51:37] INFO: Project updated successfully and saved to storage.
+[2025-04-24 15:53:38] INFO: Project updated successfully!
+[2025-04-24 15:53:38] INFO: Project updated successfully and saved to storage.
+[2025-04-24 15:54:50] INFO: Project updated successfully!
+[2025-04-24 15:54:50] INFO: Project updated successfully and saved to storage.
+[2025-04-24 15:57:07] INFO: Changes discarded.
+[2025-04-24 15:57:19] INFO: Project updated successfully!
+[2025-04-24 15:57:19] INFO: Project updated successfully and saved to storage.
+[2025-04-24 15:59:39] INFO: Project updated successfully!
+[2025-04-24 15:59:39] INFO: Project updated successfully and saved to storage.
+[2025-04-24 16:07:23] INFO: Edit operation canceled.
+[2025-04-24 16:07:51] INFO: Added Flat Type: 2-Room with 10 units at $100.0
+[2025-04-24 16:07:57] INFO: Added Flat Type: 3-Room with 10 units at $100.0
+[2025-04-24 16:08:01] INFO: New project created: Archipelago
+[2025-04-24 16:11:46] INFO: Added Flat Type: 2-Room with 10 units at $100.0
+[2025-04-24 16:11:52] INFO: Added Flat Type: 3-Room with 10 units at $100.0
+[2025-04-24 16:11:54] INFO: New project created: Archipelago
+[2025-04-24 16:13:09] INFO: Added Flat Type: 2-Room with 10 units at $100.0
+[2025-04-24 16:13:17] INFO: Added Flat Type: 3-Room with 10 units at $100.0
+[2025-04-24 16:13:21] INFO: New project created: Archipelago
+[2025-04-24 16:20:38] INFO: Project updated successfully!
+[2025-04-24 16:20:38] INFO: Project updated successfully and saved to storage.
+[2025-04-24 16:20:58] INFO: Added Flat Type: 2-Room with 10 units at $1000.0
+[2025-04-24 16:21:04] INFO: Added Flat Type: 3-Room with 10 units at $1000.0
+[2025-04-24 16:21:07] INFO: New project created: Archipelago
+[2025-04-24 16:22:12] INFO: Project updated successfully!
+[2025-04-24 16:22:12] INFO: Project updated successfully and saved to storage.
+[2025-04-24 16:22:37] INFO: Added Flat Type: 2-Room with 10 units at $100.0
+[2025-04-24 16:22:42] INFO: Added Flat Type: 3-Room with 10 units at $1000.0
+[2025-04-24 16:22:45] INFO: New project created: Archipelago
+[2025-04-24 16:22:45] INFO: Created new project: Archipelago
+[2025-04-24 16:22:45] INFO: Saving project to storage...
+[2025-04-24 16:25:06] INFO: Added Flat Type: 2-Room with 10 units at $100.0
+[2025-04-24 16:25:12] INFO: Added Flat Type: 3-Room with 10 units at $100.0
+[2025-04-24 16:25:15] INFO: New project created: Archipelago
+[2025-04-24 16:26:33] INFO: Added Flat Type: 2-Room with 10 units at $100.0
+[2025-04-24 16:26:37] INFO: Added Flat Type: 3-Room with 10 units at $100.0
+[2025-04-24 16:26:40] INFO: New project created: Abc
+[2025-04-24 16:27:47] INFO: Added Flat Type: 2-Room with 10 units at $100.0
+[2025-04-24 16:27:51] INFO: Added Flat Type: 3-Room with 10 units at $100.0
+[2025-04-24 16:27:53] INFO: New project created: abc
+[2025-04-24 16:27:54] INFO: Created new project: abc
+[2025-04-24 16:27:54] INFO: Saving project to storage...
+[2025-04-24 16:28:11] INFO: Project name updated to: Archipelago
+[2025-04-24 16:28:13] INFO: Neighborhood updated to: Bedok
+[2025-04-24 16:28:17] INFO: Project updated successfully!
+[2025-04-24 16:28:17] INFO: Project updated successfully and saved to storage.

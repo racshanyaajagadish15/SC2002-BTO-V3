@@ -19,45 +19,46 @@ public class ProjectDB {
     private static Project createProjectFromRow(Row row) {
         try {
             // Extract PROJECT_ID
-            int projectID = (int) row.getCell(ProjectListFileIndex.PROJECT_ID.getIndex()).getNumericCellValue();
-
-            String projectName = row.getCell(ProjectListFileIndex.NAME.getIndex()).getStringCellValue();
-            String neighborhood = row.getCell(ProjectListFileIndex.NEIGHBORHOOD.getIndex()).getStringCellValue();
-
+            Cell projectIDCell = row.getCell(ProjectListFileIndex.PROJECT_ID.getIndex());
+            if (projectIDCell == null || projectIDCell.getCellType() != CellType.NUMERIC) {
+                throw new IllegalArgumentException("Missing or invalid PROJECT_ID in row " + row.getRowNum());
+            }
+            int projectID = (int) projectIDCell.getNumericCellValue();
+    
+            String projectName = getStringCellValue(row, ProjectListFileIndex.NAME.getIndex());
+            String neighborhood = getStringCellValue(row, ProjectListFileIndex.NEIGHBORHOOD.getIndex());
+    
             // Flat Type 1
-            String type1Name = row.getCell(ProjectListFileIndex.TYPE_1.getIndex()).getStringCellValue().trim();
-            int type1Units = (int) row.getCell(ProjectListFileIndex.TYPE_1_UNITS.getIndex()).getNumericCellValue();
-            double type1Price = row.getCell(ProjectListFileIndex.TYPE_1_PRICE.getIndex()).getNumericCellValue();
+            String type1Name = getStringCellValue(row, ProjectListFileIndex.TYPE_1.getIndex());
+            int type1Units = getNumericCellValue(row, ProjectListFileIndex.TYPE_1_UNITS.getIndex());
+            double type1Price = getNumericCellValue(row, ProjectListFileIndex.TYPE_1_PRICE.getIndex());
             FlatType type1 = new FlatType(type1Name, type1Units, type1Price);
-
+    
             ArrayList<FlatType> flatTypes = new ArrayList<>();
             flatTypes.add(type1);
-
+    
             // Flat Type 2 if exists
             Cell type2Cell = row.getCell(ProjectListFileIndex.TYPE_2.getIndex());
             if (type2Cell != null && !type2Cell.getStringCellValue().isBlank()) {
                 String type2Name = type2Cell.getStringCellValue().trim();
-                int type2Units = (int) row.getCell(ProjectListFileIndex.TYPE_2_UNITS.getIndex()).getNumericCellValue();
-                double type2Price = row.getCell(ProjectListFileIndex.TYPE_2_PRICE.getIndex()).getNumericCellValue();
+                int type2Units = getNumericCellValue(row, ProjectListFileIndex.TYPE_2_UNITS.getIndex());
+                double type2Price = getNumericCellValue(row, ProjectListFileIndex.TYPE_2_PRICE.getIndex());
                 flatTypes.add(new FlatType(type2Name, type2Units, type2Price));
             }
-
-            Date openingDate = row.getCell(ProjectListFileIndex.OPENING_DATE.getIndex()).getDateCellValue();
-            Date closingDate = row.getCell(ProjectListFileIndex.CLOSING_DATE.getIndex()).getDateCellValue();
-
-            String managerNRIC = row.getCell(ProjectListFileIndex.MANAGER.getIndex()).getStringCellValue();
-
-            // Adapt to the existing HDBManager constructor
+    
+            Date openingDate = getDateCellValue(row, ProjectListFileIndex.OPENING_DATE.getIndex());
+            Date closingDate = getDateCellValue(row, ProjectListFileIndex.CLOSING_DATE.getIndex());
+    
+            String managerNRIC = getStringCellValue(row, ProjectListFileIndex.MANAGER.getIndex());
             HDBManager manager = (HDBManager) HDBManager.findUserByNricDB(managerNRIC);
-
-            int officerSlots = (int) row.getCell(ProjectListFileIndex.OFFICER_SLOT.getIndex()).getNumericCellValue();
-
+    
+            int officerSlots = getNumericCellValue(row, ProjectListFileIndex.OFFICER_SLOT.getIndex());
+    
             // Handle visibility
-            Cell visibilityCell = row.getCell(ProjectListFileIndex.VISIBILITY.getIndex());
-            boolean visibility = visibilityCell != null && visibilityCell.getStringCellValue().equalsIgnoreCase("Visible");
-
+            boolean visibility = "Visible".equalsIgnoreCase(getStringCellValue(row, ProjectListFileIndex.VISIBILITY.getIndex()));
+    
             return new Project(
-                projectID, // Use PROJECT_ID from the Excel row
+                projectID,
                 projectName,
                 manager,
                 neighborhood,
@@ -71,6 +72,22 @@ public class ProjectDB {
             System.err.println("Error creating project from row: " + e.getMessage());
             return null;
         }
+    }
+    
+    // Helper methods to handle null or missing cells
+    private static String getStringCellValue(Row row, int cellIndex) {
+        Cell cell = row.getCell(cellIndex);
+        return (cell != null && cell.getCellType() == CellType.STRING) ? cell.getStringCellValue().trim() : "";
+    }
+    
+    private static int getNumericCellValue(Row row, int cellIndex) {
+        Cell cell = row.getCell(cellIndex);
+        return (cell != null && cell.getCellType() == CellType.NUMERIC) ? (int) cell.getNumericCellValue() : 0;
+    }
+    
+    private static Date getDateCellValue(Row row, int cellIndex) {
+        Cell cell = row.getCell(cellIndex);
+        return (cell != null && cell.getCellType() == CellType.NUMERIC) ? cell.getDateCellValue() : null;
     }
 
     // Helper function to populate excel row from Project object
@@ -113,31 +130,44 @@ public class ProjectDB {
     // Create Project
     public static boolean createProject(Project project) throws IOException {
         try (FileInputStream fileStreamIn = new FileInputStream(PROJECT_FILEPATH);
-            Workbook workbook = new XSSFWorkbook(fileStreamIn)) {
+             Workbook workbook = new XSSFWorkbook(fileStreamIn)) {
             Sheet sheet = workbook.getSheetAt(0);
-
+    
             // Check if project already exists
             for (Row row : sheet) {
-                if (row.getRowNum() == 0) continue;
-                if (row.getCell(ProjectListFileIndex.NAME.getIndex()).getStringCellValue().equalsIgnoreCase(project.getProjectName())) {
+                if (row.getRowNum() == 0) continue; // Skip header row
+                Cell nameCell = row.getCell(ProjectListFileIndex.NAME.getIndex());
+                if (nameCell != null && nameCell.getCellType() == CellType.STRING &&
+                    nameCell.getStringCellValue().equalsIgnoreCase(project.getProjectName())) {
                     return false; // Project already exists
                 }
             }
-            Row lastRow = sheet.getRow(sheet.getLastRowNum());
-            int projectID;
-            if (lastRow == null || lastRow.getCell(ProjectListFileIndex.PROJECT_ID.getIndex()) == null) {
-                projectID = 1; // Start with ID 1 if no valid last row exists
-            } else {
-                projectID  = (int) lastRow.getCell(ProjectListFileIndex.PROJECT_ID.getIndex()).getNumericCellValue() + 1;
-            }
+    
+            // Find the next empty row
             int newRowNum = sheet.getLastRowNum() + 1;
-            Row row = sheet.createRow(newRowNum);
-            // Assign PROJECT_ID as the next available row number
+            while (newRowNum >= 0 && isRowEmpty(sheet.getRow(newRowNum))) {
+                newRowNum--;
+            }
+            newRowNum++; // Move to the next row after the last non-empty row
+    
+            // Increment the PROJECT_ID
+            int projectID = 1; // Default to 1 if no rows exist
+            for (Row row : sheet) {
+                if (row.getRowNum() == 0) continue; // Skip header row
+                Cell idCell = row.getCell(ProjectListFileIndex.PROJECT_ID.getIndex());
+                if (idCell != null && idCell.getCellType() == CellType.NUMERIC) {
+                    projectID = Math.max(projectID, (int) idCell.getNumericCellValue() + 1);
+                }
+            }
+    
+            // Assign the new PROJECT_ID to the project
             project.setProjectID(projectID);
-
+    
             // Create a new row and populate it
+            Row row = sheet.createRow(newRowNum);
             populateProjectRow(row, project);
-
+    
+            // Save the changes to the file
             try (FileOutputStream fileOut = new FileOutputStream(PROJECT_FILEPATH)) {
                 workbook.write(fileOut);
             }
@@ -156,7 +186,11 @@ public class ProjectDB {
              Workbook workbook = new XSSFWorkbook(fileStreamIn)) {
             Sheet sheet = workbook.getSheetAt(0);
             for (Row row : sheet) {
-                if (row.getRowNum() == 0) continue; // Skip header
+                if (row.getRowNum() == 0) continue; // Skip header row
+    
+                // Check if the row is empty
+                if (isRowEmpty(row)) break;
+    
                 try {
                     Project project = createProjectFromRow(row);
                     if (project != null) {
@@ -172,7 +206,17 @@ public class ProjectDB {
         }
         return projects;
     }
-
+    
+    // Helper method to check if a row is empty
+    private static boolean isRowEmpty(Row row) {
+        if (row == null) return true; // If the row is null, consider it empty
+        for (Cell cell : row) {
+            if (cell != null && cell.getCellType() != CellType.BLANK) {
+                return false; // Row is not empty if any cell is not blank
+            }
+        }
+        return true; // Row is empty if all cells are blank or null
+    }
     public static Project getProjectsById(int id) throws IOException {
         try (FileInputStream fileStreamIn = new FileInputStream(PROJECT_FILEPATH);
              Workbook workbook = new XSSFWorkbook(fileStreamIn)) {

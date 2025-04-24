@@ -19,7 +19,7 @@ public class ManagerMainView {
         this.loggedInManager = manager;
         this.applicationView = new ManagerApplicationView(loggedInManager);
         this.projectView = new ManagerProjectView();
-        this.enquiryView = new ManagerEnquiryView(loggedInManager);
+        this.enquiryView = new ManagerEnquiryView();
         this.registrationView = new ManagerRegistrationView();
     }
 
