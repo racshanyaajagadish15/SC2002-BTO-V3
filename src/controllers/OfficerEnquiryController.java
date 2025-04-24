@@ -81,6 +81,7 @@ public class OfficerEnquiryController implements IOfficerEnquiryController {
                 }
             }
             for (Project project : projectsAssigned){
+                System.out.println("test" + project.getProjectName());
                 ArrayList<Enquiry> projectEnquiries = Enquiry.getProjectEnquiries(project);
                 projectEnquiriesMap.put(project, projectEnquiries);
             }

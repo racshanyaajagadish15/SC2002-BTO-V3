@@ -19,7 +19,7 @@ public class ApplicationDB {
             Sheet sheet = workbook.getSheetAt(0);
             Row lastRow = sheet.getRow(sheet.getLastRowNum());
             int applicationID;
-            if (lastRow == null || lastRow.getCell(ProjectApplicationFileIndex.ID.getIndex()) == null) {
+            if (lastRow == null || lastRow.getCell(ProjectApplicationFileIndex.ID.getIndex()).getCellType() != CellType.NUMERIC) {
                 applicationID = 1; // Start with ID 1 if no valid last row exists
             } else {
                 applicationID  = (int) lastRow.getCell(ProjectApplicationFileIndex.ID.getIndex()).getNumericCellValue() + 1;
@@ -227,6 +227,50 @@ public class ApplicationDB {
             }
         }
         return applications;
+    }
+
+    public static void deleteOfficerRegistrationByProjID(Project project) throws IOException {
+        File file = new File(APPLICATION_FILEPATH);
+        try (FileInputStream fis = new FileInputStream(file);
+             Workbook workbook = new XSSFWorkbook(fis)) {
+            Sheet sheet = workbook.getSheetAt(0);
+            int projectID = project.getProjectID();
+            List<Integer> rowsToDelete = new ArrayList<>();
+
+            // Collect row indices to delete (skip header)
+            for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+                Row row = sheet.getRow(i);
+                if (row == null) continue;
+                Cell projectIDCell = row.getCell(ProjectApplicationFileIndex.PROJECT_ID.getIndex());
+                if (projectIDCell == null || projectIDCell.getCellType() == CellType.BLANK) continue;
+                int currentProjectID = (int) projectIDCell.getNumericCellValue();
+                if (currentProjectID == projectID) {
+                    rowsToDelete.add(i);
+                }
+            }
+
+            // Delete rows in reverse order to avoid shifting issues
+            for (int i = rowsToDelete.size() - 1; i >= 0; i--) {
+                int rowIndex = rowsToDelete.get(i);
+                Row rowToRemove = sheet.getRow(rowIndex);
+                if (rowToRemove != null) {
+                    sheet.removeRow(rowToRemove);
+                    // Shift rows up if not last row
+                    if (rowIndex < sheet.getLastRowNum()) {
+                        sheet.shiftRows(rowIndex + 1, sheet.getLastRowNum(), -1);
+                    }
+                }
+            }
+
+            // Save changes
+            try (FileOutputStream fos = new FileOutputStream(file)) {
+                workbook.write(fos);
+            }
+            LoggerUtility.logInfo("Deleted all applications for Project ID: " + projectID);
+        } catch (IOException e) {
+            LoggerUtility.logError("Failed to delete applications for Project ID: " + project.getProjectID(), e);
+            throw new IOException(e);
+        }
     }
 
     private static void populateApplicationRow(Row row, int applicationID,Applicant applicant, Project project, String status, String flatType) {

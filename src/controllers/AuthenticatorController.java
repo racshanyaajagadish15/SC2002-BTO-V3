@@ -77,7 +77,7 @@ public class AuthenticatorController {
                 authenticatorView.displayError("Incorrect password. Please try again!");
             } 
             else {
-               
+                authenticatorView.displaySuccess("Login Successful!");
                 if (user.getClass() == Applicant.class) {
                     new ApplicantMainController().applicantSelectMenu((Applicant) user);
                 } 

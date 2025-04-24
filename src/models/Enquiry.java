@@ -76,7 +76,7 @@ public class Enquiry {
         try {
             ArrayList<Enquiry> allEnquiries = Enquiry.getAllEnquiriesDB();
             for (Enquiry enquiry : allEnquiries) {
-                if (enquiry.getProjectID() == project.getProjectID()) {
+                if (enquiry.getProject().getProjectID() == project.getProjectID()) {
                     projectEnquiries.add(enquiry);
                 }
             }
