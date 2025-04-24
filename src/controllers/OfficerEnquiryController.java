@@ -81,13 +81,12 @@ public class OfficerEnquiryController implements IOfficerEnquiryController {
                 }
             }
             for (Project project : projectsAssigned){
-                System.out.println("test" + project.getProjectName());
                 ArrayList<Enquiry> projectEnquiries = Enquiry.getProjectEnquiries(project);
                 projectEnquiriesMap.put(project, projectEnquiries);
             }
 
             if (projectEnquiriesMap.size() == 0) {
-                view.displayInfo("You are not handling any projects.");
+                view.displayInfo("There are no enquiries from projects you are managing.");
                 return;
             }
 

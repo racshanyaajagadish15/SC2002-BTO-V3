@@ -280,7 +280,7 @@ public class OfficerBookingController implements IOfficerBookingController {
             if (!java.nio.file.Files.exists(directoryPath)) {
                 java.nio.file.Files.createDirectories(directoryPath);
             }
-            String fileName = "generated_files/Receipt_" + application.getApplicant().getNric() + "_" + application.getProject().getProjectID() + ".pdf";
+            String fileName = "generated_files/Receipt_" + application.getApplicant().getNric() + "_" + application.getProject().getProjectName() + ".pdf";
             document.save(fileName);
             document.close();
             return true;

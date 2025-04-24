@@ -9,7 +9,7 @@ public class ApplicantMainView implements IDisplayResult {
         System.out.println("           APPLICANT DASHBOARD           ");
         System.out.println("=========================================");
         System.out.println("1. View Application Status");
-        System.out.println("2. View Available Projects");
+        System.out.println("2. Apply/Enquiry Applicable Projects");
         System.out.println("3. Manage Enquiries");
         System.out.println("4. Change Password");
         System.out.println("5. Logout");
