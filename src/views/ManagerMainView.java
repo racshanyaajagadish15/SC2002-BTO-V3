@@ -10,13 +10,11 @@ import controllers.AuthenticatorController;
 public class ManagerMainView {
     private ManagerApplicationView applicationView;
     private ManagerRegistrationView registrationView;
-    private ManagerProjectView projectView;
     private ManagerEnquiryView enquiryView;
     private HDBManager loggedInManager;
     public ManagerMainView(HDBManager manager) {
         this.loggedInManager = manager;
         this.applicationView = new ManagerApplicationView(loggedInManager);
-        this.projectView = new ManagerProjectView();
         this.enquiryView = new ManagerEnquiryView(loggedInManager); // Pass the required argument(s)
         this.registrationView = new ManagerRegistrationView();
     }

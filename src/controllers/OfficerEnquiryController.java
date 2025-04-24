@@ -73,6 +73,10 @@ public class OfficerEnquiryController implements IOfficerEnquiryController {
         return projectEnquiries;		
     }
 
+    
+    /** 
+     * @param officer
+     */
     // New method: main entry point for officer to handle enquiries (all logic here)
     public void enquiryActionMenu(HDBOfficer officer) {
         try {
