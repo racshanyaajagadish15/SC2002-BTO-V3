@@ -53,3 +53,9 @@
 [2025-04-23 12:47:28] INFO: Created new enquiry ID: 3
 [2025-04-23 12:47:35] INFO: Created application for NRIC: S1234567A, Project: Melville Park
 [2025-04-23 12:56:04] INFO: Created application for NRIC: T2345678D, Project: Melville Park
+[2025-04-23 19:31:06] INFO: Project updated successfully!
+[2025-04-23 19:31:06] INFO: Project updated successfully and saved to storage.
+[2025-04-23 19:31:53] INFO: Toggle visibility operation canceled.
+[2025-04-23 19:44:10] INFO: Project selected for deletion.
+[2025-04-23 20:02:10] INFO: Deleted project: Archipelago
+[2025-04-23 20:02:10] INFO: Project deleted successfully.

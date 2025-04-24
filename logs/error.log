@@ -1,0 +1,22 @@
+[2025-04-23 19:31:00] ERROR: Invalid date format entered: Unparseable date: "" - Unparseable date: ""
+Stacktrace: 	java.base/java.text.DateFormat.parse(DateFormat.java:399)
+	views.ManagerProjectView.getDateInput(ManagerProjectView.java:356)
+	views.ManagerProjectView.editProjectMenu(ManagerProjectView.java:163)
+	controllers.ManagerProjectController.handleProjectMenu(ManagerProjectController.java:70)
+	views.ManagerMainView.handleProjects(ManagerMainView.java:90)
+	views.ManagerMainView.showManagerMenu(ManagerMainView.java:38)
+	controllers.ManagerMainController.managerSelectMenu(ManagerMainController.java:25)
+	controllers.AuthenticatorController.authenticate(AuthenticatorController.java:88)
+	Main.main(Main.java:7)
+
+[2025-04-23 19:31:01] ERROR: Invalid date format entered: Unparseable date: "" - Unparseable date: ""
+Stacktrace: 	java.base/java.text.DateFormat.parse(DateFormat.java:399)
+	views.ManagerProjectView.getDateInput(ManagerProjectView.java:356)
+	views.ManagerProjectView.editProjectMenu(ManagerProjectView.java:170)
+	controllers.ManagerProjectController.handleProjectMenu(ManagerProjectController.java:70)
+	views.ManagerMainView.handleProjects(ManagerMainView.java:90)
+	views.ManagerMainView.showManagerMenu(ManagerMainView.java:38)
+	controllers.ManagerMainController.managerSelectMenu(ManagerMainController.java:25)
+	controllers.AuthenticatorController.authenticate(AuthenticatorController.java:88)
+	Main.main(Main.java:7)
+
