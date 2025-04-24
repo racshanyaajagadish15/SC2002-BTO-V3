@@ -30,9 +30,12 @@ HDB Manager: Manage Projects and reply to applicant enquiries
 
 ## Project Structure
 
-- `src/` - Java source files
+- `generated_files/` - Files created by user
+- `lib/` - External libraries
 - `resources/data/` - Data files (Not for manual modification!)
-- 
+- `src/` - Java source files
+- `logs/` - Log files for errors and info logs
+- `Main.java` - Main class with main function to start program
 - `README.md` - Project documentation
 
 ## Authors

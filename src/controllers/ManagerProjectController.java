@@ -978,15 +978,15 @@ public class ManagerProjectController implements IManagerProjectController {
         System.out.println("=========================================");
     }
 
-    public String promptProjectNameFilter() {
+    private String promptProjectNameFilter() {
         System.out.print("\nEnter project name (Nothing to clear filter): ");
         return ScannerUtility.SCANNER.nextLine();
     }
-    public String promptNeighbourhoodFilter() {
+    private String promptNeighbourhoodFilter() {
         System.out.print("\nEnter neighbourhood name (Nothing to clear filter): ");
         return ScannerUtility.SCANNER.nextLine();
     }
-    public Double promptMinPriceFilter() {
+    private Double promptMinPriceFilter() {
         while (true){
         System.out.print("\nEnter minimum price (0 to clear filter): ");
             try {
@@ -999,6 +999,7 @@ public class ManagerProjectController implements IManagerProjectController {
             }
         }
     }
+
     
     /**
      * Prompts the user to select a project name from a list of available projects.
@@ -1037,6 +1038,7 @@ public class ManagerProjectController implements IManagerProjectController {
             }
         }
     }
+
     
     /**
      * Prompts the user to select a neighborhood from a list of available neighborhoods.
@@ -1085,7 +1087,7 @@ public class ManagerProjectController implements IManagerProjectController {
             }
         }
     }
-
+  
     /**
      * Prompts the user to enter a maximum price for filtering projects.
      *
