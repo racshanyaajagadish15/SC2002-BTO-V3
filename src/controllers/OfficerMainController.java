@@ -8,7 +8,7 @@ public class OfficerMainController {
 	private final OfficerApplicationController officerApplicationController;
 	private final ApplicantEnquiryController applicantEnquiryController;
 	private final OfficerEnquiryController officerEnquiryController;
-	private final OfficerRegistrationController officerJoinProjectController;
+	private final OfficerRegistrationController officerRegistrationController;
 	private final OfficerBookingController officerBookingController;
 	private final AuthenticatorController authenticatorController;
 
@@ -18,7 +18,7 @@ public class OfficerMainController {
 		this.officerApplicationController = new OfficerApplicationController();
 		this.applicantEnquiryController = new ApplicantEnquiryController();
 		this.officerEnquiryController = new OfficerEnquiryController();
-		this.officerJoinProjectController = new OfficerRegistrationController();
+		this.officerRegistrationController = new OfficerRegistrationController();
 		this.officerBookingController = new OfficerBookingController();
 		this.authenticatorController = new AuthenticatorController();
 	}
@@ -38,10 +38,10 @@ public class OfficerMainController {
 					applicantEnquiryController.enquiryActionMenu(officer);
 					break;
 				case 4:
-					officerJoinProjectController.showRegistrations(officer);
+					officerRegistrationController.showRegistrations(officer);
 					break;
 				case 5:
-					officerJoinProjectController.joinProjectAction(officer);
+					officerRegistrationController.joinProjectAction(officer);
 					break;
 				case 6:
 					officerEnquiryController.enquiryActionMenu(officer);
