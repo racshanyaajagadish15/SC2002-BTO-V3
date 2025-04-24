@@ -37,16 +37,16 @@ public class ManagerMainController {
      * @param projectNameFilter The project name filter (e.g., "Project A").
      * @param outputFilePath The path where the Excel file will be saved.
      */
-    public void generateApplicantReport(String maritalStatusFilter, String flatTypeFilter, String projectNameFilter, String outputFilePath) {
+    public void generateApplicantReport(String maritalStatusFilter, String flatTypeFilter, String projectNameFilter) {
         try {
             List<Application> allApplications = ApplicationDB.getAllApplications();
-
+    
             List<Application> filteredApplications = allApplications.stream()
                 .filter(app -> maritalStatusFilter == null || app.getApplicant().getMaritalStatus().equalsIgnoreCase(maritalStatusFilter))
                 .filter(app -> flatTypeFilter == null || app.getFlatType().equalsIgnoreCase(flatTypeFilter))
                 .filter(app -> projectNameFilter == null || app.getProject().getProjectName().equalsIgnoreCase(projectNameFilter))
                 .collect(Collectors.toList());
-
+    
             Workbook workbook = new XSSFWorkbook();
             Sheet sheet = workbook.createSheet("Applicant Report");
             Row headerRow = sheet.createRow(0);
@@ -55,7 +55,7 @@ public class ManagerMainController {
             headerRow.createCell(2).setCellValue("Marital Status");
             headerRow.createCell(3).setCellValue("Project Name");
             headerRow.createCell(4).setCellValue("Flat Type");
-
+    
             int rowIndex = 1;
             for (Application app : filteredApplications) {
                 Row row = sheet.createRow(rowIndex++);
@@ -65,17 +65,28 @@ public class ManagerMainController {
                 row.createCell(3).setCellValue(app.getProject().getProjectName());
                 row.createCell(4).setCellValue(app.getFlatType());
             }
-
+    
             for (int i = 0; i < 5; i++) {
                 sheet.autoSizeColumn(i);
             }
-
+    
+            // Create the folder if it doesn't exist
+            String folderPath = "generated_files";
+            java.io.File folder = new java.io.File(folderPath);
+            if (!folder.exists()) {
+                folder.mkdirs();
+            }
+    
+            // Generate the file name with a timestamp
+            String timestamp = new java.text.SimpleDateFormat("yyyyMMdd_HHmmss").format(new java.util.Date());
+            String outputFilePath = folderPath + "/ApplicantReport_" + timestamp + ".xlsx";
+    
             try (FileOutputStream fos = new FileOutputStream(outputFilePath)) {
                 workbook.write(fos);
             }
-
+    
             workbook.close();
-
+    
             System.out.println("[SUCCESS] Report generated successfully: " + outputFilePath);
         } catch (Exception e) {
             System.out.println("[ERROR] Failed to generate report: " + e.getMessage());
