@@ -978,14 +978,6 @@ public class ManagerProjectController implements IManagerProjectController {
         System.out.println("=========================================");
     }
 
-    private String promptProjectNameFilter() {
-        System.out.print("\nEnter project name (Nothing to clear filter): ");
-        return ScannerUtility.SCANNER.nextLine();
-    }
-    private String promptNeighbourhoodFilter() {
-        System.out.print("\nEnter neighbourhood name (Nothing to clear filter): ");
-        return ScannerUtility.SCANNER.nextLine();
-    }
     private Double promptMinPriceFilter() {
         while (true){
         System.out.print("\nEnter minimum price (0 to clear filter): ");

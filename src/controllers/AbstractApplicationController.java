@@ -33,6 +33,11 @@ public abstract class AbstractApplicationController implements IApplicationContr
         this.view = new ApplicationView();
     }
     
+    
+    /** 
+     * @param applicant
+     * @return ArrayList<Project>
+     */
     /**
      * Abstract method to get applicable projects for a given applicant.
      * Must be implemented by subclasses to provide specific project filtering logic.
@@ -43,9 +48,8 @@ public abstract class AbstractApplicationController implements IApplicationContr
     public abstract ArrayList<Project> getApplicableProjects(Applicant applicant);
 
     /**
-     * Abstract method to get the project ID for a given applicant.
-     * Must be implemented by subclasses to provide specific project ID retrieval logic.
-     *
+     * Get the projects for a given applicant and shows actions.
+     * 
      * @param applicant The applicant for whom to retrieve the project ID.
      * @return The project ID for the given applicant.
      */
@@ -55,8 +59,7 @@ public abstract class AbstractApplicationController implements IApplicationContr
     }
 
     /**
-     * Abstract method to show the application details for a given applicant.
-     * Must be implemented by subclasses to provide specific application detail display logic.
+     * Shows the application details for a given applicant.
      *
      * @param applicant The applicant for whom to show application details.
      */
