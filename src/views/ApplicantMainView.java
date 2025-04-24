@@ -4,6 +4,10 @@ import utilities.ScannerUtility;
 
 public class ApplicantMainView implements IDisplayResult {
 
+    /**
+     * Displays the main menu for the applicant dashboard.
+     * @return The selected option as an integer.
+     */
     public int showApplicantMenu() {
         System.out.println("\n=========================================");
         System.out.println("           APPLICANT DASHBOARD           ");

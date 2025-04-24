@@ -10,8 +10,22 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Row; 
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+/**
+ * ApplicantDB handles the database operations for the Applicant class.
+ * It provides methods to retrieve and save applicant information from an Excel file.
+ */
+
 public class ApplicantDB {
     private static final String APPLICANT_FILEPATH = "resources/data/ApplicantList.xlsx";
+
+    /**
+     * Retrieves an applicant's information based on their NRIC.
+     * 
+     * @param nric The NRIC of the applicant to retrieve.
+     * @return An Applicant object containing the applicant's information, or null if not found.
+     * @throws IOException If there is an error reading the file.
+     * @throws NumberFormatException If there is an error converting the age to an integer.
+     */
     
     public static Applicant getApplicantByNRIC(String nric) throws IOException, NumberFormatException {
 		try (FileInputStream fileStreamIn = new FileInputStream(APPLICANT_FILEPATH);
@@ -43,6 +57,13 @@ public class ApplicantDB {
 		return null;
     }
 
+    /**
+     * Saves the updated password for an applicant in the database.
+     * 
+     * @param applicant The Applicant object containing the updated information.
+     * @return true if the password was successfully saved, false otherwise.
+     * @throws IOException If there is an error writing to the file.
+     */
     public static boolean saveUser(Applicant applicant) throws IOException {
         try (FileInputStream fis = new FileInputStream(APPLICANT_FILEPATH);
              Workbook workbook = new XSSFWorkbook(fis)) {

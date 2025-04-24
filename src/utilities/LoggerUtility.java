@@ -8,6 +8,13 @@ import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/*
+ * LoggerUtility.java
+ * This utility class provides methods for logging error and info messages to separate log files.
+ * It creates a directory for logs if it doesn't exist and handles the creation of log files.
+ * It also formats the log messages with timestamps and stack traces for errors.
+ */
+
 public class LoggerUtility {
     private static final String LOG_DIR = "logs";
     private static final String ERROR_LOG = "logs/error.log";
@@ -26,6 +33,11 @@ public class LoggerUtility {
             System.err.println("Failed to initialize logging system: " + e.getMessage());
         }
     }
+    /**
+     * Logs an error message along with the stack trace of the exception to the error log file.
+     * @param message The error message to log.
+     * @param e The exception whose stack trace will be logged.
+     */
 
     public static void logError(String message, Exception e) {
         String logEntry = String.format("[%s] ERROR: %s - %s%nStacktrace: %s%n", 
@@ -37,6 +49,10 @@ public class LoggerUtility {
         writeToLog(ERROR_LOG, logEntry);
     }
 
+    /**
+     * Logs an informational message to the info log file.
+     * @param message The informational message to log.
+     */
     public static void logInfo(String message) {
         String logEntry = String.format("[%s] INFO: %s%n", 
             DATE_FORMAT.format(new Date()), 
@@ -44,6 +60,11 @@ public class LoggerUtility {
         );
         writeToLog(INFO_LOG, logEntry);
     }
+
+    /**
+     * Logs a warning message to the info log file.
+     * @param message The warning message to log.
+     */
 
     private static String getStackTraceAsString(Exception e) {
         StringBuilder sb = new StringBuilder();
@@ -53,6 +74,11 @@ public class LoggerUtility {
         return sb.toString();
     }
 
+    /**
+     * Writes a log entry to the specified log file.
+     * @param logFile The log file to write to.
+     * @param message The message to log.
+     */
     private static synchronized void writeToLog(String logFile, String message) {
         try {
             Files.write(

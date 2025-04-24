@@ -6,8 +6,6 @@ import controllers.ManagerProjectController;
 import models.HDBManager;
 import controllers.AuthenticatorController;
 
-//commit
-
 
 public class ManagerMainView {
     private ManagerApplicationView applicationView;
@@ -15,7 +13,6 @@ public class ManagerMainView {
     private ManagerProjectView projectView;
     private ManagerEnquiryView enquiryView;
     private HDBManager loggedInManager;
-    private ManagerMainController controller = new ManagerMainController(); // Create an instance of the controller
     public ManagerMainView(HDBManager manager) {
         this.loggedInManager = manager;
         this.applicationView = new ManagerApplicationView(loggedInManager);

@@ -232,7 +232,7 @@ public class Project {
      */
     public static void sortProjectByPrice(List<Project> projects, Boolean isAscending) {
         List<Project> expandedProjects = new ArrayList<>();
-        // Split projects by flat types
+
         for (Project project : projects) {
             for (FlatType flatType : project.getFlatTypes()) {
                 Project splitProject = new Project(
@@ -249,21 +249,14 @@ public class Project {
                 expandedProjects.add(splitProject);
             }
         }
-        // Sort the expanded projects by price
         Collections.sort(expandedProjects, (p1, p2) -> {
             double price1 = p1.getFlatTypes().get(0).getPricePerFlat();
             double price2 = p2.getFlatTypes().get(0).getPricePerFlat();
             return isAscending ? Double.compare(price1, price2) : Double.compare(price2, price1);
         });
-
-        // Clear the original list and add the sorted projects
         projects.clear();
         projects.addAll(expandedProjects);
     }
-
-
-    // Instance methods
-
     /**
      * Check if the project has any applications.
      * @return True if the project has applications, false otherwise.
@@ -312,7 +305,6 @@ public class Project {
         System.out.println("[SUCCESS] Officer " + officerName + " added to the ManagerList for Project: " + this.projectName);
     }
 
-    // Getters and Setters
 
     public int getProjectID() {
         return projectID;

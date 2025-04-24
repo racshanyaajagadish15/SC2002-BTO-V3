@@ -5,25 +5,18 @@ import java.util.ArrayList;
 import models.HDBOfficer;
 import models.Project;
 
+
+/**
+ * Interface for Officer Registration Controller.
+ * This interface defines the methods that an officer can use to manage project registrations.
+ */
 public interface IOfficerRegistrationController {
 
-	/**
-	 * 
-	 * @param project
-	 */
+	
 	boolean registerForProject(HDBOfficer officer, Project project);
 
 	ArrayList<Project> getRegistrableProjects(HDBOfficer officer);
 
-	/**
-	 * Handles the officer's request to join a project.
-	 * @param officer
-	 */
 	void joinProjectAction(models.HDBOfficer officer);
-
-	/**
-	 * Shows the officer's registration status.
-	 * @param officer
-	 */
 	void showRegistrations(models.HDBOfficer officer);
 }

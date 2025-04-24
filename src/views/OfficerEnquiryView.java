@@ -10,7 +10,11 @@ import utilities.ScannerUtility;
 
 public class OfficerEnquiryView implements IDisplayResult {
 
-    // Only displays the project list and returns user selection
+    /**
+     * Displays the menu for viewing and managing enquiries.
+     * @param projectList
+     * @return
+     */
     public int promptProjectSelection(List<Project> projectList) {
         while (true) {
             try {
@@ -38,8 +42,12 @@ public class OfficerEnquiryView implements IDisplayResult {
             }
         }
     }
+    /**
+     * Displays the list of enquiries for a selected project.
+     * @param enquiryCount
+     * @return
+     */
 
-    // Only displays the list of enquiries and returns user selection
     public int promptEnquirySelection(int enquiryCount) {
         try {
             System.out.print("\nEnter an enquiry number to modify (0 to go back): ");
@@ -55,13 +63,19 @@ public class OfficerEnquiryView implements IDisplayResult {
         
     }
 
-    // Prompt for reply text
+    /**
+     * Prompts the user to enter a reply for an enquiry.
+     * @return The reply text entered by the user.
+     */
     public String promptReplyText() {
         System.out.print("Enter your reply enquiry (Blank to back): ");
         return ScannerUtility.SCANNER.nextLine();
     }
 
-    // Display list of enquiries (table)
+    /**
+     * displayEnquiries displays the list of enquiries for a selected project.
+     * @param enquiries
+     */
     public void displayEnquiries(ArrayList<Enquiry> enquiries) {
         System.out.println("\n---------------------------------------------------------------------------------------------------------------------------------------------------------------");
         System.out.printf("| %-3s | %-40s | %-30s | %-30s | %-40s |\n", 
@@ -90,7 +104,12 @@ public class OfficerEnquiryView implements IDisplayResult {
         }
     }
 
-    // Table helper method
+    /**
+     * Text wrapping function to break long lines into multiple lines.
+     * @param text
+     * @param width
+     * @return
+     */
     private List<String> wrapText(String text, int width) {
         List<String> lines = new ArrayList<>();
         if (text == null) return lines;

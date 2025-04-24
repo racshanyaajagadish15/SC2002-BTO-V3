@@ -13,7 +13,18 @@ import models.HDBOfficer;
 import models.OfficerRegistration;
 import models.Project;
 
+/*
+ * OfficerApplicationController.java
+ * This class is responsible for handling the officer application process. 
+ */
+
 public class OfficerApplicationController extends AbstractApplicationController {
+
+    /**
+     * Constructor for the OfficerApplicationController class.
+     * Initializes the view used for displaying information to the user.
+     * @param view The view to be used for displaying information.
+     */
 
     public ArrayList<Project> getApplicableProjects(Applicant applicant) {
         try {

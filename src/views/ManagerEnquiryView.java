@@ -12,18 +12,34 @@ import utilities.LoggerUtility;
 import utilities.ScannerUtility;
 import models.HDBManager;
 
+/**
+ * The ManagerEnquiryView class is responsible for displaying the enquiry management interface for the HDB Manager.
+ * It allows the manager to view, reply to, and manage enquiries related to projects.
+ */
+
 public class ManagerEnquiryView implements IDisplayResult {
 
     private ManagerEnquiryController controller;
 
+    /**
+     * Constructor for ManagerEnquiryView.
+     * @param controller The controller to handle the logic for managing enquiries.
+     */
     public ManagerEnquiryView(ManagerEnquiryController controller) {
         this.controller = controller;
     }
-
+    /**
+     * Constructor for ManagerEnquiryView with HDBManager.
+     * @param HDBManager The HDBManager instance to manage the enquiries.
+     */
     public ManagerEnquiryView(HDBManager HDBManager) {
         this.controller = new ManagerEnquiryController();
     }
 
+    /**
+     * Displays the enquiry management menu for the HDB Manager.
+     * It allows the manager to reply to enquiries, view all enquiries, or view enquiries for a specific project.
+     */
     public void showEnquiryMenu() {
         while (true) {
             System.out.println("\n=========================================");
@@ -63,6 +79,10 @@ public class ManagerEnquiryView implements IDisplayResult {
         }
     }
 
+    /**
+     * Prompts the user to reply to an enquiry.
+     * It fetches all enquiries, displays them, and allows the manager to select one to reply to.
+     */
     private void replyToEnquiry() {
         try {
             // Fetch and display all enquiries
@@ -118,6 +138,11 @@ public class ManagerEnquiryView implements IDisplayResult {
         }
     }
 
+    /**
+     * Displays all enquiries for the manager to view.
+     * It fetches all enquiries and displays them in a formatted manner.
+     */
+
     private void viewAllEnquiries() {
         try {
             ArrayList<Enquiry> enquiries = controller.getAllProjectEnquiries();
@@ -128,7 +153,11 @@ public class ManagerEnquiryView implements IDisplayResult {
             LoggerUtility.logError("Error while viewing all enquiries", e);
         }
     }
-
+    
+    /**
+     * Displays enquiries for a specific project.
+     * It prompts the user to enter a project ID and fetches the enquiries for that project.
+     */
     private void viewProjectEnquiries() {
         try {
             System.out.print("Enter Project ID: ");
@@ -157,7 +186,13 @@ public class ManagerEnquiryView implements IDisplayResult {
             LoggerUtility.logError("Error while viewing project enquiries", e);
         }
     }
-
+    
+    /**
+     * Displays the enquiries in a formatted table.
+     * It wraps long text to fit within the specified width for better readability.
+     *
+     * @param enquiries The list of enquiries to display.
+     */
     private void displayEnquiries(ArrayList<Enquiry> enquiries) {
         if (enquiries.isEmpty()) {
             displayInfo("No enquiries found.");
@@ -209,6 +244,11 @@ public class ManagerEnquiryView implements IDisplayResult {
         return lines;
     }
 
+    /**
+     * Displays the result of the reply operation.
+     * @param success Indicates whether the reply was successful or not.
+     */
+
     public void showReplyResult(boolean success) {
         if (success) {
             displaySuccess("Reply sent successfully.");
@@ -216,17 +256,28 @@ public class ManagerEnquiryView implements IDisplayResult {
             displayError("Failed to send reply.");
         }
     }
-
+    /**
+     * Displays an error message.
+     * @param message The error message to display.
+     */
     public void displayError(String message) {
         System.out.println("ERROR: " + message);
         LoggerUtility.logError(message, new Exception("Error logged without stack trace"));
     }
 
+    /**
+     * Displays an information message.
+     * @param message The information message to display.
+     */
     public void displayInfo(String message) {
         System.out.println("INFO: " + message);
         LoggerUtility.logInfo(message);
     }
 
+    /**
+     * Displays a success message.
+     * @param message The success message to display.
+     */
     public void displaySuccess(String message) {
         System.out.println("SUCCESS: " + message);
         LoggerUtility.logInfo(message);

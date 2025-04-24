@@ -14,6 +14,11 @@ import models.OfficerRegistration;
 import models.Project;
 import views.OfficerEnquiryView;
 
+/**
+ * OfficerEnquiryController handles the logic for managing enquiries related to projects.
+ * It allows officers to reply to enquiries and retrieve project-specific enquiries.
+ */
+
 public class OfficerEnquiryController implements IOfficerEnquiryController {
     private final OfficerEnquiryView view;
 

@@ -1,5 +1,10 @@
 package enums;
 
+/*
+ * EnquiryFileIndex.java
+ * This enum represents the various indices of the enquiry file.
+ */
+
 public enum ProjectListFileIndex {
     PROJECT_ID(0), // Add this line
     NAME(1),

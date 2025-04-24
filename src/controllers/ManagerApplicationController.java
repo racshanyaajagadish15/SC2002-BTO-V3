@@ -1,8 +1,12 @@
 package controllers;
-import java.io.IOException;
 
+import java.io.IOException;
 import models.Application;
 
+/**
+ * Interface for the ManagerApplicationController class.
+ * This interface defines the methods that a manager can use to manage BTO applications.
+ */
 public class ManagerApplicationController implements IManagerApplicationController {
 
     /**
@@ -14,9 +18,7 @@ public class ManagerApplicationController implements IManagerApplicationControll
     @Override
     public void updateBTOApplicationStatus(Application application, String status) {
         try {
-            // Update the application's status
             application.setApplicationStatus(status);
-            // Persist the updated application to the database
             Application.updateApplicationDB(application);
         } catch (IOException e) {
             throw new RuntimeException("Failed to update application status: " + e.getMessage(), e);
@@ -32,10 +34,7 @@ public class ManagerApplicationController implements IManagerApplicationControll
     @Override
     public void updateBTOApplicationWithdrawalStatus(Application application, String status) {
         try {
-            // Update the application's status
             application.setApplicationStatus(status);
-
-            // Persist the updated application to the database
             Application.updateApplicationDB(application);
         } catch (IOException e) {
             throw new RuntimeException("Failed to update withdrawal status: " + e.getMessage(), e);
@@ -43,4 +42,3 @@ public class ManagerApplicationController implements IManagerApplicationControll
     }
 }
 
-//commit

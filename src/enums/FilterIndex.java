@@ -1,5 +1,10 @@
 package enums;
 
+/*
+ * EnquiryFileIndex.java
+ * This enum represents the various indices of the enquiry file.
+ */
+
 public enum FilterIndex {
     PROJECT_NAME(0),
     NEIGHBOURHOOD(1),

@@ -15,7 +15,14 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class ProjectDB {
     private static final String PROJECT_FILEPATH = "resources/data/ProjectList.xlsx";
 
-    // Helper function to create Project object from excel row
+    /**
+     * createProjectFromRow(Row row)
+     * This method creates a Project object from a given row in the Excel sheet.
+     * It extracts the necessary fields from the row and returns a Project object.
+     * @param row The row from which to create the Project object.
+     * @return A Project object created from the row data.
+     * @throws IllegalArgumentException if the row does not contain valid data.
+     */
     private static Project createProjectFromRow(Row row) {
         try {
             // Extract PROJECT_ID
@@ -74,7 +81,14 @@ public class ProjectDB {
         }
     }
     
-    // Helper methods to handle null or missing cells
+    /**
+     * getStringCellValue(Row row, int cellIndex)
+     * This method retrieves the string value from a cell in the given row.
+     * @param row The row from which to retrieve the cell value.
+     * @param cellIndex The index of the cell to retrieve.
+     * @return The string value of the cell, or an empty string if the cell is null or not a string.
+     * @throws IllegalArgumentException if the cell index is invalid.
+     */
     private static String getStringCellValue(Row row, int cellIndex) {
         Cell cell = row.getCell(cellIndex);
         return (cell != null && cell.getCellType() == CellType.STRING) ? cell.getStringCellValue().trim() : "";
@@ -90,22 +104,17 @@ public class ProjectDB {
         return (cell != null && cell.getCellType() == CellType.NUMERIC) ? cell.getDateCellValue() : null;
     }
 
-    // Helper function to populate excel row from Project object
     private static void populateProjectRow(Row row, Project project) {
-        // Populate PROJECT_ID
         row.createCell(ProjectListFileIndex.PROJECT_ID.getIndex()).setCellValue(project.getProjectID());
 
-        // Populate other fields
         row.createCell(ProjectListFileIndex.NAME.getIndex()).setCellValue(project.getProjectName());
         row.createCell(ProjectListFileIndex.NEIGHBORHOOD.getIndex()).setCellValue(project.getNeighborhood());
 
-        // Flat Type 1
         FlatType type1 = project.getFlatTypes().get(0);
         row.createCell(ProjectListFileIndex.TYPE_1.getIndex()).setCellValue(type1.getFlatType());
         row.createCell(ProjectListFileIndex.TYPE_1_UNITS.getIndex()).setCellValue(type1.getNumFlats());
         row.createCell(ProjectListFileIndex.TYPE_1_PRICE.getIndex()).setCellValue(type1.getPricePerFlat());
 
-        // Flat Type 2 if exists
         if (project.getFlatTypes().size() > 1) {
             FlatType type2 = project.getFlatTypes().get(1);
             row.createCell(ProjectListFileIndex.TYPE_2.getIndex()).setCellValue(type2.getFlatType());
@@ -113,21 +122,25 @@ public class ProjectDB {
             row.createCell(ProjectListFileIndex.TYPE_2_PRICE.getIndex()).setCellValue(type2.getPricePerFlat());
         }
 
-        // Dates
         row.createCell(ProjectListFileIndex.OPENING_DATE.getIndex()).setCellValue(project.getApplicationOpeningDate());
         row.createCell(ProjectListFileIndex.CLOSING_DATE.getIndex()).setCellValue(project.getApplicationClosingDate());
 
-        // Manager (store name instead of NRIC)
+
         row.createCell(ProjectListFileIndex.MANAGER.getIndex()).setCellValue(
             project.getProjectManager() != null ? project.getProjectManager().getName() : "N/A");
 
-        // Other fields
         row.createCell(ProjectListFileIndex.OFFICER_SLOT.getIndex()).setCellValue(project.getOfficerSlots());
         row.createCell(ProjectListFileIndex.VISIBILITY.getIndex()).setCellValue(
             project.getProjectVisibility() ? "Visible" : "Hidden");
     }
 
-    // Create Project
+    /**
+     * createProject(Project project)
+     * This method creates a new project in the Excel file.
+     * It checks if the project already exists and if not, adds it to the file.
+     * @param project The Project object to create.
+     * @return true if the project was created successfully, false if it already exists.
+     */
     public static boolean createProject(Project project) throws IOException {
         try (FileInputStream fileStreamIn = new FileInputStream(PROJECT_FILEPATH);
              Workbook workbook = new XSSFWorkbook(fileStreamIn)) {
@@ -143,31 +156,30 @@ public class ProjectDB {
                 }
             }
     
-            // Find the next empty row
+
             int newRowNum = sheet.getLastRowNum() + 1;
             while (newRowNum >= 0 && isRowEmpty(sheet.getRow(newRowNum))) {
                 newRowNum--;
             }
-            newRowNum++; // Move to the next row after the last non-empty row
+            newRowNum++; 
     
-            // Increment the PROJECT_ID
-            int projectID = 1; // Default to 1 if no rows exist
+
+            int projectID = 1;
             for (Row row : sheet) {
-                if (row.getRowNum() == 0) continue; // Skip header row
+                if (row.getRowNum() == 0) continue; 
                 Cell idCell = row.getCell(ProjectListFileIndex.PROJECT_ID.getIndex());
                 if (idCell != null && idCell.getCellType() == CellType.NUMERIC) {
                     projectID = Math.max(projectID, (int) idCell.getNumericCellValue() + 1);
                 }
             }
     
-            // Assign the new PROJECT_ID to the project
             project.setProjectID(projectID);
     
-            // Create a new row and populate it
+
             Row row = sheet.createRow(newRowNum);
             populateProjectRow(row, project);
     
-            // Save the changes to the file
+
             try (FileOutputStream fileOut = new FileOutputStream(PROJECT_FILEPATH)) {
                 workbook.write(fileOut);
             }
@@ -179,14 +191,20 @@ public class ProjectDB {
         }
     }
 
-    // Get all Projects
+    /**
+     * getAllProjects()
+     * This method retrieves all projects from the Excel file.
+     * It reads the file and creates Project objects for each row, returning a list of projects.
+     * @return An ArrayList of Project objects.
+     * @throws IOException if there is an error reading the file.
+     */
     public static ArrayList<Project> getAllProjects() throws IOException {
         ArrayList<Project> projects = new ArrayList<>();
         try (FileInputStream fileStreamIn = new FileInputStream(PROJECT_FILEPATH);
              Workbook workbook = new XSSFWorkbook(fileStreamIn)) {
             Sheet sheet = workbook.getSheetAt(0);
             for (Row row : sheet) {
-                if (row.getRowNum() == 0) continue; // Skip header row
+                if (row.getRowNum() == 0) continue; 
     
                 // Check if the row is empty
                 if (isRowEmpty(row)) break;
@@ -207,16 +225,31 @@ public class ProjectDB {
         return projects;
     }
     
-    // Helper method to check if a row is empty
+    /**
+     * isRowEmpty(Row row)
+     * This method checks if a given row is empty.
+     * It iterates through the cells in the row and checks if they are all blank or null.
+     * @param row The row to check.
+     * @return true if the row is empty, false otherwise.
+     */
     private static boolean isRowEmpty(Row row) {
-        if (row == null) return true; // If the row is null, consider it empty
+        if (row == null) return true; 
         for (Cell cell : row) {
             if (cell != null && cell.getCellType() != CellType.BLANK) {
-                return false; // Row is not empty if any cell is not blank
+                return false; 
             }
         }
-        return true; // Row is empty if all cells are blank or null
+        return true; 
     }
+
+    /**
+     * getProjectsById(int id)
+     * This method retrieves a project by its ID from the Excel file.
+     * It reads the file and checks each row for the matching ID.
+     *  @param id The ID of the project to retrieve.
+     *  @return A Project object if found, null otherwise.
+     * @throws IOException if there is an error reading the file.
+     */
     public static Project getProjectsById(int id) throws IOException {
         try (FileInputStream fileStreamIn = new FileInputStream(PROJECT_FILEPATH);
              Workbook workbook = new XSSFWorkbook(fileStreamIn)) {
@@ -231,7 +264,15 @@ public class ProjectDB {
         return null;
     }
 
-    // Get Project by Name
+    /**
+     * getProjectByName(String projectName)
+     * This method retrieves a project by its name from the Excel file.
+     * It reads the file and checks each row for the matching name.
+     * @param projectName The name of the project to retrieve.
+     * @return A Project object if found, null otherwise.
+     * @throws IOException if there is an error reading the file.
+     * @throws IllegalArgumentException if the project name is invalid.
+     */
     public static Project getProjectByName(String projectName) throws IOException {
         try (FileInputStream fileStreamIn = new FileInputStream(PROJECT_FILEPATH);
              Workbook workbook = new XSSFWorkbook(fileStreamIn)) {
@@ -246,7 +287,14 @@ public class ProjectDB {
         return null;
     }
 
-    // Update Project
+    /**
+     * updateProject(Project project)
+     * This method updates an existing project in the Excel file.
+     * It finds the project by its ID and updates the corresponding row with new data.
+     * @param project The Project object with updated data.
+     * @return true if the project was updated successfully, false if not found.
+     * @throws IOException if there is an error reading or writing the file.
+     */
     public static boolean updateProject(Project project) throws IOException {
         try (FileInputStream fileStreamIn = new FileInputStream(PROJECT_FILEPATH);
              Workbook workbook = new XSSFWorkbook(fileStreamIn)) {
@@ -268,10 +316,17 @@ public class ProjectDB {
                 }
             }
         }
-        return false; // Return false if no matching project is found
+        return false; 
     }
 
-    // Delete Project
+    /**
+     * deleteProject(Project project)
+     * This method deletes a project from the Excel file.
+     * It finds the project by its ID and removes the corresponding row from the file.
+     * @param project The Project object to delete.
+     * @return true if the project was deleted successfully, false if not found.
+     * @throws IOException if there is an error reading or writing the file.
+     */
     public static boolean deleteProject(Project project) throws IOException {
         try (FileInputStream fileStreamIn = new FileInputStream(PROJECT_FILEPATH);
              Workbook workbook = new XSSFWorkbook(fileStreamIn)) {
@@ -283,7 +338,7 @@ public class ProjectDB {
                     int rowToDelete = row.getRowNum();
                     int projectID = (int) row.getCell(ProjectListFileIndex.PROJECT_ID.getIndex()).getNumericCellValue();
     
-                    // Remove related enquiries
+                    
                     EnquiryDB.getAllEnquiries().stream()
                         .filter(enquiry -> enquiry.getProject().getProjectID() == projectID)
                         .forEach(enquiry -> {
@@ -294,21 +349,20 @@ public class ProjectDB {
                             }
                         });
     
-                    // Remove related applications
+                    
                     try {
                         ApplicationDB.deleteApplicationbyProj(project);
                     } catch (IOException e) {
                         LoggerUtility.logError("Failed to delete applications linked to project: " + project.getProjectName(), e);
                     }
     
-                    // Remove related officer registrations
+                    
                     try {
                         OfficerRegistrationDB.deleteOfficerRegistrationByProjID((project));
                     } catch (IOException e) {
                         LoggerUtility.logError("Failed to delete officer registrations linked to project: " + project.getProjectName(), e);
                     }
     
-                    // Remove the project row
                     sheet.removeRow(row);
                     if (rowToDelete < sheet.getLastRowNum()) {
                         sheet.shiftRows(rowToDelete + 1, sheet.getLastRowNum(), -1);
@@ -336,7 +390,7 @@ public class ProjectDB {
     
             Sheet sheet = workbook.getSheetAt(0);
             for (Row row : sheet) {
-                if (row.getRowNum() == 0) continue; // Skip header
+                if (row.getRowNum() == 0) continue; 
     
                 String projectManagerNric = row.getCell(ProjectListFileIndex.MANAGER.getIndex()).getStringCellValue().trim();
     
@@ -348,13 +402,20 @@ public class ProjectDB {
         return projects;
     }
 
-    // Get Project by ID
+    /**
+     * getProjectByIdDB(int projectID)
+     * This method retrieves a project by its ID from the Excel file.
+     * It reads the file and checks each row for the matching ID.
+     * @param projectID The ID of the project to retrieve.
+     * @return A Project object if found, null otherwise.
+     * @throws IOException if there is an error reading the file.
+     */
     public static Project getProjectByIdDB(int projectID) throws IOException {
         try (FileInputStream fileStreamIn = new FileInputStream(PROJECT_FILEPATH);
              Workbook workbook = new XSSFWorkbook(fileStreamIn)) {
             Sheet sheet = workbook.getSheetAt(0);
             for (Row row : sheet) {
-                if (row.getRowNum() == 0) continue; // Skip header row
+                if (row.getRowNum() == 0) continue; 
                 Cell idCell = row.getCell(ProjectListFileIndex.PROJECT_ID.getIndex());
                 if (idCell != null && idCell.getCellType() == CellType.NUMERIC) {
                     int id = (int) idCell.getNumericCellValue();
@@ -370,6 +431,14 @@ public class ProjectDB {
         return null; // Return null if no project matches the given ID
     }
 
+    /**
+     * addOfficerNRICToExcel(int projectID, String officerNRIC)
+     * This method adds an officer's NRIC to the "Officer" column of the specified project in the Excel file.
+     * It appends the NRIC to the existing value in the cell.
+     * @param projectID The ID of the project to update.
+     * @param officerNRIC The NRIC of the officer to add.
+     * @throws IOException if there is an error reading or writing the file.
+     */
     public static void addOfficerNRICToExcel(int projectID, String officerNRIC) throws IOException {
         try (FileInputStream fis = new FileInputStream(PROJECT_FILEPATH);
              Workbook workbook = new XSSFWorkbook(fis)) {
@@ -378,7 +447,6 @@ public class ProjectDB {
             int columnIdx = -1;
             int projectRowIdx = -1;
     
-            // Find the column index for "Officer"
             Row headerRow = sheet.getRow(0);
             for (Cell cell : headerRow) {
                 if (cell.getStringCellValue().equalsIgnoreCase("Officer")) {
@@ -387,7 +455,6 @@ public class ProjectDB {
                 }
             }
     
-            // Find the row index for the specified project ID
             for (Row row : sheet) {
                 Cell cell = row.getCell(ProjectListFileIndex.PROJECT_ID.getIndex());
                 if (cell != null) {
@@ -413,7 +480,6 @@ public class ProjectDB {
                 throw new IOException("Column or Project ID not found in the Excel sheet.");
             }
     
-            // Append the NRIC to the "Officer" column
             Row projectRow = sheet.getRow(projectRowIdx);
             Cell cell = projectRow.getCell(columnIdx);
             if (cell == null) {
@@ -423,7 +489,6 @@ public class ProjectDB {
             String newValue = existingValue.isEmpty() ? officerNRIC : existingValue + ", " + officerNRIC;
             cell.setCellValue(newValue);
     
-            // Save the changes
             try (FileOutputStream fos = new FileOutputStream(PROJECT_FILEPATH)) {
                 workbook.write(fos);
             }

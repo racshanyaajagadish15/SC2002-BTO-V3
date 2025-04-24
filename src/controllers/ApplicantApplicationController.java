@@ -11,8 +11,20 @@ import models.Applicant;
 import models.FlatType;
 import models.Project;
 
+/**
+ * This class is responsible for handling the application process for applicants.
+ * It extends the AbstractApplicationController class and implements the getApplicableProjects method.
+ */
+
 public class ApplicantApplicationController extends AbstractApplicationController {
 	
+	/**
+	 * This method retrieves a list of applicable projects for the given applicant.
+	 * It checks the applicant's marital status and age to determine the applicable flat types and projects.
+	 * 
+	 * @param applicant The applicant for whom to retrieve applicable projects.
+	 * @return A list of applicable projects for the applicant, or null if an error occurs.
+	 */
 	@Override
 	public ArrayList<Project> getApplicableProjects(Applicant applicant){
 		try {
