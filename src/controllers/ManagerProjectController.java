@@ -870,15 +870,15 @@ public class ManagerProjectController implements IManagerProjectController {
         System.out.println("=========================================");
     }
 
-    public String promptProjectNameFilter() {
+    private String promptProjectNameFilter() {
         System.out.print("\nEnter project name (Nothing to clear filter): ");
         return ScannerUtility.SCANNER.nextLine();
     }
-    public String promptNeighbourhoodFilter() {
+    private String promptNeighbourhoodFilter() {
         System.out.print("\nEnter neighbourhood name (Nothing to clear filter): ");
         return ScannerUtility.SCANNER.nextLine();
     }
-    public Double promptMinPriceFilter() {
+    private Double promptMinPriceFilter() {
         while (true){
         System.out.print("\nEnter minimum price (0 to clear filter): ");
             try {
@@ -892,7 +892,7 @@ public class ManagerProjectController implements IManagerProjectController {
         }
     }
 
-    public String promptProjectNameFilter(ArrayList<Project> allProjects) {
+    private String promptProjectNameFilter(ArrayList<Project> allProjects) {
         System.out.println("\n=========================================");
         System.out.println("           AVAILABLE PROJECT NAMES       ");
         System.out.println("=========================================");
@@ -923,7 +923,7 @@ public class ManagerProjectController implements IManagerProjectController {
             }
         }
     }
-    public String promptNeighbourhoodFilter(ArrayList<Project> allProjects) {
+    private String promptNeighbourhoodFilter(ArrayList<Project> allProjects) {
         // Extract unique neighborhoods from the list of projects
         Set<String> neighborhoods = new HashSet<>();
         for (Project project : allProjects) {
@@ -963,7 +963,7 @@ public class ManagerProjectController implements IManagerProjectController {
             }
         }
     }
-    public Double promptMaxPriceFilter() {
+    private Double promptMaxPriceFilter() {
         while (true){
             System.out.print("\nEnter maximum price (0 to clear filter): ");
             try {
@@ -976,7 +976,7 @@ public class ManagerProjectController implements IManagerProjectController {
             }
         }
     }
-    public int promptFlatTypeFilter() {
+    private int promptFlatTypeFilter() {
         while (true) {
             try {
                 System.out.println("\nApplicable Flat Types:");
@@ -998,7 +998,7 @@ public class ManagerProjectController implements IManagerProjectController {
     }
 
     // Prompt user for sort order (ascending/descending) for price sorting
-    public int promptSortOrder() {
+    private int promptSortOrder() {
         while (true) {
             try {
                 System.out.println("\nHow would you like it sorted?");
